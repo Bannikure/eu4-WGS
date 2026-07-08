@@ -1,0 +1,143 @@
+namespace = aow_trade_goods_events
+
+#######################################
+#		TROPICAL WOOD      #
+#######################################
+province_event = {
+	id = aow_trade_goods_events.1
+	title = "aow_trade_goods_events.1.t"
+	desc = "aow_trade_goods_events.1.d"
+	picture = TRADEGOODS_eventPicture
+
+	trigger = {
+		trade_goods = unknown
+		OR = {
+			colonysize = 300
+			is_city = yes
+		}
+		OR = {
+			has_terrain = jungle 
+			has_terrain = coastline 
+			has_terrain = marsh
+			has_terrain = mountain
+			has_terrain = highlands 
+			has_terrain = hills 
+		}
+		NOT = {
+			OR = {
+				has_winter = mild_winter
+				has_winter = normal_winter
+				has_winter = severe_winter
+			}
+		}
+	}
+
+	mean_time_to_happen = {
+		months = 8
+
+		modifier = {
+			factor = 0.5
+			colonysize = 500
+		}
+		modifier = {
+			factor = 1.5
+			any_neighbor_province = {
+				trade_goods = tropical_wood
+			}
+		}
+		modifier = {
+			factor = 1.2
+			OR = {
+				has_terrain = mountain
+				has_terrain = highlands 
+				has_terrain = hills 
+			}
+		}
+	}
+	
+	immediate = {
+		hidden_effect = {
+			change_trade_goods = tropical_wood
+			set_province_flag = received_trade_goods
+		}
+	}
+
+	option = {
+		name = "aow_trade_goods_events.1.a"
+		change_trade_goods = tropical_wood
+	}
+}
+
+#######################################
+#		DYES      #
+#######################################
+province_event = {
+	id = aow_trade_goods_events.2
+	title = "aow_trade_goods_events.2.t"
+	desc = "aow_trade_goods_events.2.d"
+	picture = TRADEGOODS_eventPicture
+
+	trigger = {
+		trade_goods = unknown
+		OR = {
+			colonysize = 300
+			is_city = yes
+		}
+		OR = {
+			has_terrain = jungle 
+			has_terrain = coastline 
+			has_terrain = marsh
+			has_terrain = mountain
+			has_terrain = highlands 
+			has_terrain = hills 
+			has_terrain = coastal_desert 
+			has_terrain = forest 
+		}
+		NOT = {
+			OR = {
+				has_winter = mild_winter
+				has_winter = normal_winter
+				has_winter = severe_winter
+			}
+		}
+	}
+
+	mean_time_to_happen = {
+		months = 8
+
+		modifier = {
+			factor = 0.5
+			colonysize = 500
+		}
+
+		modifier = {
+			factor = 1.2
+			OR = {
+				has_terrain = coastline 
+				has_terrain = mountain
+				has_terrain = highlands 
+				has_terrain = hills 
+				has_terrain = coastal_desert 
+				has_terrain = forest 
+			}
+		}
+		modifier = {
+			factor = 1.5
+			any_neighbor_province = {
+				trade_goods = dyes
+			}
+		}
+	}
+	
+	immediate = {
+		hidden_effect = {
+			change_trade_goods = dyes
+			set_province_flag = received_trade_goods
+		}
+	}
+
+	option = {
+		name = "aow_trade_goods_events.2.a"
+		change_trade_goods = dyes
+	}
+}

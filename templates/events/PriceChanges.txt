@@ -1,0 +1,646 @@
+########################################
+# Price Change Events
+#
+# written by Johan Andersson
+########################################
+
+namespace = prices
+
+# Triangle Trade
+country_event = {
+	id = prices.1
+	title = prices.1.t
+	desc = prices.1.d
+	picture = TRADEGOODS_eventPicture
+
+	fire_only_once = yes
+	
+	major = yes
+
+	trigger = {
+		num_of_colonial_subjects = 1
+		NOT = { has_global_flag = triangle_happened }
+		any_subject_country = {
+			is_colonial_nation = yes
+			OR = {
+				capital_scope = { continent = north_america }
+				capital_scope = { continent = south_america }
+			}
+			OR = {
+				tobacco = 4
+				sugar = 4
+				cotton = 4
+			}
+		}
+		
+	}
+	mean_time_to_happen = {
+		months = 1
+	}
+	
+	
+	option = {
+		name = prices.1.a
+		change_price = {
+			trade_goods = slaves
+			key = TRIANGLE_TRADE
+			value = 0.5
+			duration = -1
+		}
+		add_years_of_income  = 0.25
+		add_prestige = 20
+	}
+}
+
+#Lots of Protestants, less demand for fish
+country_event = {
+	id = prices.4
+	title = prices.4.t
+	desc = prices.4.d
+	picture = TRADEGOODS_eventPicture
+
+	fire_only_once = yes
+	
+	major = yes
+
+	trigger = {
+		religion = catholic
+		is_religion_enabled = protestant
+		is_papal_controller = yes
+		
+		calc_true_if = {
+			all_country = {
+				religion = protestant
+			}
+			amount = 5
+		}
+		NOT = { has_global_flag = protestant_fish_happened }
+	}
+	
+	mean_time_to_happen = {
+		months = 1
+	}
+	
+	option = {
+		name = prices.4.a
+		change_price = {
+			trade_goods = fish
+			key = PROTESTANT_DONT_EAT_FISH
+			value = -0.1
+			duration = -1
+		}
+	}
+}
+
+
+
+# Coffee Boom
+country_event = {
+	id = prices.5
+	title = prices.5.t
+	desc = prices.5.d
+	picture = TRADEGOODS_eventPicture
+
+	fire_only_once = yes
+	
+	major = yes
+
+	trigger = {
+		capital_scope = { continent = europe }
+		NOT = { has_global_flag = coffee_boom_happened }
+		OR = {
+			any_owned_province = {
+				region = indonesian_region
+				trade_goods = coffee
+			}
+			any_subject_country = {
+				is_colonial_nation = yes
+				coffee = 4
+			}
+		}
+	}
+	
+	mean_time_to_happen = {
+		months = 1
+	}
+
+	
+	option = {
+		name = prices.5.a
+		change_price = {
+			trade_goods = coffee
+			key = COFFEE_BOOM
+			value = 0.5
+			duration = -1
+		}
+		add_years_of_income  = 0.25
+		add_prestige = 20
+	}
+}
+
+# Abolitionism
+country_event = {
+	id = prices.9
+	title = prices.9.t
+	desc = prices.9.d
+	picture = TRADEGOODS_eventPicture
+
+	fire_only_once = yes
+	
+	major = yes
+
+	trigger = {
+		has_country_modifier = the_abolish_slavery_act
+		NOT = { has_global_flag = abolitionism_happened }
+	}
+	mean_time_to_happen = {
+		months = 1
+	}
+	
+	
+	option = {
+		name = prices.9.a
+		change_price = {
+			trade_goods = slaves
+			key = ABOLITIONISM
+			value = -0.4
+			duration = -1
+		}
+		add_prestige = 10
+	}
+}
+
+# Cork Bottle Stoppers
+country_event = {
+	id = prices.12
+	title = prices.12.t
+	desc = prices.12.d
+	picture = TRADEGOODS_eventPicture
+
+	fire_only_once = yes
+	
+	major = yes
+
+	trigger = {
+		dip_tech = 20
+		wine = 1
+		NOT = { has_global_flag = wine_corks_happened }
+	}
+	mean_time_to_happen = {
+		months = 1
+	}
+	
+	
+	option = {
+		name = prices.12.a
+		change_price = {
+			trade_goods = wine
+			key = WINE_CORKS
+			value = 0.25
+			duration = -1
+		}
+	}
+}
+
+# New Draperies
+country_event = {
+	id = prices.13
+	title = prices.13.t
+	desc = prices.13.d
+	picture = TRADEGOODS_eventPicture
+
+	fire_only_once = yes
+	
+	major = yes
+
+	trigger = {
+		dip_tech = 11
+		cloth = 1
+		NOT = { has_global_flag = new_draperies_happened }
+	}
+	mean_time_to_happen = {
+		months = 1
+	}
+	
+	
+	option = {
+		name = prices.13.a
+		change_price = {
+			trade_goods = cloth
+			key = NEW_DRAPERIES
+			value = 0.20
+			duration = -1
+		}
+		change_price = {
+			trade_goods = wool
+			key = NEW_DRAPERIES
+			value = -0.20
+			duration = -1
+		}
+	}
+}
+
+# Uniform Regulations
+country_event = {
+	id = prices.14
+	title = prices.14.t
+	desc = prices.14.d
+	picture = TRADEGOODS_eventPicture
+
+	fire_only_once = yes
+	
+	major = yes
+
+	trigger = {
+		mil_tech = 21
+		NOT = { has_global_flag = regulated_uniforms_happened }
+	}
+	mean_time_to_happen = {
+		months = 1
+	}
+	
+	
+	option = {
+		name = prices.14.a
+		change_price = {
+			trade_goods = cloth
+			key = REGULATED_UNIFORMS
+			value = 0.15
+			duration = -1
+		}
+		change_price = {
+			trade_goods = dyes
+			key = REGULATED_UNIFORMS
+			value = 0.25
+			duration = -1
+		}
+	}
+}
+
+# Felt Hats
+country_event = {
+	id = prices.18
+	title = prices.18.t
+	desc = prices.18.d
+	picture = TRADEGOODS_eventPicture
+
+	fire_only_once = yes
+	
+	major = yes
+
+	trigger = {
+		OR = {
+			capital_scope = { continent = europe }
+			is_colonial_nation = yes
+		}
+		any_owned_province = {
+			trade_goods = fur
+			continent = north_america
+		}
+		NOT = { has_global_flag = felt_hats_happened }
+	}
+	mean_time_to_happen = {
+		months = 3
+	}
+	
+	
+	option = {
+		name = prices.18.a
+		change_price = {
+			trade_goods = fur
+			key = FELT_HATS
+			value = 0.35
+			duration = -1
+		}
+	}
+}
+
+# Permanent Navies
+country_event = {
+	id = prices.19
+	title = prices.19.t
+	desc = prices.19.d
+	picture = TRADEGOODS_eventPicture
+
+	fire_only_once = yes
+	
+	major = yes
+
+	trigger = {
+		dip_tech = 22
+		num_of_ports = 3
+		NOT = { has_global_flag = permanent_navies_happened }
+	}
+	mean_time_to_happen = {
+		months = 1
+	}
+	
+	
+	option = {
+		name = prices.19.a
+		change_price = {
+			trade_goods = naval_supplies
+			key = PERMANENT_NAVIES
+			value = 0.5
+			duration = -1
+		}
+	}
+}
+
+# Bronze Cannons
+country_event = {
+	id = prices.20
+	title = prices.20.t
+	desc = prices.20.d
+	picture = TRADEGOODS_eventPicture
+
+	fire_only_once = yes
+	
+	major = yes
+
+	trigger = {
+		mil_tech = 7
+		copper = 1
+		NOT = { has_global_flag = bronze_cannons_happened }
+	}
+	mean_time_to_happen = {
+		months = 1
+	}
+	
+	
+	option = {
+		name = prices.20.a
+		change_price = {
+			trade_goods = copper
+			key = BRONZE_CANNONS
+			value = 0.5
+			duration = -1
+		}
+	}
+}
+
+# Japanese Tea Culture
+country_event = {
+	id = prices.21
+	title = prices.21.t
+	desc = prices.21.d
+	picture = TRADEGOODS_eventPicture
+
+	fire_only_once = yes
+	
+	major = yes
+
+	trigger = {
+		dip_tech = 8
+		tag = JAP
+		NOT = { has_global_flag = japanese_tea_happened }
+	}
+	mean_time_to_happen = {
+		months = 1
+	}
+	
+	
+	option = {
+		name = prices.21.a
+		change_price = {
+			trade_goods = tea
+			key = JAPANESE_TEA_CULTURE
+			value = 0.25
+			duration = -1
+		}
+	}
+}
+
+# Decline of the Spice Trade
+country_event = {
+	id = prices.22
+	title = prices.22.t
+	desc = prices.22.d
+	picture = TRADEGOODS_eventPicture
+
+	fire_only_once = yes
+	
+	major = yes
+
+	trigger = {
+		is_year = 1600
+		capital_scope = { continent = europe }
+		spices = 3
+		any_known_country = {
+			capital_scope = { continent = europe }
+			spices = 3
+		}
+		NOT = { has_global_flag = decline_of_spices_happened }
+	}
+	mean_time_to_happen = {
+		months = 60
+	}
+	
+	
+	option = {
+		name = prices.22.a
+		change_price = {
+			trade_goods = spices
+			key = DECLINE_OF_SPICE_TRADE
+			value = -0.4
+			duration = -1
+		}
+	}
+}
+
+# Changing Patterns of Consumption
+country_event = {
+	id = prices.23
+	title = prices.23.t
+	desc = prices.23.d
+	picture = TRADEGOODS_eventPicture
+
+	fire_only_once = yes
+	
+	major = yes
+
+	trigger = {
+		capital_scope = { continent = europe }
+		sugar = 5
+		dip_tech = 20
+		OR = {
+			trading_part = {
+				trade_goods = cocoa
+				value = 0.05
+			}
+			trading_part = {
+				trade_goods = tea
+				value = 0.05
+			}
+			trading_part = {
+				trade_goods = coffee
+				value = 0.05
+			}
+		}
+		NOT = { has_global_flag = popularization_of_sugar_happened }
+	}
+	mean_time_to_happen = {
+		months = 1
+	}
+	
+	
+	option = {
+		name = prices.23.a
+		change_price = {
+			trade_goods = sugar
+			key = POPULARIZATION_OF_SUGAR
+			value = 0.5
+			duration = -1
+		}
+	}
+}
+
+# Ivory Shortage in East Asia
+country_event = {
+	id = prices.27
+	title = prices.27.t
+	desc = prices.27.d
+	picture = TRADEGOODS_eventPicture
+
+	fire_only_once = yes
+	
+	major = yes
+
+	trigger = {
+		is_year = 1750
+		capital_scope = { region = indochinan_region }
+		NOT = { has_global_flag = ivory_shortage_happened }
+	}
+	mean_time_to_happen = {
+		months = 1
+	}
+	
+	
+	option = {
+		name = prices.27.a
+		change_price = {
+			trade_goods = ivory
+			key = IVORY_SHORTAGE
+			value = 0.25
+			duration = -1
+		}
+	}
+}
+
+# Development of Ironworking
+country_event = {
+	id = prices.28
+	title = prices.28.t
+	desc = prices.28.d
+	picture = TRADEGOODS_eventPicture
+
+	fire_only_once = yes
+	
+	major = yes
+
+	trigger = {
+		mil_tech = 18
+		NOT = { has_global_flag = iron_working_happened }
+	}
+	mean_time_to_happen = {
+		months = 1
+	}
+	
+	
+	option = {
+		name = prices.28.a
+		change_price = {
+			trade_goods = iron
+			key = IRON_WORKING
+			value = 0.5
+			duration = -1
+		}
+		change_price = {
+			trade_goods = copper
+			key = IRON_WORKING
+			value = -0.35
+			duration = -1
+		}
+	}
+}
+
+# Hot Chocolate
+country_event = {
+	id = prices.29
+	title = prices.29.t
+	desc = prices.29.d
+	picture = TRADEGOODS_eventPicture
+
+	fire_only_once = yes
+	
+	major = yes
+
+	trigger = {
+		dip_tech = 16
+		num_of_colonial_subjects = 1
+		any_subject_country = {
+			is_colonial_nation = yes
+			OR = {
+				capital_scope = { continent = north_america }
+				capital_scope = { continent = south_america }
+			}
+			cocoa = 7
+			sugar = 1
+		}
+		NOT = { has_global_flag = hot_chocolate_happened }
+	}
+	mean_time_to_happen = {
+		months = 1
+	}
+	
+	
+	option = {
+		name = prices.29.a
+		change_price = {
+			trade_goods = cocoa
+			key = HOT_CHOCOLATE
+			value = 0.4
+			duration = -1
+		}
+	}
+}
+
+# Popularization of Tobacco
+country_event = {
+	id = prices.30
+	title = prices.30.t
+	desc = prices.30.d
+	picture = TRADEGOODS_eventPicture
+
+	fire_only_once = yes
+	
+	major = yes
+
+	trigger = {
+		dip_tech = 16
+		num_of_colonial_subjects = 1
+		NOT = { has_global_flag = popularization_of_tobacco_happened }
+		any_subject_country = {
+			is_colonial_nation = yes
+			OR = {
+				capital_scope = { continent = north_america }
+				capital_scope = { continent = south_america }
+			}
+			tobacco = 4
+		}
+	}
+	mean_time_to_happen = {
+		months = 1
+	}
+	
+	
+	option = {
+		name = prices.30.a
+		change_price = {
+			trade_goods = tobacco
+			key = POPULARIZATION_OF_TOBACCO
+			value = 0.5
+			duration = -1
+		}
+	}
+}
