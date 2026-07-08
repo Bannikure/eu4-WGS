@@ -1,0 +1,638 @@
+defeat_the_byzantine_empire = {
+	
+	type = country
+
+	category = MIL
+	ai_mission = yes
+	
+	allow = {
+		tag = TUR
+		exists = BYZ
+		is_subject = no
+		BYZ = {
+			is_subject = no			
+		}
+	}
+	abort = {
+		OR = {
+			is_subject = yes
+			BYZ = { is_subject = yes }
+			NOT = { exists = BYZ }
+		}
+	}
+	success = {
+		NOT = { exists = BYZ }
+	}
+	chance = {
+		factor = 5000
+		modifier = {
+			factor = 2
+			is_monarch_leader = yes
+		}
+		modifier = {
+			factor = 10
+			is_year = 1450
+		}
+	}
+	effect = {
+		add_prestige = 5
+	}
+}
+
+vassalize_candar = {
+
+	type = country
+
+	category = MIL
+	
+	allow = {
+		tag = TUR
+		is_subject = no
+		CND = {
+			is_subject = no
+			is_neighbor_of = ROOT
+			NOT = { num_of_cities = ROOT }
+		}
+	}
+	abort = {
+		OR = {
+			is_subject = yes
+			NOT = { exists = CND }
+			CND = { is_subject = yes }
+		}
+	}
+	success = {
+		CND = { vassal_of = ROOT }
+	}
+	chance = {
+		factor = 1000
+		modifier = {
+			factor = 2
+			NOT = { has_opinion = { who = CND value = 0 } }
+		}
+	}
+	immediate = {
+		add_casus_belli = {
+			type = cb_vassalize_mission
+			months = 120
+			target = CND
+		}
+	}
+	abort_effect = {
+		remove_casus_belli = {
+			type = cb_vassalize_mission
+			target = CND
+		}
+	}
+	effect = {
+		add_prestige = 5
+		add_army_tradition = 15
+		hidden_effect = {
+			remove_casus_belli = {
+				type = cb_vassalize_mission
+				target = CND
+			}
+		}
+	}
+}
+
+
+annex_candar = {
+	
+	type = country
+
+	category = DIP
+	
+	target_provinces = {
+		owned_by = CND
+	}
+	allow = {
+		tag = TUR
+		is_subject = no
+		CND = {
+			vassal_of = ROOT
+			is_neighbor_of = ROOT
+			NOT = { num_of_cities = ROOT }
+			religion_group = ROOT
+		}
+	}
+	abort = {
+		OR = {
+			is_subject = yes
+			NOT = { exists = CND }
+			CND = { NOT = { religion_group = ROOT } }
+			any_target_province = {
+				NOT = { owned_by = ROOT }
+				NOT = { owned_by = CND }
+			}
+		}
+	}
+	success = {
+		NOT = { exists = CND }
+		all_target_province = {
+			owned_by = ROOT
+		}
+	}
+	chance = {
+		factor = 1000
+		modifier = {
+			factor = 2
+			has_opinion = { who = CND value = 100 }
+		}
+		modifier = {
+			factor = 2
+			has_opinion = { who = CND value = 200 }
+		}
+	}
+	effect = {
+		add_prestige = 10
+	}
+}
+
+
+vassalize_karaman = {
+
+	type = country
+
+	category = MIL
+	
+	allow = {
+		tag = TUR
+		is_subject = no
+		KAR = {
+			is_subject = no
+			is_neighbor_of = ROOT
+			NOT = { num_of_cities = ROOT }
+		}
+	}
+	abort = {
+		OR = {
+			is_subject = yes
+			NOT = { exists = KAR }
+			KAR = { is_subject = yes }
+		}
+	}
+	success = {
+		KAR = { vassal_of = ROOT }
+	}
+	chance = {
+		factor = 1000
+		modifier = {
+			factor = 2
+			NOT = { has_opinion = { who = KAR value = 0 } }
+		}
+	}
+	immediate = {
+		add_casus_belli = {
+			type = cb_vassalize_mission
+			months = 120
+			target = KAR
+		}
+	}
+	abort_effect = {
+		remove_casus_belli = {
+			type = cb_vassalize_mission
+			target = KAR
+		}
+	}
+	effect = {
+		add_prestige = 5
+		add_army_tradition = 15
+		hidden_effect = {
+			remove_casus_belli = {
+				type = cb_vassalize_mission
+				target = KAR
+			}
+		}
+	}
+}
+
+
+annex_karaman = {
+	
+	type = country
+
+	category = DIP
+	
+	target_provinces = {
+		owned_by = KAR
+	}
+	allow = {
+		tag = TUR
+		is_subject = no
+		KAR = {
+			vassal_of = ROOT
+			is_neighbor_of = ROOT
+			NOT = { num_of_cities = ROOT }
+			religion_group = ROOT
+		}
+	}
+	abort = {
+		OR = {
+			is_subject = yes
+			NOT = { exists = KAR }
+			KAR = { NOT = { religion_group = ROOT } }
+			any_target_province = {
+				NOT = { owned_by = ROOT }
+				NOT = { owned_by = KAR }
+			}
+		}
+	}
+	success = {
+		NOT = { exists = KAR }
+		all_target_province = {
+			owned_by = ROOT
+		}
+	}
+	chance = {
+		factor = 1000
+		modifier = {
+			factor = 2
+			has_opinion = { who = KAR value = 100 }
+		}
+		modifier = {
+			factor = 2
+			has_opinion = { who = KAR value = 200 }
+		}
+	}
+	effect = {
+		add_prestige = 10
+	}
+}
+
+
+vassalize_dulkadir = {
+
+	type = country
+
+	category = MIL
+	
+	allow = {
+		tag = TUR
+		is_subject = no
+		DUL = {
+			is_subject = no
+			is_neighbor_of = ROOT
+			NOT = { num_of_cities = ROOT }
+		}
+	}
+	abort = {
+		OR = {
+			is_subject = yes
+			NOT = { exists = DUL }
+			DUL = { is_subject = yes }
+		}
+	}
+	success = {
+		DUL = { vassal_of = TUR }
+	}
+	chance = {
+		factor = 1000
+		modifier = {
+			factor = 2
+			NOT = { has_opinion = { who = DUL value = 0 } }
+		}
+	}
+	immediate = {
+		add_casus_belli = {
+			type = cb_vassalize_mission
+			months = 120
+			target = DUL
+		}
+	}
+	abort_effect = {
+		remove_casus_belli = {
+			type = cb_vassalize_mission
+			target = DUL
+		}
+	}
+	effect = {
+		add_adm_power = 50
+		add_army_tradition = 15
+		hidden_effect = {
+			remove_casus_belli = {
+				type = cb_vassalize_mission
+				target = DUL
+			}
+		}
+	}
+}
+
+
+retake_smyrna = {
+	
+	type = country
+
+	category = MIL
+	ai_mission = yes
+	
+	target_provinces = {
+		owned_by = AYD
+	}
+	allow = {
+		tag = TUR
+		is_subject = no
+		AYD = {
+			is_neighbor_of = ROOT
+			NOT = { is_subject_of = ROOT }
+		}
+	}
+	abort = {
+		OR = {
+			is_subject = yes
+			NOT = { exists = AYD }
+			any_target_province = {
+				NOT = { owned_by = ROOT }
+				NOT = { owned_by = AYD }
+			}
+		}
+	}
+	success = {
+		NOT = { exists = AYD }
+		all_target_province = {
+			owned_by = ROOT
+		}
+	}
+	chance = {
+		factor = 1000
+		modifier = {
+			factor = 2
+			NOT = { has_opinion = { who = AYD value = 0 } }
+		}
+	}
+	immediate = {
+		every_target_province = {
+			add_claim = ROOT
+		}
+	}
+	abort_effect = {
+		every_target_province = {
+			remove_claim = ROOT
+		}
+	}
+	effect = {
+		add_adm_power = 50
+	}
+}
+
+
+vassalize_wallachia = {
+
+	type = country
+
+	category = MIL
+	ai_mission = yes
+	
+	allow = {
+		tag = TUR
+		is_subject = no
+		WAL = {
+			is_subject = no
+			is_neighbor_of = ROOT
+			NOT = { num_of_cities = ROOT }
+		}
+	}
+	abort = {
+		OR = {
+			is_subject = yes
+			NOT = { exists = WAL }
+			WAL = { is_subject = yes }
+		}
+	}
+	success = {
+		WAL = { vassal_of = ROOT }
+	}
+	chance = {
+		factor = 1000
+		modifier = {
+			factor = 2
+			NOT = { has_opinion = { who = WAL value = 0 } }
+		}
+		modifier = {
+			factor = 2
+			mil = 4
+		}
+	}
+	immediate = {
+		add_casus_belli = {
+			type = cb_vassalize_mission
+			months = 120
+			target = WAL
+		}
+	}
+	abort_effect = {
+		remove_casus_belli = {
+			type = cb_vassalize_mission
+			target = WAL
+		}
+	}
+	effect = {
+		add_prestige = 5
+		add_army_tradition = 15
+		hidden_effect = {
+			remove_casus_belli = {
+				type = cb_vassalize_mission
+				target = WAL
+			}
+		}
+	}
+}
+
+
+vassalize_transylvania = {
+
+	type = country
+
+	category = MIL
+	ai_mission = yes
+	
+	allow = {
+		tag = TUR
+		is_subject = no
+		TRA = {
+			is_subject = no
+			is_neighbor_of = ROOT
+			NOT = { num_of_cities = ROOT }
+		}
+	}
+	abort = {
+		OR = {
+			is_subject = yes
+			NOT = { exists = TRA }
+			TRA = { is_subject = yes }
+		}
+	}
+	success = {
+		TRA = { vassal_of = ROOT }
+	}
+	chance = {
+		factor = 1000
+		modifier = {
+			factor = 2
+			NOT = { has_opinion = { who = TRA value = 0 } }
+		}
+		modifier = {
+			factor = 2
+			mil = 4
+		}
+	}
+	immediate = {
+		add_casus_belli = {
+			type = cb_vassalize_mission
+			months = 120
+			target = TRA
+		}
+	}
+	abort_effect = {
+		remove_casus_belli = {
+			type = cb_vassalize_mission
+			target = TRA
+		}
+	}
+	effect = {
+		add_prestige = 5
+		add_army_tradition = 15
+		hidden_effect = {
+			remove_casus_belli = {
+				type = cb_vassalize_mission
+				target = TRA
+			}
+		}
+	}
+}
+
+
+conquer_levant = {
+   
+    type = country
+
+	category = MIL
+	ai_mission = yes
+	
+	target_provinces = {
+		AND = {
+			region = middle_east
+			owned_by = MAM
+		}
+	}
+    allow = {
+        tag = TUR
+        is_subject = no
+		is_neighbor_of = MAM
+		MAM = {
+			any_owned_province = {
+				region = middle_east
+			}
+			NOT = { alliance_with = ROOT }
+			NOT = { war_with = ROOT }
+			NOT = { is_subject_of = ROOT }
+		}
+    }
+    abort = {
+        OR = {
+            is_subject = yes
+			any_target_province = {
+				NOT = { owned_by = ROOT }
+				NOT = { owned_by = MAM }
+			}
+        }
+    }
+    success = {
+		all_target_province = {
+			owned_by = ROOT
+		}
+    }
+    chance = {
+        factor = 1000
+        modifier = {
+            factor = 2
+            NOT = { has_opinion = { who = MAM value = 100 } }
+        }
+        modifier = {
+            factor = 2
+            NOT = { has_opinion = { who = MAM value = 0 } }
+        }
+    }
+    immediate = {
+		every_target_province = {
+			add_claim = ROOT
+		}
+    }
+    abort_effect = {
+		every_target_province = {
+			remove_claim = ROOT
+		}
+    }
+    effect = {
+		add_prestige = 10
+		add_army_tradition = 15
+    }
+}
+
+conquer_egypt = {
+   
+    type = country
+
+	category = MIL
+	ai_mission = yes
+	
+	target_provinces = {
+		AND = {
+			region = north_africa
+			owned_by = MAM
+		}
+	}
+    allow = {
+        tag = TUR
+        is_subject = no
+		is_neighbor_of = MAM
+		MAM = {
+			any_owned_province = {
+				region = north_africa
+			}
+			NOT = { alliance_with = ROOT }
+			NOT = { war_with = ROOT }
+			NOT = { is_subject_of = ROOT }
+		}
+    }
+    abort = {
+        OR = {
+            is_subject = yes
+			any_target_province = {
+				NOT = { owned_by = ROOT }
+				NOT = { owned_by = MAM }
+			}
+        }
+    }
+    success = {
+        NOT = { exists = MAM }
+		all_target_province = {
+			owned_by = ROOT
+		}
+    }
+    chance = {
+        factor = 1000
+        modifier = {
+            factor = 2
+            NOT = { has_opinion = { who = MAM value = 100 } }
+        }
+        modifier = {
+            factor = 2
+            NOT = { has_opinion = { who = MAM value = 0 } }
+        }
+    }
+    immediate = {
+		every_target_province = {
+			add_claim = ROOT
+		}
+    }
+    abort_effect = {
+		every_target_province = {
+			remove_claim = ROOT
+		}
+    }
+    effect = {
+		add_prestige = 10
+		add_army_tradition = 15
+    }
+}

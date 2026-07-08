@@ -1,0 +1,690 @@
+anglo_portuguese_relations = {
+
+	type = country
+	
+	category = DIP
+	
+	allow = {
+		tag = POR
+		exists = ENG
+		government = monarchy
+		NOT = { has_opinion = { who = ENG value = 50 } }
+		ENG = {
+			is_subject = no
+			government = monarchy
+		}
+		NOT = { marriage_with = ENG }
+		NOT = { war_with = ENG }
+	}
+	abort = {
+		OR = {
+			NOT = { government = monarchy }
+			war_with = ENG
+			NOT = { exists = ENG }
+			ENG = {
+				is_subject = yes
+				NOT = { government = monarchy }
+			}
+		}
+	}
+	success = {
+		ENG = { has_opinion = { who = POR value = 100 } }
+		marriage_with = ENG
+	}
+	chance = {
+		factor = 1000
+		modifier = {
+			factor = 2
+			NOT = { has_opinion = { who = ENG value = 0 } }
+		}
+	}
+	effect = {
+		add_prestige = 10
+	}
+}
+
+
+castilian_portuguese_relations = {
+
+	type = country
+	
+	category = DIP
+	
+	allow = {
+		tag = POR
+		exists = CAS
+		government = monarchy
+		NOT = { has_opinion = { who = CAS value = 50 } }
+		CAS = {
+			is_subject = no
+			government = monarchy
+		}
+		NOT = { marriage_with = CAS }
+		NOT = { war_with = CAS }
+	}
+	abort = {
+		OR = {
+			NOT = { government = monarchy }
+			war_with = CAS
+			NOT = { exists = CAS }
+			CAS = {
+				OR = {
+					is_subject = yes
+					NOT = { government = monarchy }
+				}
+			}
+		}
+	}
+	success = {
+		CAS = { has_opinion = { who = POR value = 100 } }
+		marriage_with = CAS
+	}
+	chance = {
+		factor = 1000
+		modifier = {
+			factor = 2
+			NOT = { has_opinion = { who = CAS value = 0 } }
+		}
+	}
+	effect = {
+		add_prestige = 10
+	}
+}
+
+
+spanish_portuguese_relations = {
+
+	type = country
+	
+	category = DIP
+	
+	allow = {
+		tag = POR
+		exists = SPA
+		government = monarchy
+		NOT = { has_opinion = { who = SPA value = 100 } }
+		SPA = {
+			is_subject = no
+			government = monarchy
+		}
+		NOT = { marriage_with = SPA }
+		NOT = { war_with = SPA }
+	}
+	abort = {
+		OR = {
+			NOT = { government = monarchy }
+			war_with = SPA
+			NOT = { exists = SPA }
+			SPA = {
+				OR = {
+					is_subject = yes
+					NOT = { government = monarchy }
+				}
+			}
+		}
+	}
+	success = {
+		SPA = { has_opinion = { who = POR value = 100 } }
+		marriage_with = SPA
+	}
+	chance = {
+		factor = 1000
+		modifier = {
+			factor = 2
+			NOT = { has_opinion = { who = SPA value = 0 } }
+		}
+	}
+	effect = {
+		add_stability = 1
+	}
+}
+
+
+portugal_discovers_the_west_african_coast = {
+
+	type = country
+	
+	category = DIP
+	
+	allow = {
+		tag = POR
+		has_idea = quest_for_the_new_world
+		num_of_ports = 1
+		NOT = { west_african_coast = { has_discovered =  ROOT } }
+		west_african_coast = { range = ROOT }
+	}
+	abort = {
+		OR = {
+			NOT = { num_of_ports = 1 }
+			NOT = { has_idea = quest_for_the_new_world }
+		}
+	}
+	success = {
+		west_african_coast = {
+			has_discovered = ROOT
+		}
+	}
+	chance = {
+		factor = 1000
+		modifier = {
+			factor = 2
+			num_of_explorers = 1
+		}
+	}
+	effect = {
+		add_dip_power = 25
+	}
+}
+
+
+portuguese_colony_in_west_africa = {
+
+	type = country
+	
+	category = DIP
+	
+	allow = {
+		tag = POR
+		has_idea = quest_for_the_new_world
+		num_of_ports = 1
+		num_of_colonists = 1
+		west_african_coast = {
+			has_discovered = ROOT
+			is_empty = yes
+		}
+		NOT = { west_african_coast = { owned_by = ROOT } }
+	}
+	abort = {
+		OR = {
+			NOT = { has_idea = quest_for_the_new_world }
+			NOT = { num_of_ports = 1 }
+			AND = {
+				NOT = { west_african_coast = { owned_by = ROOT } }
+				NOT = { west_african_coast = { is_empty = yes } }
+			}
+		}
+	}
+	success = {
+		west_african_coast = { owned_by = ROOT }
+	}
+	chance = {
+		factor = 1000
+		modifier = {
+			factor = 2
+			dip = 4
+		}
+	}
+	effect = {
+		add_prestige = 10
+	}
+}
+
+
+portugal_discovers_south_america = {
+
+	type = country
+
+	category = DIP
+	
+	allow = {
+		tag = POR
+		has_idea = quest_for_the_new_world
+		num_of_ports = 1
+		NOT = { brazil_region = { has_discovered = ROOT } }
+		brazil_region = { range = ROOT }
+	}
+	abort = {
+		OR = {
+			NOT = { num_of_ports = 1 }
+			NOT = {	has_idea = quest_for_the_new_world  }
+		}
+	}
+	success = {
+		brazil_region = {
+			has_discovered = ROOT
+		}
+	}
+	chance = {
+		factor = 1000
+		modifier = {
+			factor = 2
+			adm = 3
+		}
+		modifier = {
+			factor = 2
+			adm = 4
+		}		
+		modifier = {
+			factor = 2
+			adm = 5
+		}
+	}
+	effect = {
+		add_dip_power = 25
+		add_country_modifier = {
+			name = "colonial_enthusiasm"
+			duration = 1875
+		}
+	}
+}
+
+
+portuguese_brazil = {
+
+	type = country
+	
+	category = MIL
+	
+	allow = {
+		tag = POR
+		has_idea = quest_for_the_new_world
+		num_of_ports = 1
+		brazil_region = {
+			has_discovered = ROOT
+			is_empty = yes
+		}
+		NOT = { brazil_region = { owned_by = ROOT } }
+	}
+	abort = {
+		OR = {
+			NOT = { has_idea = quest_for_the_new_world }
+			NOT = { num_of_ports = 1 }
+			AND = {
+				NOT = { brazil_region = { owned_by = ROOT } }
+				NOT = { brazil_region = { is_empty = yes } }
+			}
+		}
+	}
+	success = {
+		brazil_region = { owned_by = ROOT }
+	}
+	chance = {
+		factor = 1000
+		modifier = {
+			factor = 2
+			adm = 4
+		}
+	}
+	effect = {
+		add_prestige = 10
+	}
+}
+
+
+brazil_belongs_to_portugal = {
+
+	type = country
+	
+	category = MIL
+	
+	target_provinces = {
+		region = brazil_region
+		owned_by = CAS
+	}
+	allow = {
+		tag = POR
+		is_subject = no
+		brazil_region = { owned_by = ROOT }
+		brazil_region = { owned_by = CAS }
+		NOT = { alliance_with = CAS }
+		NOT = { war_with = CAS }
+	}
+	abort = {
+		OR = {
+			is_subject = yes
+			NOT = { brazil_region = { owned_by = ROOT } }
+			NOT = { brazil_region = { owned_by = CAS } }
+		}
+	}
+	success = {
+		NOT = { war_with = CAS }
+		NOT = { brazil_region = { owned_by = CAS } }
+		brazil_region = { owned_by = ROOT }
+	}
+	chance = {
+		factor = 1000
+		modifier = {
+			factor = 2
+			mil = 4
+		}
+	}
+	immediate = {
+		every_target_province = {
+			add_claim = ROOT
+		}
+	}
+	abort_effect = {
+		every_target_province = {
+			remove_claim = ROOT
+		}
+	}
+	effect = {
+		add_prestige = 10
+	}
+}
+
+
+brazil_to_portugal = {
+
+	type = country
+	
+	category = MIL
+	
+	target_provinces = {
+		region = brazil_region
+		owned_by = SPA
+	}
+	allow = {
+		tag = POR
+		is_subject = no
+		brazil_region = { owned_by = ROOT }
+		brazil_region = { owned_by = SPA }
+		NOT = { alliance_with = SPA }
+		NOT = { war_with = SPA }
+	}
+	abort = {
+		OR = {
+			is_subject = yes
+			NOT = { brazil_region = { owned_by = ROOT } }
+			NOT = { brazil_region = { owned_by = SPA } }
+		}
+	}
+	success = {
+		NOT = { war_with = SPA }
+		NOT = { brazil_region = { owned_by = SPA } }
+		brazil_region = { owned_by = ROOT }
+	}
+	chance = {
+		factor = 1000
+		modifier = {
+			factor = 2
+			mil = 4
+		}
+	}
+	immediate = {
+		every_target_province = {
+			add_claim = ROOT
+		}
+	}
+	abort_effect = {
+		every_target_province = {
+			remove_claim = ROOT
+		}
+	}
+	effect = {
+		add_prestige = 10
+	}
+}
+
+
+portugal_discovers_india = {
+	
+	type = country
+
+	category = DIP
+	
+	allow = {
+		tag = POR
+		has_idea = quest_for_the_new_world
+		num_of_ports = 1
+		west_african_coast = { has_discovered = ROOT }
+		NOT = { indian_coast = { has_discovered = ROOT } }
+		indian_coast = { range = ROOT }
+	}
+	abort = {
+		OR = {
+			NOT = { num_of_ports = 1 }
+			NOT = {	has_idea = quest_for_the_new_world }
+		}
+	}
+	success = {
+		indian_coast = {
+			has_discovered = ROOT
+		}
+	}
+	chance = {
+		factor = 1000
+		modifier = {
+			factor = 2
+			has_idea = land_of_opportunity
+		}
+		modifier = {
+			factor = 2
+			has_idea = colonial_ventures
+		}
+	}
+	effect = {
+		add_dip_power = 25
+		add_country_modifier = {
+			name = "colonial_enthusiasm"
+			duration = 730
+		}
+	}
+}
+
+
+portuguese_control_of_indian_province = {
+	
+	type = country
+	ai_mission = yes
+
+	category = DIP
+	
+	target_provinces = {
+		region = indian_coast
+		has_discovered = ROOT
+		range = ROOT
+		has_port = yes
+	}
+	allow = {
+		tag = POR
+		is_subject = no
+		has_idea = quest_for_the_new_world
+		num_of_ports = 1
+		indian_coast = {
+			has_discovered = ROOT
+			range = ROOT
+			has_port = yes
+		}
+		NOT = { indian_coast = { owned_by = ROOT } }
+	}
+	abort = {
+		OR = {
+			is_subject = yes
+			NOT = { has_idea = quest_for_the_new_world }
+			NOT = { num_of_ports = 1 }
+		}
+	}
+	success = {
+		indian_coast = { owned_by = ROOT }
+	}
+	chance = {
+		factor = 1000
+		modifier = {
+			factor = 2
+			has_idea = land_of_opportunity
+		}
+		modifier = {
+			factor = 2
+			has_idea = colonial_ventures
+		}
+	}
+	immediate = {
+		every_target_province = {
+			add_claim = ROOT
+		}
+	}
+	abort_effect = {
+		every_target_province = {
+			remove_claim = ROOT
+		}
+	}
+	effect = {
+		add_adm_power = 50
+	}
+}
+
+
+portugal_discovers_indonesia = {
+
+	type = country
+	
+	category = DIP
+	
+	allow = {
+		tag = POR
+		has_idea = quest_for_the_new_world
+		num_of_ports = 1
+		west_african_coast = { has_discovered = ROOT }
+		NOT = { indonesian_region = { has_discovered = ROOT } }
+		indonesian_region = { range = ROOT }
+	}
+	abort = {
+		OR = {
+			NOT = { has_idea = quest_for_the_new_world }
+			NOT = { num_of_ports = 1 }
+		}
+	}
+	success = {
+		indonesian_region = {
+			has_discovered = ROOT
+		}
+	}
+	chance = {
+		factor = 1000
+		modifier = {
+			factor = 2
+			innovativeness_ideas = 4
+		}
+		modifier = {
+			factor = 2
+			num_of_explorers = 1
+		}
+	}
+	effect = {
+		add_dip_power = 25
+		add_country_modifier = {
+			name = "colonial_enthusiasm"
+			duration = 730
+		}
+	}
+}
+
+
+portuguese_colony_in_indonesia = {
+	
+	type = country
+	ai_mission = yes
+	
+	category = MIL
+	
+	target_provinces = {
+		region = indonesian_region
+		has_discovered = ROOT
+		range = ROOT
+		has_port = yes
+	}
+	allow = {
+		tag = POR
+		is_subject = no
+		has_idea = quest_for_the_new_world
+		num_of_ports = 1
+		num_of_colonists = 1
+		indonesian_region = {
+			has_discovered = ROOT
+			range = ROOT
+			has_port = yes
+		}
+		NOT = { indonesian_region = { owned_by = ROOT } }
+	}
+	abort = {
+		OR = {
+			NOT = { has_idea = quest_for_the_new_world }
+			NOT = { num_of_ports = 1 }
+			AND = {
+				NOT = { indonesian_region = { is_empty = yes } }
+				NOT = { indonesian_region = { owned_by = ROOT } }
+			}
+		}
+	}
+	success = {
+		indonesian_region = { owned_by = ROOT }
+	}
+	chance = {
+		factor = 1000
+		modifier = {
+			factor = 2
+			has_idea = land_of_opportunity
+		}
+		modifier = {
+			factor = 2
+			has_idea = colonial_ventures
+		}
+		modifier = {
+			factor = 2
+			num_of_colonists = 2
+		}
+		modifier = {
+			factor = 2
+			num_of_colonists = 3
+		}
+	}
+	immediate = {
+		every_target_province = {
+			add_claim = ROOT
+		}
+	}
+	abort_effect = {
+		every_target_province = {
+			remove_claim = ROOT
+		}
+	}
+	effect = {
+		add_prestige = 10
+	}
+}
+
+
+portugal_discovers_the_far_east = {
+
+	type = country
+	
+	category = DIP
+	
+	allow = {
+		tag = POR
+		has_idea = quest_for_the_new_world
+		num_of_ports = 1
+		west_african_coast = { has_discovered = ROOT }
+		indian_coast = { has_discovered = ROOT }
+		NOT = { japanese_region = { has_discovered = ROOT } }
+		NOT = { chinese_coast = { has_discovered = ROOT } }
+		japanese_region = { range = ROOT }
+		chinese_coast = { range = ROOT }
+	}
+	abort = {
+		OR = {
+			NOT = { has_idea = quest_for_the_new_world }
+			NOT = { num_of_ports = 1 }
+		}
+	}
+	success = {
+		japanese_region = { has_discovered = ROOT }
+		chinese_coast = { has_discovered = ROOT }
+	}
+	chance = {
+		factor = 1000
+		modifier = {
+			factor = 2
+			innovativeness_ideas = 4
+		}
+		modifier = {
+			factor = 2
+			num_of_explorers = 1
+		}
+	}
+	effect = {
+		add_prestige = 10
+		add_dip_power = 50
+	}
+}

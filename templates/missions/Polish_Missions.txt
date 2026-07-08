@@ -1,0 +1,552 @@
+
+poland_mazovia_relations = {
+	
+	type = country
+
+	category = DIP
+	
+	allow = {
+		tag = POL
+		exists = MAZ
+		is_subject = no
+		government = monarchy
+		NOT = { war_with = MAZ }
+		NOT = { marriage_with = MAZ }
+		MAZ = {
+			is_subject = no
+			government = monarchy
+		}
+	}
+	abort = {
+		OR = {
+			is_subject = yes
+			NOT = { government = monarchy }
+			NOT = { exists = MAZ }
+			war_with = MAZ
+			MAZ = {
+				OR = {
+					is_subject = yes
+					NOT = { government = monarchy }
+				}
+			}
+		}
+	}
+	success = {
+		marriage_with = MAZ
+		MAZ = { has_opinion = { who = POL value = 100 } }
+	}
+	chance = {
+		factor = 1000
+		modifier = {
+			factor = 2
+			NOT = { has_opinion = { who = MAZ value = 0 } }
+		}
+		modifier = {
+			factor = 2
+			NOT = { has_opinion = { who = MAZ value = -50 } }
+		}
+	}
+	effect = {
+		add_prestige = 5
+	}
+}
+
+
+vassalize_mazovia = {
+	
+	type = country
+
+	category = MIL
+	ai_mission = yes
+	
+	allow = {
+		tag = POL
+		exists = MAZ
+		is_subject = no
+		MAZ = {
+			is_subject = no
+			is_neighbor_of = ROOT
+			NOT = { num_of_cities = ROOT }
+		}
+	}
+	abort = {
+		OR = {
+			is_subject = yes
+			NOT = { exists = MAZ }
+			MAZ = { is_subject = yes }
+		}
+	}
+	success = {
+		MAZ = { vassal_of = POL }
+	}
+	chance = {
+		factor = 1000
+		modifier = {
+			factor = 2
+			marriage_with = MAZ
+		}
+		modifier = {
+			factor = 2
+			has_opinion = { who = MAZ value = 100 }
+		}
+	}
+	immediate = {
+		add_casus_belli = {
+			type = cb_vassalize_mission
+			months = 120
+			target = MAZ
+		}
+	}
+	abort_effect = {
+		remove_casus_belli = {
+			type = cb_vassalize_mission
+			target = MAZ
+		}
+	}
+	effect = {
+		add_prestige = 10
+		hidden_effect = {
+			remove_casus_belli = {
+				type = cb_vassalize_mission
+				target = MAZ
+			}
+		}
+	}
+}
+
+
+annex_mazovia = {
+	
+	type = country
+
+	category = DIP
+	
+	target_provinces = {
+		owned_by = MAZ
+	}
+	allow = {
+		tag = POL
+		exists = MAZ
+		is_subject = no
+		MAZ = {
+			vassal_of = POL
+			is_neighbor_of = ROOT
+			NOT = { num_of_cities = ROOT }
+			religion_group = ROOT
+		}
+	}
+	abort = {
+		OR = {
+			is_subject = yes
+			NOT = { exists = MAZ }
+			MAZ = { NOT = { religion_group = ROOT } }
+		}
+	}
+	success = {
+		NOT = { exists = MAZ }
+		all_target_province = {
+			owned_by = ROOT
+		}
+	}
+	chance = {
+		factor = 1000
+		modifier = {
+			factor = 2
+			has_opinion = { who = MAZ value = 100 }
+		}
+		modifier = {
+			factor = 2
+			has_opinion = { who = MAZ value = 200 }
+		}
+	}
+	immediate = {
+		every_target_province = {
+			add_claim = ROOT
+		}
+	}
+	abort_effect = {
+		every_target_province = {
+			remove_claim = ROOT
+		}
+	}
+	effect = {
+		add_prestige = 10
+	}
+}
+
+
+poland_lithuania_relations = {
+	
+	type = country
+
+	category = DIP
+	
+	allow = {
+		tag = POL
+		exists = LIT
+		is_subject = no
+		government = monarchy
+		NOT = { war_with = LIT }
+		NOT = { marriage_with = LIT }
+		LIT = {
+			is_subject = no
+			government = monarchy
+		}
+	}
+	abort = {
+		OR = {
+			is_subject = yes
+			NOT = { government = monarchy }
+			war_with = LIT
+			LIT = {
+				OR = {
+					is_subject = yes
+					NOT = { government = monarchy }
+				}
+			}
+		}
+	}
+	success = {
+		marriage_with = LIT
+		LIT = { has_opinion = { who = POL value = 100 } }
+	}
+	chance = {
+		factor = 1000
+		modifier = {
+			factor = 2
+			NOT = { has_opinion = { who = LIT value = 0 } }
+		}
+		modifier = {
+			factor = 2
+			NOT = { has_opinion = { who = LIT value = -50 } }
+		}
+	}
+	effect = {
+		add_adm_power = 50
+	}
+}
+
+
+vassalize_lithuania = {
+	
+	type = country
+
+	category = MIL
+	ai_mission = yes
+	
+	allow = {
+		tag = POL
+		exists = LIT
+		LIT = {
+			is_subject = no
+			is_neighbor_of = ROOT
+			NOT = { num_of_cities = ROOT }
+		}
+	}
+	abort = {
+		OR = {
+			is_subject = yes
+			NOT = { exists = LIT }
+			LIT = { is_subject = yes }
+		}
+	}
+	success = {
+		LIT = { vassal_of = POL }
+	}
+	chance = {
+		factor = 1000
+		modifier = {
+			factor = 2
+			has_opinion = { who = LIT value = 100 }
+		}
+		modifier = {
+			factor = 2
+			marriage_with = LIT
+		}
+	}
+	immediate = {
+		add_casus_belli = {
+			type = cb_vassalize_mission
+			months = 120
+			target = LIT
+		}
+	}
+	abort_effect = {
+		remove_casus_belli = {
+			type = cb_vassalize_mission
+			target = LIT
+		}
+	}
+	effect = {
+		add_prestige = 10
+		hidden_effect = {
+			remove_casus_belli = {
+				type = cb_vassalize_mission
+				target = LIT
+			}
+		}
+	}
+}
+
+
+annex_lithuania = {
+	
+	type = country
+
+	category = DIP
+	
+	target_provinces = {
+		owned_by = LIT
+	}
+	allow = {
+		tag = POL
+		exists = LIT
+		is_subject = no
+		LIT = {
+			vassal_of = POL
+			is_neighbor_of = ROOT
+			NOT = { num_of_cities = ROOT }
+			religion_group = ROOT
+		}
+	}
+	abort = {
+		OR = {
+			NOT = { exists = LIT }
+			LIT = { NOT = { religion_group = ROOT } }
+		}
+	}
+	success = {
+		NOT = { exists = LIT }
+		all_target_province = {
+			owned_by = ROOT
+		}
+	}
+	chance = {
+		factor = 1000
+		modifier = {
+			factor = 2
+			has_opinion = { who = LIT value = 100 }
+		}
+		modifier = {
+			factor = 2
+			has_opinion = { who = LIT value = 200 }
+		}
+	}
+	effect = {
+		add_prestige = 10
+		add_adm_power = 50
+	}
+}
+
+
+vassalize_the_teutonic_order = {
+	
+	type = country
+
+	category = MIL
+	ai_mission = yes
+	
+	allow = {
+		tag = POL
+		exists = TEU
+		is_subject = no
+		TEU = {
+			is_subject = no
+			is_neighbor_of = ROOT
+			NOT = { num_of_cities = ROOT }
+		}
+	}
+	abort = {
+		OR = {
+			is_subject = yes
+			NOT = { exists = TEU }
+			TEU = { is_subject = yes }
+		}
+	}
+	success = {
+		TEU = { vassal_of = POL }
+	}
+	chance = {
+		factor = 1000
+		modifier = {
+			factor = 2
+			NOT = { has_opinion = { who = TEU value = 0 } }
+		}
+	}
+	immediate = {
+		add_casus_belli = {
+			type = cb_vassalize_mission
+			months = 120
+			target = TEU
+		}
+	}
+	abort_effect = {
+		remove_casus_belli = {
+			type = cb_vassalize_mission
+			target = TEU
+		}
+	}
+	effect = {
+		add_prestige = 10
+		hidden_effect = {
+			remove_casus_belli = {
+				type = cb_vassalize_mission
+				target = TEU
+			}
+		}
+	}
+}
+
+
+fortify_the_southern_border = {
+	
+	type = country
+
+	category = ADM
+	
+	target_provinces = {
+		owned_by = ROOT
+		NOT = { has_building = fort3 }
+		can_build = fort3
+		any_neighbor_province = {
+			owned_by = HAB
+		}
+	}
+	allow = {
+		tag = POL
+		is_year = 1700
+		exists = HAB
+		is_neighbor_of = HAB
+		any_owned_province = {
+			NOT = { has_building = fort3 }
+			can_build = fort3
+			any_neighbor_province = {
+				owned_by = HAB
+			}
+		}
+	}
+	abort = {
+		HAB = { NOT = { is_neighbor_of = ROOT } }
+	}
+	success = {
+		all_target_province = {
+			has_building = fort3
+		}
+	}
+	chance = {
+		factor = 1000
+		modifier = {
+			factor = 2
+			NOT = { has_opinion = { who = HAB value = 0 } }
+		}
+	}
+	effect = {
+		add_army_tradition = 30
+	}
+}
+
+
+defend_polands_western_border = {
+	
+	type = country
+
+	category = ADM
+	
+	target_provinces = {
+		region = wielkopolska
+		owned_by = PRU
+	}
+	allow = {
+		tag = POL
+		is_year = 1700
+		exists = PRU
+		is_subject = no
+		NOT = { war_with = PRU }
+		wielkopolska = { owned_by = ROOT }
+		wielkopolska = { owned_by = PRU }
+	}
+	abort = {
+		OR = {
+			is_subject = yes
+			NOT = { wielkopolska = { owned_by = ROOT } }
+		}
+	}
+	success = {
+		NOT = { war_with = PRU }
+		NOT = { wielkopolska = { owned_by = PRU } }
+	}
+	chance = {
+		factor = 1000
+		modifier = {
+			factor = 2
+			mil = 4
+		}	
+	}
+	immediate = {
+		every_target_province = {
+			add_claim = ROOT
+		}
+	}
+	abort_effect = {
+		every_target_province = {
+			remove_claim = ROOT
+		}
+	}
+	effect = {
+		add_war_exhaustion = -5
+		add_stability = 1
+	}
+}
+
+
+defend_polands_northern_border = {
+	
+	type = country
+
+	category = ADM
+	
+	target_provinces = {
+		region = lithuanian_region
+		owned_by = RUS
+	}
+	allow = {
+		tag = POL
+		is_year = 1700
+		exists = RUS
+		is_subject = no
+		NOT = { war_with = RUS }
+		lithuanian_region = { owned_by = ROOT }
+		lithuanian_region = { owned_by = RUS }
+	}
+	abort = {
+		OR = {
+			is_subject = no
+			NOT = { lithuanian_region = { owned_by = ROOT } }
+		}
+	}
+	success = {
+		NOT = { war_with = RUS }
+		NOT = { lithuanian_region = { owned_by = RUS } }
+	}
+	chance = {
+		factor = 1000
+		modifier = {
+			factor = 2
+			mil = 4
+		}	
+	}
+	immediate = {
+		every_target_province = {
+			add_claim = ROOT
+		}
+	}
+	abort_effect = {
+		every_target_province = {
+			remove_claim = ROOT
+		}
+	}
+	effect = {
+		add_war_exhaustion = -5
+		add_stability = 1
+	}
+}

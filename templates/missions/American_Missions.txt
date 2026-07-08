@@ -1,0 +1,193 @@
+defend_the_american_colonies = {
+	
+	type = country
+	
+	category = MIL
+
+	allow = {
+		tag = USA
+		is_subject = no
+		the_thirteen_colonies = {
+			owned_by = USA
+		}
+		the_thirteen_colonies = {
+			owned_by = GBR
+		}
+	}
+	abort = {
+		is_subject = yes
+	}
+	success = {
+		NOT = { war_with = GBR }
+		the_thirteen_colonies = {
+			type = all
+			owned_by = USA
+		}
+	}
+	chance = {
+		factor = 1000
+		modifier = {
+			factor = 2
+			mil = 4
+		}
+		modifier = {
+			factor = 2
+			ENG = { NOT = { mil = 2 } }
+		}
+	}
+	effect = {
+		add_army_tradition = 50
+		add_stability = 2
+	}
+}
+
+
+reach_the_mississippi = {
+	
+	type = country
+	
+	category = ADM
+	ai_mission = yes
+
+	allow = {
+		tag = USA
+		is_subject = no
+		the_mississippi_region = {
+			any_neighbor_province = { owned_by = ROOT }
+		}
+		NOT = { the_mississippi_region = { owned_by = ROOT } }
+	}
+	abort = {
+		OR = {
+			is_subject = yes
+			NOT = { the_mississippi_region = { any_neighbor_province = { owned_by = ROOT } } }
+		}
+	}
+	success = {
+		the_mississippi_region = { owned_by = ROOT }
+	}
+	chance = {
+		factor = 1000
+		modifier = {
+			factor = 2
+			mil = 4
+		}	
+	}
+	effect = {
+		add_prestige = 5
+	}
+}
+
+
+the_united_states_france_relations = {
+	
+	type = country
+	
+	category = DIP
+
+	allow = {
+		tag = USA
+		exists = FRA
+		NOT = { war_with = FRA }
+		NOT = { has_opinion = { who = FRA value = 100 } }
+	}
+	abort = {
+		OR = {
+			NOT = { exists = FRA }
+			war_with = FRA
+		}
+	}
+	success = {
+		FRA = { has_opinion = { who = USA value = 150 } }
+	}
+	chance = {
+		factor = 1000
+		modifier = {
+			factor = 2
+			FRA = { NOT = { has_opinion = { who = USA value = 0 } } }
+		}
+		modifier = {
+			factor = 2
+			FRA = { NOT = { has_opinion = { who = USA value = -100 } } }
+		}	
+	}
+	effect = {
+		add_prestige = 5
+	}
+}
+
+
+the_united_states_rev_france_relations = {
+	
+	type = country
+	
+	category = DIP
+
+	allow = {
+		tag = USA
+		exists = RFR
+		NOT = { war_with = RFR }
+		NOT = { has_opinion = { who = RFR value = 100 } }
+	}
+	abort = {
+		OR = {
+			NOT = { exists = RFR }
+			war_with = RFR
+		}
+	}
+	success = {
+		RFR = { has_opinion = { who = USA value = 150 } }
+	}
+	chance = {
+		factor = 1000
+		modifier = {
+			factor = 2
+			RFR = { NOT = { has_opinion = { who = USA value = 0 } } }
+		}
+		modifier = {
+			factor = 2
+			RFR = { NOT = { has_opinion = { who = USA value = -100 } } }
+		}	
+	}
+	effect = {
+		add_prestige = 5
+	}
+}
+
+
+tobacco_factory = {
+	
+	type = country
+
+	category = ADM
+
+	allow = {
+		tag = USA
+		NOT = {
+			any_owned_province = {
+				trade_goods = tobacco
+				has_building = refinery
+			}
+		}
+		any_owned_province = {
+			can_build = refinery
+			trade_goods = tobacco
+			NOT = { has_building = refinery }
+		}
+	}
+	abort = {
+		NOT = { any_owned_province = { trade_goods = tobacco } }
+	}
+	success = {
+		any_owned_province = {
+			has_building = refinery
+			trade_goods = tobacco
+		}
+	}
+	chance = {
+		factor = 1000
+	}
+	effect = {
+		add_base_tax = 1
+	}
+}

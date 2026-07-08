@@ -1,0 +1,282 @@
+
+denmark_slesvig_holstein_relations = {
+	
+	type = country
+
+	category = DIP
+	
+	allow = {
+		tag = DAN
+		exists = SHL
+		is_subject = no
+		government = monarchy
+		NOT = { has_opinion = { who = SHL value = 50 } }
+		NOT = { war_with = SHL }
+		NOT = { marriage_with = SHL }
+		SHL = {
+			is_subject = no
+			government = monarchy
+		}
+	}
+	abort = {
+		OR = {
+			is_subject = yes
+			NOT = { government = monarchy }
+			war_with = SHL
+			SHL = {
+				OR = {
+					is_subject = yes
+					NOT = { government = monarchy }
+				}
+			}
+		}
+	}
+	success = {
+		SHL = { has_opinion = { who = DAN value = 100 } }
+		marriage_with = SHL
+	}
+	chance = {
+		factor = 1000
+		modifier = {
+			factor = 2
+			NOT = { has_opinion = { who = SHL value = 0 } }
+		}
+		modifier = {
+			factor = 2
+			NOT = { has_opinion = { who = SHL value = -100 } }
+		}
+	}
+	effect = {
+		add_prestige = 10
+	}
+}
+
+
+denmark_oldenburg_relations = {
+	
+	type = country
+
+	category = DIP
+	
+	allow = {
+		tag = DAN
+		exists = OLD
+		is_subject = no
+		government = monarchy
+		NOT = { has_opinion = { who = OLD value = 50 } }
+		NOT = { war_with = OLD }
+		NOT = { marriage_with = OLD }
+		OLD = {
+			is_subject = no
+			government = monarchy
+		}
+	}
+	abort = {
+		OR = {
+			is_subject = yes
+			NOT = { government = monarchy }
+			war_with = OLD
+			OLD = {
+				OR = {
+					is_subject = yes
+					NOT = { government = monarchy }
+				}
+			}
+		}
+	}
+	success = {
+		OLD = { has_opinion = { who = DAN value = 100 } }
+		marriage_with = OLD
+	}
+	chance = {
+		factor = 1000
+		modifier = {
+			factor = 2
+			NOT = { has_opinion = { who = OLD value = 0 } }
+		}
+		modifier = {
+			factor = 2
+			NOT = { has_opinion = { who = OLD value = -100 } }
+		}
+	}
+	effect = {
+		add_prestige = 10
+	}
+}
+
+
+vassalize_norway = {
+	
+	type = country
+
+	category = MIL
+	ai_mission = yes
+	
+	allow = {
+		tag = DAN
+		exists = NOR
+		is_subject = no
+		NOT = { war_with = NOR }
+		NOR	= {
+			is_subject = no
+			is_neighbor_of = ROOT
+			NOT = { num_of_cities = ROOT }
+		}
+	}
+	abort = {
+		OR = {
+			is_subject = yes
+			NOT = { exists = NOR }
+			NOR = { is_subject = yes }
+		}
+	}
+	success = {
+		NOR = { vassal_of = DAN }
+	}
+	chance = {
+		factor = 1000
+		modifier = {
+			factor = 2
+			NOT = { has_opinion = { who = NOR value = 0 } }
+		}
+	}
+	immediate = {
+		add_casus_belli = {
+			type = cb_vassalize_mission
+			months = 120
+			target = NOR
+		}
+	}
+	abort_effect = {
+		remove_casus_belli = {
+			type = cb_vassalize_mission
+			target = NOR
+		}
+	}
+	effect = {
+		add_prestige = 10
+		hidden_effect = {
+			remove_casus_belli = {
+				type = cb_vassalize_mission
+				target = NOR
+			}
+		}
+	}
+}
+
+
+annex_norway = {
+	
+	type = country
+
+	category = DIP
+	
+	target_provinces = {
+		owned_by = NOR
+	}
+	allow = {
+		tag = DAN
+		exists = NOR
+		is_subject = no
+		NOR = {
+			vassal_of = DAN
+			religion_group = ROOT
+			NOT = { num_of_cities = ROOT }
+		}
+	}
+	abort = {
+		OR = {
+			is_subject = yes
+			NOT = { exists = NOR }
+			NOR = { NOT = { religion_group = ROOT } }
+		}
+	}
+	success = {
+		NOT = { exists = NOR }
+		all_target_province = {
+			owned_by = ROOT
+		}
+	}
+	chance = {
+		factor = 1000
+		modifier = {
+			factor = 2
+			has_opinion = { who = NOR value = 100 }
+		}
+		modifier = {
+			factor = 2
+			has_opinion = { who = NOR value = 200 }
+		}
+	}
+	effect = {
+		add_prestige = 20
+	}
+}
+
+
+defend_denmark = {
+
+	type = country
+	
+	category = MIL
+	
+	allow = {
+		tag = DAN
+		is_subject = no
+		danish_region = { owned_by = SWE }
+	}
+	abort = {
+		is_subject = yes
+	}
+	success = {
+		NOT = { war_with = SWE }
+		NOT = { danish_region = { owned_by = SWE } }
+	}
+	chance = {
+		factor = 1000
+		modifier = {
+			factor = 2
+			mil = 4
+		}	
+	}
+	effect = {
+		add_prestige = 10
+		add_war_exhaustion = -5
+	}
+}
+
+danish_controlled_cot = {
+	
+	type = country
+
+	category = MIL
+	ai_mission = yes
+	
+	allow = {
+		tag = DAN
+		is_subject = no
+		NOT = { owns = 45 }
+		NOT = { owns = 43 }
+		NOT = { owns = 33 }
+	}
+	abort = {
+		is_subject = yes
+	}
+	success = {
+		OR = {
+			owns = 45
+			owns = 43
+			owns = 33
+		}
+	}
+	chance = {
+		factor = 1000
+		modifier = {
+			factor = 2
+			has_idea = national_trade_policy
+		}	
+	}
+	effect = {
+		add_dip_power = 50
+	}
+}

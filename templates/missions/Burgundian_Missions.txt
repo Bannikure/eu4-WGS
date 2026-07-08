@@ -1,0 +1,245 @@
+conquer_hainaut = {
+	
+	type = country
+
+	category = MIL
+	ai_mission = yes
+	
+	target_provinces = {
+		owned_by = HAI
+	}
+	allow = {
+		tag = BUR
+		is_subject = no
+		exists = HAI
+	}
+	abort = {
+		is_subject = yes
+	}
+	success = {
+		NOT = { exists = HAI }
+		all_target_province = {
+			owned_by = ROOT
+		}
+	}
+	chance = {
+		factor = 1000
+		modifier = {
+			factor = 2
+			NOT = { has_opinion = { who = HAI value = 0 } }
+		}	
+	}
+	immediate = {
+		every_target_province = {
+			add_claim = ROOT
+		}
+	}
+	abort_effect = {
+		every_target_province = {
+			remove_claim = ROOT
+		}
+	}
+	effect = {
+		add_prestige = 5
+	}
+}
+
+
+conquer_brabant = {
+	
+	type = country
+
+	category = MIL
+	ai_mission = yes
+	
+	target_provinces = {
+		owned_by = BRB
+	}
+	allow = {
+		tag = BUR
+		is_subject = no
+		exists = BRB
+	}
+	abort = {
+		is_subject = yes
+	}
+	success = {
+		NOT = { exists = BRB }
+		all_target_province = {
+			owned_by = ROOT
+		}
+	}
+	chance = {
+		factor = 1000
+		modifier = {
+			factor = 2
+			NOT = { has_opinion = { who = BRB value = 0 } }
+		}	
+	}
+	immediate = {
+		every_target_province = {
+			add_claim = ROOT
+		}
+	}
+	abort_effect = {
+		every_target_province = {
+			remove_claim = ROOT
+		}
+	}
+	effect = {
+		add_prestige = 5
+	}
+}
+
+
+conquer_luxemburg = {
+	
+	type = country
+
+	category = MIL
+	ai_mission = yes
+	
+	target_provinces = {
+		owned_by = LUX
+	}
+	allow = {
+		tag = BUR
+		is_subject = no
+		exists = LUX
+	}
+	abort = {
+		is_subject = yes
+	}
+	success = {
+		NOT = { exists = LUX }
+		all_target_province = {
+			owned_by = ROOT
+		}
+	}
+	chance = {
+		factor = 1000
+		modifier = {
+			factor = 2
+			NOT = { has_opinion = { who = LUX value = 0 } }
+		}	
+	}
+	immediate = {
+		every_target_province = {
+			add_claim = ROOT
+		}
+	}
+	abort_effect = {
+		every_target_province = {
+			remove_claim = ROOT
+		}
+	}
+	effect = {
+		add_prestige = 5
+	}
+}
+
+
+conquer_liege = {
+	
+	type = country
+
+	category = MIL
+	ai_mission = yes
+	
+	target_provinces = {
+		owned_by = LIE
+	}
+	allow = {
+		tag = BUR
+		is_subject = no
+		exists = LIE
+	}
+	abort = {
+		is_subject = yes
+	}
+	success = {
+		NOT = { exists = LIE }
+		all_target_province = {
+			owned_by = ROOT
+		}
+	}
+	chance = {
+		factor = 1000
+		modifier = {
+			factor = 2
+			NOT = { has_opinion = { who = LIE value = 0 } }
+		}	
+	}
+	immediate = {
+		every_target_province = {
+			add_claim = ROOT
+		}
+	}
+	abort_effect = {
+		every_target_province = {
+			remove_claim = ROOT
+		}
+	}
+	effect = {
+		add_prestige = 5
+	}
+}
+
+
+vassalize_lorraine = {
+	
+	type = country
+
+	category = MIL
+	ai_mission = yes
+	
+	allow = {
+		tag = BUR
+		exists = LOR
+		is_subject = no
+		LOR = {
+			is_subject = no
+			is_neighbor_of = ROOT
+			NOT = { num_of_cities = ROOT }
+		}
+	}
+	abort = {
+		OR = {
+			is_subject = yes
+			NOT = { exists = LOR }
+			LOR = { is_subject = yes }
+		}
+	}
+	success = {
+		LOR = { vassal_of = BUR }
+	}
+	chance = {
+		factor = 1000
+		modifier = {
+			factor = 2
+			NOT = { has_opinion = { who = LOR value = 0 } }
+		}
+	}
+	immediate = {
+		add_casus_belli = {
+			type = cb_vassalize_mission
+			months = 120
+			target = LOR
+		}
+	}
+	abort_effect = {
+		remove_casus_belli = {
+			type = cb_vassalize_mission
+			target = LOR
+		}
+	}
+	effect = {
+		add_army_tradition = 10
+		hidden_effect = {
+			remove_casus_belli = {
+				type = cb_vassalize_mission
+				target = LOR
+			}
+		}
+	}
+}

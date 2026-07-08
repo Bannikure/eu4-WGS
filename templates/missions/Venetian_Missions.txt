@@ -1,0 +1,57 @@
+
+subjugate_aquileia = {
+	
+	type = country
+
+	category = MIL
+	ai_mission = yes
+	
+	allow = {
+		tag = VEN
+		is_subject = no
+		AQU = {
+			is_subject = no
+			is_neighbor_of = ROOT
+			NOT = { num_of_cities = ROOT }
+		}
+	}
+	abort = {
+		OR = {
+			is_subject = yes
+			NOT = { exists = AQU }
+			AQU = { is_subject = yes }
+		}
+	}
+	success = {
+		AQU = { vassal_of = VEN }
+	}
+	chance = {
+		factor = 1000
+		modifier = {
+			factor = 2
+			NOT = { has_opinion = { who = AQU value = 0 } }
+		}
+	}
+	immediate = {
+		add_casus_belli = {
+			type = cb_vassalize_mission
+			months = 120
+			target = AQU
+		}
+	}
+	abort_effect = {
+		remove_casus_belli = {
+			type = cb_vassalize_mission
+			target = AQU
+		}
+	}
+	effect = {
+		add_prestige = 10
+		hidden_effect = {
+			remove_casus_belli = {
+				type = cb_vassalize_mission
+				target = AQU
+			}
+		}
+	}
+}

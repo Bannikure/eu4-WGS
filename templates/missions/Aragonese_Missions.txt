@@ -1,0 +1,317 @@
+vassalize_navarra = {
+	
+	type = country
+
+	category = MIL
+	ai_mission = yes
+	
+	allow = {
+		tag = ARA
+		exists = NAV
+		is_subject = no
+		NAV = {
+			is_subject = no
+			is_neighbor_of = ROOT
+			NOT = { num_of_cities = ROOT }
+		}
+	}
+	abort = {
+		OR = {
+			is_subject = yes
+			NOT = { exists = NAV }
+			NAV = {
+				is_subject = yes
+			}
+		}
+	}
+	success = {
+		NAV = { vassal_of = ARA }
+	}
+	chance = {
+		factor = 1000
+		modifier = {
+			factor = 2
+			NOT = { has_opinion = { who = NAV value = 0 } }
+		}
+	}
+	immediate = {
+		add_casus_belli = {
+			type = cb_vassalize_mission
+			months = 120
+			target = NAV
+		}
+	}
+	abort_effect = {
+		remove_casus_belli = {
+			type = cb_vassalize_mission
+			target = NAV
+		}
+	}
+	effect = {
+		add_stability = 1
+		hidden_effect = {
+			remove_casus_belli = {
+				type = cb_vassalize_mission
+				target = NAV
+			}
+		}
+	}
+}
+
+
+conquer_sardinia = {
+	
+	type = country
+
+	category = MIL
+	ai_mission = yes
+	
+	target_provinces = {
+		owned_by = SAR
+	}
+	allow = {
+		tag = ARA
+		exists = SAR
+		is_subject = no
+		SAR = {
+			NOT = { is_subject_of = ARA }
+		}
+	}
+	abort = {
+		OR = {
+			is_subject = yes
+			NOT = { is_subject_of = ROOT }
+		}
+	}
+	success = {
+		NOT = { exists = SAR }
+		all_target_province = {
+			owned_by = ROOT
+		}
+	}
+	chance = {
+		factor = 1000
+		modifier = {
+			factor = 2
+			mil = 4
+		}	
+	}
+	immediate = {
+		every_target_province = {
+			add_claim = ROOT
+		}
+	}
+	abort_effect = {
+		every_target_province = {
+			remove_claim = ROOT
+		}
+	}
+	effect = {
+		add_prestige = 5
+	}
+}
+
+
+conquer_sicily = {
+	
+	type = country
+
+	category = MIL
+	ai_mission = yes
+	
+	target_provinces = {
+		owned_by = SIC
+	}
+	allow = {
+		tag = ARA
+		exists = SIC
+		is_subject = no
+		SIC = {
+			NOT = { is_subject_of = ARA }
+		}
+		NOT = { exists = SAR }
+	}
+	abort = {
+		OR = {
+			is_subject = yes
+			NOT = { is_subject_of = ROOT }
+		}
+	}
+	success = {
+		NOT = { exists = SIC }
+		all_target_province = {
+			owned_by = ROOT
+		}
+	}
+	chance = {
+		factor = 1000
+		modifier = {
+			factor = 2
+			mil = 4
+		}	
+	}
+	immediate = {
+		every_target_province = {
+			add_claim = ROOT
+		}
+	}
+	abort_effect = {
+		every_target_province = {
+			remove_claim = ROOT
+		}
+	}
+	effect = {
+		add_prestige = 5
+	}
+}
+
+
+diplo_annex_sicily = {
+	
+	type = country
+
+	category = DIP
+	
+	target_provinces = {
+		owned_by = SIC
+	}
+	allow = {
+		tag = ARA
+		exists = SIC
+		is_subject = no
+		SIC = {
+			vassal_of = ARA
+			NOT = { num_of_cities = ROOT }
+			religion_group = ROOT
+		}
+	}
+	abort = {
+		OR = {
+			is_subject = yes
+			NOT = { exists = SIC }
+			SIC = { NOT = { religion_group = ROOT } }
+		}
+	}
+	success = {
+		NOT = { exists = SIC }
+		all_target_province = {
+			owned_by = ROOT
+		}
+	}
+	chance = {
+		factor = 1000
+		modifier = {
+			factor = 2
+			SIC = { has_opinion = { who = ARA value = 100 } }
+		}
+		modifier = {
+			factor = 2
+			SIC = { has_opinion = { who = ARA value = 200 } }
+		}
+	}
+	effect = {
+		add_prestige = 10
+	}
+}
+
+
+diplo_annex_naples = {
+	
+	type = country
+
+	category = DIP
+	
+	target_provinces = {
+		owned_by = NAP
+	}
+	allow = {
+		tag = ARA
+		exists = NAP
+		is_subject = no
+		NAP = {
+			vassal_of = ARA
+			NOT = { num_of_cities = ROOT }
+			religion_group = ROOT
+		}
+	}
+	abort = {
+		OR = {
+			is_subject = yes
+			NOT = { exists = NAP }
+			NAP = { NOT = { religion_group = ROOT } }
+		}
+	}
+	success = {
+		NOT = { exists = NAP }
+		all_target_province = {
+			owned_by = ROOT
+		}
+	}
+	chance = {
+		factor = 1000
+		modifier = {
+			factor = 2
+			NAP = { has_opinion = { who = ARA value = 100 } }
+		}
+		modifier = {
+			factor = 2
+			NAP = { has_opinion = { who = ARA value = 200 } }
+		}
+	}
+	effect = {
+		add_adm_power = 50
+	}
+}
+
+
+conquer_naples = {
+	type = country
+
+	category = MIL
+	ai_mission = yes
+	
+	target_provinces = {
+		owned_by = NAP
+	}
+	allow = {
+		tag = ARA
+		exists = NAP
+		is_subject = no
+		NAP = {
+			NOT = { is_subject_of = ARA }
+		}
+		NOT = { exists = SIC }
+	}
+	abort = {
+		OR = {
+			is_subject = yes
+			NOT = { is_subject_of = ROOT }
+		}
+	}
+	success = {
+		NOT = { exists = NAP }
+		all_target_province = {
+			owned_by = ROOT
+		}
+	}
+	chance = {
+		factor = 1000
+		modifier = {
+			factor = 2
+			mil = 4
+		}	
+	}
+	immediate = {
+		every_target_province = {
+			add_claim = ROOT
+		}
+	}
+	abort_effect = {
+		every_target_province = {
+			remove_claim = ROOT
+		}
+	}
+	effect = {
+		add_prestige = 5
+	}
+}

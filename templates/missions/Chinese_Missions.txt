@@ -1,0 +1,85 @@
+annex_dai_viet = {
+	
+	type = country
+
+	category = MIL
+	
+	allow = {
+		faction_in_power = temples
+		tag = MNG
+		is_subject = no
+		is_lesser_in_union = no
+		exists = DAI
+		NOT = { alliance_with = DAI }
+		DAI = {
+			is_neighbor_of = ROOT
+			religion_group = ROOT
+			NOT = { num_of_cities = ROOT }
+		}
+	}
+	abort = {
+		OR = {
+			NOT = { faction_in_power = temples }
+			NOT = { exists = DAI }
+			is_subject = yes
+			is_lesser_in_union = yes
+			DAI = { NOT = { religion_group = ROOT } }
+		}
+	}
+	success = {
+		NOT = { exists = DAI }
+	}
+	chance = {
+		factor = 1000
+		modifier = {
+			factor = 2
+			NOT = { has_opinion = { who = DAI value = 0 } }
+		}
+	}
+	effect = {
+		add_army_tradition = 10
+		add_stability = 1
+	}
+}
+
+
+defend_korea = {
+
+	type = country
+	
+	category = MIL
+	
+	allow = {
+		tag = MNG
+		exists = KOR
+		exists = JAP
+		is_subject = no
+		is_lesser_in_union = no
+		KOR = {
+			war_with = JAP
+			is_neighbor_of = ROOT
+		}
+		war_with = JAP
+	}
+	abort = {
+		OR = {
+			NOT = { war_with = JAP }
+			is_subject = yes
+			is_lesser_in_union = yes	
+		}
+	}
+	success = {
+		NOT = { war_with = JAP }
+		NOT = { korean_region = { owned_by = JAP } }
+	}
+	chance = {
+		factor = 1000
+		modifier = {
+			factor = 2
+			mil = 4
+		}	
+	}
+	effect = {
+		korean_region = { add_claim = ROOT }
+	}
+}

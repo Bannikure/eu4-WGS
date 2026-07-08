@@ -1,0 +1,390 @@
+defend_the_lowlands = {
+	
+	type = country
+
+	category = MIL
+	
+	target_provinces = {
+		region = the_low_countries
+		owned_by = SPA
+	}
+	allow = {
+		tag = NED
+		NOT = { is_year = 1649 }
+		is_neighbor_of = SPA
+		the_low_countries = { owned_by = SPA }
+	}
+	abort = {
+		is_subject = yes
+	}
+	success = {
+		NOT = { war_with = SPA }
+		NOT = { the_low_countries = { owned_by = SPA } }
+	}
+	chance = {
+		factor = 1000
+		modifier = {
+			factor = 2
+			mil = 4
+		}
+		modifier = {
+			factor = 2
+			mil = 5
+		}
+	}
+	immediate = {
+		every_target_province = {
+			add_claim = ROOT
+		}
+	}
+	abort_effect = {
+		every_target_province = {
+			remove_claim = ROOT
+		}
+	}
+	effect = {
+		add_war_exhaustion = -5
+		add_army_tradition = 25
+	}
+}
+
+
+the_netherlands_discover_the_carribean = {
+	
+	type = country
+
+	category = DIP
+	
+	allow = {
+		tag = NED
+		has_idea = quest_for_the_new_world
+		num_of_ports = 1
+		NOT = { the_carribean = { has_discovered = ROOT } }
+		the_carribean = { range = ROOT }
+	}
+	abort = {
+		OR = {
+			NOT = { has_idea = quest_for_the_new_world }
+			NOT = { num_of_ports = 1 }
+		}
+	}
+	success = {
+		the_carribean = { has_discovered = ROOT }
+	}
+	chance = {
+		factor = 1000
+		modifier = {
+			factor = 2
+			has_idea = land_of_opportunity
+		}
+		modifier = {
+			factor = 2
+			has_idea = colonial_ventures
+		}	
+	}
+	effect = {
+		add_dip_power = 25
+		add_country_modifier = {
+			name = "colonial_enthusiasm"
+			duration = 730
+		}
+	}
+}
+
+
+dutch_colony_in_the_carribean = {
+	
+	type = country
+
+	category = DIP
+	
+	allow = {
+		tag = NED
+		num_of_ports = 1
+		num_of_colonists = 1
+		the_carribean = {
+			has_discovered = ROOT
+			is_empty = yes
+		}
+		NOT = {
+			the_carribean = {
+				owned_by =  this
+			}
+		}
+	}
+	abort = {
+		OR = {
+			NOT = { num_of_ports = 1 }
+			AND = {
+				NOT = { the_carribean = { owned_by = ROOT } }	
+				NOT = { the_carribean = { is_empty = yes } }
+			}
+		}
+	}
+	success = {
+		the_carribean = { owned_by = ROOT }
+	}
+	chance = {
+		factor = 1000
+		modifier = {
+			factor = 2
+			has_idea = land_of_opportunity
+		}
+		modifier = {
+			factor = 2
+			has_idea = colonial_ventures
+		}
+		modifier = {
+			factor = 2
+			num_of_colonists = 2
+		}
+		modifier = {
+			factor = 2
+			num_of_colonists = 3
+		}
+	}
+	effect = {
+		add_prestige = 10
+	}
+}
+
+
+the_netherlands_discover_north_america = {
+	
+	type = country
+
+	category = DIP
+	
+	allow = {
+		tag = NED
+		has_idea = quest_for_the_new_world
+		num_of_ports = 1
+		NOT = { northeastern_america = { has_discovered = ROOT } }
+		northeastern_america = { range = ROOT }
+	}
+	abort = {
+		OR = {
+			NOT = { has_idea = quest_for_the_new_world }
+			NOT = { num_of_ports = 1 }
+		}
+	}
+	success = {
+		northeastern_america = { has_discovered = ROOT }
+	}
+	chance = {
+		factor = 1000
+		modifier = {
+			factor = 2
+			has_idea = land_of_opportunity
+		}
+		modifier = {
+			factor = 2
+			has_idea = colonial_ventures
+		}	
+	}
+	effect = {
+		add_dip_power = 25
+		add_country_modifier = {
+			name = "colonial_enthusiasm"
+			duration = 1875
+		}
+	}
+}
+
+
+dutch_colony_in_north_america = {
+	
+	type = country
+
+	category = DIP
+	
+	allow = {
+		tag = NED
+		num_of_ports = 1
+		num_of_colonists = 1
+		northeastern_america = {
+			has_discovered = ROOT
+			is_empty = yes
+		}
+		NOT = {
+			northeastern_america = {
+				owned_by =  this
+			}
+		}
+	}
+	abort = {
+		OR = {
+			NOT = { num_of_ports = 1 }
+			AND = {
+				NOT = { northeastern_america = { owned_by = ROOT } }	
+				NOT = { northeastern_america = { is_empty = yes } }
+			}
+		}
+	}
+	success = {
+		northeastern_america = { owned_by = ROOT }
+	}
+	chance = {
+		factor = 1000
+		modifier = {
+			factor = 2
+			has_idea = land_of_opportunity
+		}
+		modifier = {
+			factor = 2
+			has_idea = colonial_ventures
+		}
+		modifier = {
+			factor = 2
+			num_of_colonists = 2
+		}
+		modifier = {
+			factor = 2
+			num_of_colonists = 3
+		}
+	}
+	effect = {
+		add_prestige = 10
+	}
+}
+
+dutch_colony_in_indonesia = {
+	
+	type = country
+
+	category = DIP
+	
+	allow = {
+		tag = NED
+		num_of_colonists = 1
+		num_of_ports = 1
+		indonesian_region = {
+			has_discovered = ROOT
+			is_empty = yes
+			range = ROOT
+		}
+		NOT = {
+			indonesian_region = {
+				owned_by =  this
+			}
+		}
+	}
+	abort = {
+		OR = {
+			NOT = { num_of_ports = 1 }
+			AND = {
+				NOT = { indonesian_region = { owned_by = ROOT } }	
+				NOT = { indonesian_region = { is_empty = yes } }
+			}
+		}
+	}
+	success = {
+		indonesian_region = { owned_by =  this }
+	}
+	chance = {
+		factor = 1000
+		modifier = {
+			factor = 2
+			has_idea = land_of_opportunity
+		}
+		modifier = {
+			factor = 2
+			has_idea = colonial_ventures
+		}
+		modifier = {
+			factor = 2
+			num_of_colonists = 2
+		}
+		modifier = {
+			factor = 2
+			num_of_colonists = 3
+		}
+	}
+	effect = {
+		add_prestige = 10
+	}
+}
+
+
+the_netherlands_discover_australia = {
+	
+	type = country
+
+	category = DIP
+	
+	allow = {
+		tag = NED
+		has_idea = quest_for_the_new_world
+		num_of_ports = 1
+		northeastern_america = {
+			has_discovered = ROOT
+			owned_by = ROOT
+		}
+		indonesian_region = {
+			has_discovered = ROOT
+			owned_by = ROOT
+		}
+		NOT = { australian_coast = { has_discovered = ROOT } }
+		australian_coast = { range = ROOT }
+	}
+	abort = {
+		OR = {
+			NOT = { has_idea = quest_for_the_new_world }
+			NOT = { num_of_ports = 1 }
+		}
+	}
+	success = {
+		australian_coast = { has_discovered = ROOT }
+	}
+	chance = {
+		factor = 1000
+		modifier = {
+			factor = 2
+			has_idea = land_of_opportunity
+		}
+		modifier = {
+			factor = 2
+			has_idea = colonial_ventures
+		}	
+	}
+	effect = {
+		add_prestige = 10
+	}
+}
+
+
+embrace_the_reformation = {
+	
+	type = country
+
+	category = ADM
+	
+	allow = {
+		tag = NED
+		religion = catholic
+		the_low_countries = { religion = reformed }
+		num_of_missionaries = 1
+	}
+	abort = {
+	}
+	success = {
+		religion = reformed
+	}
+	chance = {
+		factor = 1000
+		modifier = {
+			factor = 2
+			is_year = 1650
+		}
+		modifier = {
+			factor = 2
+			has_idea = humanist_tolerance
+		}
+	}
+	effect = {
+		add_country_modifier = {
+			name = innovative_modifier
+			duration = 3650
+		}
+	}
+}

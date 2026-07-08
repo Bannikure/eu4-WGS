@@ -1,0 +1,841 @@
+unite_austria = {
+	
+	type = country
+
+	category = MIL
+	ai_mission = yes
+	
+	target_provinces = {
+		OR = {
+			owned_by = STY
+			owned_by = TIR
+		}
+	}
+	allow = {
+		tag = HAB
+		is_subject = no
+		OR = {
+			exists = STY
+			exists = TIR
+		}
+	}
+	abort = {
+		OR = {
+			is_subject = yes
+			AND = {
+				NOT = { exists = STY }
+				NOT = { exists = TIR }
+			}
+		}
+	}
+	success = {
+		NOT = { exists = STY }
+		NOT = { exists = TIR }
+		all_target_province = {
+			owned_by = ROOT
+		}
+	}
+	chance = {
+		factor = 1000
+		modifier = {
+			factor = 2
+			TIR = { has_opinion = { who = HAB value = 100 } }
+		}
+		modifier = {
+			factor = 2
+			STY = { has_opinion = { who = HAB value = 100 } }
+		}
+	}
+	immediate = {
+		every_target_province = {
+			add_claim = ROOT
+		}
+	}
+	abort_effect = {
+		every_target_province = {
+			remove_claim = ROOT
+		}
+	}
+	effect = {
+		add_prestige = 10
+	}
+}
+
+reclaim_the_empire = {
+	
+	type = country
+
+	category = DIP
+	
+	allow = {
+		tag = HAB
+		is_emperor = no
+		is_female = no
+		has_regency = no
+		NOT = { government = republic }
+		capital_scope = {
+			is_part_of_hre = yes
+		}
+	}
+	abort = {
+		OR = {
+			has_regency = yes
+			is_female = yes
+			government = republic
+			capital_scope = {
+				is_part_of_hre = no
+			}
+		}
+	}
+	success = {
+		is_emperor = yes
+	}
+	chance = {
+		factor = 1000
+	}
+	effect = {
+		add_prestige = 25
+	}
+}
+
+
+subjugate_bohemia = {
+	
+	type = country
+
+	category = MIL
+	
+	allow = {
+		tag = HAB
+		exists = BOH
+		is_year = 1500
+		is_subject = no
+		BOH = {
+			is_subject = no
+			is_emperor = no
+			is_neighbor_of = ROOT
+			NOT = { num_of_cities = ROOT }
+		}
+	}
+	abort = {
+		OR = {
+			is_subject = yes
+			NOT = { exists = BOH }
+			BOH = { is_subject = yes }
+		}
+	}
+	success = {
+		senior_union_with = BOH
+	}
+	chance = {
+		factor = 1000
+		modifier = {
+			factor = 2
+			NOT = { has_opinion = { who = BOH value = 0 } }
+		}
+	}
+	immediate = {
+		add_casus_belli = {
+			type = cb_restore_personal_union
+			months = 120
+			target = BOH
+		}
+	}
+	abort_effect = {
+		remove_casus_belli = {
+			type = cb_restore_personal_union
+			target = BOH
+		}
+	}
+	effect = {
+		add_prestige = 10
+		hidden_effect = {
+			remove_casus_belli = {
+				type = cb_restore_personal_union
+				target = BOH
+			}
+		}
+	}
+}
+
+
+subjugate_hungary = {
+	
+	type = country
+
+	category = MIL
+	
+	allow = {
+		tag = HAB
+		exists = HUN
+		is_year = 1500
+		is_subject = no
+		HUN = {
+			is_subject = no
+			is_emperor = no
+			is_neighbor_of = ROOT
+			NOT = { num_of_cities = ROOT }
+		}
+	}
+	abort = {
+		OR = {
+			is_subject = yes
+			NOT = { exists = HUN }
+			HUN = { is_subject = yes }
+		}
+	}
+	success = {
+		senior_union_with = HUN
+	}
+	chance = {
+		factor = 1000
+		modifier = {
+			factor = 2
+			NOT = { has_opinion = { who = HUN value = 0 } }
+		}
+	}
+	immediate = {
+		add_casus_belli = {
+			type = cb_restore_personal_union
+			months = 120
+			target = HUN
+		}
+	}
+	abort_effect = {
+		remove_casus_belli = {
+			type = cb_restore_personal_union
+			target = HUN
+		}
+	}
+	effect = {
+		add_prestige = 10
+		hidden_effect = {
+			remove_casus_belli = {
+				type = cb_restore_personal_union
+				target = HUN
+			}
+		}
+	}
+}
+
+
+subjugate_burgundy = {
+        
+	type = country
+
+	category = MIL
+	
+	allow = {
+		tag = HAB
+		exists = BUR
+		is_subject = no
+		BUR = {
+			is_subject = no
+			is_neighbor_of = ROOT
+			NOT = { num_of_cities = ROOT }
+		}
+	}
+	abort = {
+		OR = {
+			is_subject = yes
+			NOT = { exists = BUR }
+			BUR = { is_subject = yes }
+		}
+	}
+	success = {
+		senior_union_with = BUR
+	}
+	chance = {
+		factor = 1000
+		modifier = {
+			factor = 2
+			NOT = { has_opinion = { who = BUR value = 0 } }
+		}
+	}
+	immediate = {
+		add_casus_belli = {
+			type = cb_restore_personal_union
+			months = 180
+			target = BUR
+		}
+	}
+	abort_effect = {
+		remove_casus_belli = {
+			type = cb_restore_personal_union
+			target = BUR
+		}
+	}
+	effect = {
+		add_prestige = 10
+		hidden_effect = {
+			remove_casus_belli = {
+				type = cb_restore_personal_union
+				target = BUR
+			}
+		}
+	}
+}
+
+
+no_ottomans_in_eastern_balkans = {
+	
+	type = country
+
+	category = MIL
+	
+	allow = {
+		tag = HAB
+		exists = TUR
+		is_subject = no
+		TUR = { is_neighbor_of = ROOT }
+		eastern_balkans = { owned_by = TUR }
+	}
+	abort = {
+		OR = {
+			is_subject = yes
+			NOT = { eastern_balkans = { owned_by = TUR } }
+		}
+	}
+	success = {
+		NOT = { eastern_balkans = { owned_by = TUR } }
+		eastern_balkans = { owned_by = ROOT }
+	}
+	chance = {
+		factor = 1000
+		modifier = {
+			factor = 2
+			NOT = { has_opinion = { who = TUR value = 0 } }
+		}
+		modifier = {
+			factor = 2
+			TUR = { NOT = { num_of_cities = ROOT } }
+		}
+	}
+	effect = {
+		add_prestige = 10
+	}
+}
+
+
+no_ottomans_in_western_balkans = {
+	
+	type = country
+
+	category = MIL
+	
+	allow = {
+		tag = HAB
+		exists = TUR
+		is_subject = no
+		TUR = { is_neighbor_of = ROOT }
+		western_balkans = { owned_by = TUR }
+	}
+	abort = {
+		OR = {
+			is_subject = yes
+			NOT = { western_balkans = { owned_by = TUR } }
+		}
+	}
+	success = {
+		NOT = { western_balkans = { owned_by = TUR } }
+		western_balkans = { owned_by = HAB }
+	}
+	chance = {
+		factor = 1000
+		modifier = {
+			factor = 2
+			NOT = { has_opinion = { who = TUR value = 0 } }
+		}
+		modifier = {
+			factor = 2
+			TUR = { NOT = { num_of_cities = ROOT } }
+		}
+	}
+	effect = {
+		add_prestige = 10
+	}
+}
+
+
+austria_spain_relations = {
+	
+	type = country
+
+	category = DIP
+	
+	allow = {
+		tag = HAB
+		exists = SPA
+		is_subject = no
+		government = monarchy
+		NOT = { war_with = SPA }
+		NOT = { marriage_with = SPA }
+		SPA = {
+			is_subject = no
+			government = monarchy
+		}
+	}
+	abort = {
+		OR = {
+			is_subject = yes
+			NOT = { government = monarchy }
+			NOT = { exists = SPA }
+			war_with = SPA
+			SPA = {
+				OR = {
+					is_subject = yes
+					NOT = { government = monarchy }
+				}
+			}
+		}
+	}
+	success = {
+		marriage_with = SPA
+		SPA = { has_opinion = { who = HAB value = 100 } }
+	}
+	chance = {
+		factor = 1000
+		modifier = {
+			factor = 2
+			NOT = { has_opinion = { who = SPA value = 0 } }
+		}
+		modifier = {
+			factor = 2
+			NOT = { has_opinion = { who = SPA value = -100 } }
+		}
+	}
+	effect = {
+		add_dip_power = 50
+	}
+}
+
+
+austria_burgundy_relations = {
+	
+	type = country
+
+	category = DIP
+	
+	allow = {
+		tag = HAB
+		exists = BUR
+		is_subject = no
+		government = monarchy
+		NOT = { war_with = BUR }
+		NOT = { marriage_with = BUR }
+		BUR = {
+			is_subject = no
+			government = monarchy
+			num_of_cities = 4
+			is_neighbor_of = FRA
+		}
+	}
+	abort = {
+		OR = {
+			is_subject = yes
+			NOT = { government = monarchy }
+			NOT = { exists = BUR }
+			war_with = BUR
+			BUR = {
+				OR = {
+					is_subject = yes
+					NOT = { government = monarchy }
+				}
+			}
+		}
+	}
+	success = {
+		marriage_with = BUR
+		BUR = { has_opinion = { who = HAB value = 100 } }
+	}
+	chance = {
+		factor = 1000
+		modifier = {
+			factor = 2
+			NOT = { has_opinion = { who = BUR value = 0 } }
+		}
+		modifier = {
+			factor = 2
+			NOT = { has_opinion = { who = BUR value = -100 } }
+		}
+	}
+	effect = {
+		add_adm_power = 50
+	}
+}
+
+
+austria_bavaria_relations = {
+	
+	type = country
+
+	category = DIP
+	
+	allow = {
+		tag = HAB
+		exists = BAV
+		is_subject = no
+		government = monarchy
+		NOT = { war_with = BAV }
+		NOT = { marriage_with = BAV }
+		BAV = {
+			is_subject = no
+			government = monarchy
+		}
+	}
+	abort = {
+		OR = {
+			is_subject = yes
+			NOT = { government = monarchy }
+			NOT = { exists = BAV }
+			war_with = BAV
+			BAV = {
+				OR = {
+					is_subject = yes
+					NOT = { government = monarchy }
+				}	
+			}
+		}
+	}
+	success = {
+		marriage_with = BAV
+		BAV = { has_opinion = { who = HAB value = 100 } }
+	}
+	chance = {
+		factor = 1000
+		modifier = {
+			factor = 2
+			NOT = { has_opinion = { who = BAV value = 0 } }
+		}
+		modifier = {
+			factor = 2
+			NOT = { has_opinion = { who = BAV value = -100 } }
+		}
+	}
+	effect = {
+		add_dip_power = 50
+	}
+}
+
+
+no_territory_to_the_ottomans = {
+	
+	type = country
+
+	category = MIL
+	
+	allow = {
+		tag = HAB
+		exists = TUR
+		is_subject = no
+		is_neighbor_of = TUR
+		austrian_region = { owned_by = TUR }
+	}
+	abort = {
+		is_subject = yes
+	}
+	success = {
+		NOT = { war_with = TUR }
+		NOT = { austrian_region = { owned_by = TUR } }
+	}
+	chance = {
+		factor = 1000
+		modifier = {
+			factor = 2
+			mil = 4
+		}
+	}
+	effect = {
+		add_prestige = 10
+		add_war_exhaustion = -5
+	}
+}
+
+
+annex_hungary = {
+	
+	type = country
+
+	category = DIP
+	
+	target_provinces = {
+		owned_by = HUN
+	}
+	allow = {
+		tag = HAB
+		exists = HUN
+		is_subject = no
+		HUN = {
+			vassal_of = HAB
+			is_neighbor_of = ROOT
+			NOT = { num_of_cities = ROOT }
+			religion_group = ROOT
+		}
+	}
+	abort = {
+		OR = {
+			is_subject = yes
+			NOT = { exists = HUN }
+			HUN = { NOT = { religion_group = ROOT } }
+		}
+	}
+	success = {
+		NOT = { exists = HUN }
+		all_target_province = {
+			owned_by = ROOT
+		}
+	}
+	chance = {
+		factor = 1000
+		modifier = {
+			factor = 2
+			has_opinion = { who = HUN value = 100 }
+		}
+		modifier = {
+			factor = 2
+			has_opinion = { who = HUN value = 200 }
+		}
+	}
+	effect = {
+		add_prestige = 10
+	}
+}
+
+
+protect_belgium_from_the_french = {
+	
+	type = country
+
+	category = MIL
+	
+	allow = {
+		tag = HAB
+		exists = FRA
+		is_subject = no
+		FRA = { is_neighbor_of = ROOT }
+		spanish_netherlands = { owned_by = ROOT }
+		spanish_netherlands = { owned_by = FRA }
+	}
+	abort = {
+		OR = {
+			is_subject = yes
+			NOT = { spanish_netherlands = { owned_by = ROOT } }
+		}
+	}
+	success = {
+		NOT = { war_with = FRA }
+		NOT = { spanish_netherlands = { owned_by = FRA } }
+	}
+	chance = {
+		factor = 1000
+		modifier = {
+			factor = 2
+			mil = 4
+		}
+	}
+	effect = {
+		add_war_exhaustion = -5
+	}
+}
+
+
+protect_hungary_from_the_ottomans = {
+	
+	type = country
+
+	category = MIL
+	
+	target_provinces = {
+		region = hungarian_region
+		owned_by = TUR
+	}
+	allow = {
+		tag = HAB
+		exists = TUR
+		is_subject = no
+		TUR = { is_neighbor_of = ROOT }
+		hungarian_region = { owned_by =  ROOT }
+		hungarian_region = { owned_by =  TUR }
+	}
+	abort = {
+		OR = {
+			is_subject = yes
+			NOT = { hungarian_region = { owned_by =  ROOT } }
+		}
+	}
+	success = {
+		NOT = { war_with = TUR }
+		NOT = { hungarian_region = { owned_by =  TUR } }
+	}
+	chance = {
+		factor = 1000
+		modifier = {
+			factor = 2
+			mil = 4
+		}
+	}
+	immediate = {
+		every_target_province = {
+			add_claim = ROOT
+		}
+	}
+	abort_effect = {
+		every_target_province = {
+			remove_claim = ROOT
+		}
+	}
+	effect = {
+		add_prestige = 10
+		add_war_exhaustion = -5
+	}
+}
+
+
+protect_italy_from_the_french = {
+	
+	type = country
+
+	category = MIL
+	
+	target_provinces = {
+		region = italian_region
+		owned_by = FRA
+	}
+	allow = {
+		tag = HAB
+		exists = FRA
+		is_subject = no
+		FRA = { is_neighbor_of = ROOT }
+		italian_region = { owned_by = FRA }
+	}
+	abort = {
+		is_subject = yes
+	}
+	success = {
+		NOT = { war_with = FRA }
+		NOT = { italian_region = { owned_by = FRA } }
+	}
+	chance = {
+		factor = 1000
+		modifier = {
+			factor = 2
+			mil = 4
+		}
+	}
+	immediate = {
+		every_target_province = {
+			add_claim = ROOT
+		}
+	}
+	abort_effect = {
+		every_target_province = {
+			remove_claim = ROOT
+		}
+	}
+	effect = {
+		add_prestige = 10
+	}
+}
+
+
+protect_italy_from_the_french_republic = {
+	
+	type = country
+
+	category = MIL
+	
+	target_provinces = {
+		region = italian_region
+		owned_by = RFR
+	}
+	allow = {
+		tag = HAB
+		exists = RFR
+		is_subject = no
+		RFR = { is_neighbor_of = ROOT }
+		italian_region = { owned_by = RFR }
+	}
+	abort = {
+		is_subject = yes
+	}
+	success = {
+		NOT = { war_with = RFR }
+		NOT = { italian_region = { owned_by = RFR } }
+	}
+	chance = {
+		factor = 1000
+		modifier = {
+			factor = 2
+			mil = 4
+		}
+	}
+	immediate = {
+		every_target_province = {
+			add_claim = ROOT
+		}
+	}
+	abort_effect = {
+		every_target_province = {
+			remove_claim = ROOT
+		}
+	}
+	effect = {
+		add_prestige = 10
+	}
+}
+
+
+free_transylvania_from_the_ottomans = {
+	
+	type = country
+
+	category = MIL
+	
+	target_provinces = {
+		region = dacia
+		owned_by = TUR
+	}
+	allow = {
+		tag = HAB
+		exists = TUR
+		is_subject = no
+		dacia = { owned_by = TUR }
+		TUR = { is_neighbor_of = ROOT }
+		NOT = { war_with = TUR }
+	}
+	abort = {
+		OR = {
+			is_subject = yes		
+			NOT = { exists = TUR }
+			NOT = {	TUR = { is_neighbor_of = ROOT } }
+		}
+	}
+	success = {
+		NOT = { war_with = TUR }
+		NOT = { dacia = { owned_by = TUR } }
+	}
+	chance = {
+		factor = 1000
+		modifier = {
+			factor = 2
+			NOT = { has_opinion = { who = TUR value = 0 } }
+		}
+		modifier = {
+			factor = 2
+			NOT = { has_opinion = { who = TUR value = -100 } }
+		}
+	}
+	immediate = {
+		every_target_province = {
+			add_claim = ROOT
+		}
+	}
+	abort_effect = {
+		every_target_province = {
+			remove_claim = ROOT
+		}
+	}
+	effect = {
+		add_prestige = 10
+	}
+}

@@ -1,0 +1,165 @@
+hungary_austria_relations = {
+	
+	type = country
+
+	category = DIP
+	
+	allow = {
+		tag = HUN
+		exists = HAB
+		is_subject = no
+		government = monarchy
+		NOT = { war_with = HAB }
+		NOT = { marriage_with = HAB }
+		HAB = {
+			is_subject = no
+			government = monarchy
+		}
+	}
+	abort = {
+		OR = {
+			is_subject = yes
+			NOT = { government = monarchy }
+			war_with = HAB
+			HAB = {
+				OR = {
+					is_subject = yes
+					NOT = { government = monarchy }
+				}
+			}
+		}
+	}
+	success = {
+		marriage_with = HAB
+		HAB = { has_opinion = { who = HUN value = 100 } }
+	}
+	chance = {
+		factor = 1000
+		modifier = {
+			factor = 2
+			NOT = { has_opinion = { who = HAB value = 0 } }
+		}
+		modifier = {
+			factor = 2
+			NOT = { has_opinion = { who = HAB value = -100 } }
+		}
+	}
+	effect = {
+		add_stability = 1
+	}
+}
+
+
+hungary_transylvania_relations = {
+	
+	type = country
+
+	category = DIP
+	
+	allow = {
+		tag = HUN
+		exists = TRA
+		is_subject = no
+		government = monarchy
+		NOT = { war_with = TRA }
+		NOT = { marriage_with = TRA }
+		TRA = {
+			is_subject = no
+			government = monarchy
+		}
+	}
+	abort = {
+		OR = {
+			is_subject = yes
+			NOT = { government = monarchy }
+			war_with = TRA
+			TRA = {
+				OR = {
+					is_subject = yes
+					NOT = { government = monarchy }
+				}
+			}
+		}
+	}
+	success = {
+		marriage_with = TRA
+		TRA = { has_opinion = { who = HUN value = 100 } }
+	}
+	chance = {
+		factor = 1000
+		modifier = {
+			factor = 2
+			NOT = { has_opinion = { who = TRA value = 0 } }
+		}
+		modifier = {
+			factor = 2
+			NOT = { has_opinion = { who = TRA value = -100 } }
+		}
+	}
+	effect = {
+		add_prestige = 5
+	}
+}
+
+
+vassalize_transylvania_hun = {
+	
+	type = country
+
+	category = MIL
+	ai_mission = yes
+	
+	allow = {
+		tag = HUN
+		exists = TRA
+		is_subject = no
+		TRA = {
+			is_subject = no
+			is_neighbor_of = ROOT
+			NOT = { num_of_cities = ROOT }
+		}
+	}
+	abort = {
+		OR = {
+			is_subject = yes
+			NOT = { exists = TRA }
+			TRA = { is_subject = yes }
+		}
+	}
+	success = {
+		TRA = { vassal_of = HUN }
+	}
+	chance = {
+		factor = 1000
+		modifier = {
+			factor = 2
+			NOT = { has_opinion = { who = TRA value = 100 } }
+		}
+		modifier = {
+			factor = 2
+			NOT = { has_opinion = { who = TRA value = 200 } }
+		}
+	}
+	immediate = {
+		add_casus_belli = {
+			type = cb_vassalize_mission
+			months = 120
+			target = TRA
+		}
+	}
+	abort_effect = {
+		remove_casus_belli = {
+			type = cb_vassalize_mission
+			target = TRA
+		}
+	}
+	effect = {
+		add_prestige = 10
+		hidden_effect = {
+			remove_casus_belli = {
+				type = cb_vassalize_mission
+				target = TRA
+			}
+		}
+	}
+}
