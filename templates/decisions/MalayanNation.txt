@@ -1,0 +1,46 @@
+country_decisions = {
+
+	malayan_nation = {
+		major = yes
+		potential = {
+			NOT = { exists = MSA }
+			culture_group = malay
+			NOT = { technology_group = nomad_group }
+		}
+		allow = {
+			is_subject = no
+			is_at_war = no
+			OR = {
+				num_of_owned_provinces_with = {
+					value = 21
+					culture_group = malay
+				}
+				NOT = {
+					any_province = {
+						culture_group = malay
+						NOT = { owned_by = ROOT }
+					}
+				}
+			}
+		}
+		effect = {
+			asia = {
+				limit = {
+					NOT = { owned_by = ROOT }
+					culture_group = malay
+				}
+				add_claim = MSA
+			}
+			add_country_modifier = {
+				name = "centralization_modifier"
+				duration = 3650
+			}
+			add_prestige = 25
+			change_tag = MSA
+		}
+		ai_will_do = {
+			factor = 1
+		}
+	}
+
+}

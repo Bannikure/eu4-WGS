@@ -1,0 +1,34 @@
+country_decisions = {
+
+	chinese_nation = {
+		major = yes
+		potential = {
+			tag = MNG
+			NOT = { exists = QNG }
+			has_factions = yes
+		}
+		allow = {
+			technology_group = western
+			is_westernising = no
+			is_subject = no
+			is_at_war = no
+		}
+		effect = {
+			random_owned_province = {
+				add_base_tax = 1
+			}
+			add_country_modifier = {
+				name = "centralization_modifier"
+				duration = 3650
+			}
+			remove_faction = temples
+			remove_faction = enuchs
+			remove_faction = bureaucrats
+			change_government = despotic_monarchy
+		}
+		ai_will_do = {
+			factor = 1
+		}
+	}
+
+}

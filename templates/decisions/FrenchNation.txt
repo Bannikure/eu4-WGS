@@ -1,0 +1,71 @@
+country_decisions = {
+
+	french_nation = {
+		major = yes
+		potential = {
+			NOT = { exists = FRA }
+			NOT = { exists = RFR }
+			NOT = { tag = HLR }
+			NOT = { tag = PAP }
+			NOT = { tag = SPA }		# Basque is a valid culture for both FRA and SPA
+			OR = {
+				culture_group = french
+				culture_group = basque_group
+				primary_culture = breton
+			}
+		}
+		allow = { 
+			is_at_war = no
+			OR = {
+				num_of_owned_provinces_with = {
+					value = 13
+					OR = {
+						region = gallia 
+						region = aquitania 
+						region = occitania 
+					}
+				}
+				NOT = {
+					any_province = {
+						OR = {
+							region = gallia 
+							region = aquitania 
+							region = occitania 
+						}
+						NOT = { owned_by = ROOT }
+					}
+				}
+			}			
+		}
+		effect = {
+			gallia = {
+				limit = {
+					NOT = { owned_by = ROOT }
+				}
+				add_claim = FRA
+			}
+			aquitania = {
+				limit = {
+					NOT = { owned_by = ROOT }
+				}
+				add_claim = FRA
+			}
+			occitania = {
+				limit = {
+					NOT = { owned_by = ROOT }
+				}
+				add_claim = FRA
+			}
+			add_country_modifier = {
+				name = "centralization_modifier"
+				duration = 7300
+			}
+			add_prestige = 25
+			change_tag = FRA
+		}
+		ai_will_do = {
+			factor = 1
+		}
+	}
+	
+}

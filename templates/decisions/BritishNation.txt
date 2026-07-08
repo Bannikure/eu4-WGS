@@ -1,0 +1,87 @@
+country_decisions = {
+
+	british_nation = {
+		major = yes
+		potential = {
+			NOT = { exists = GBR }
+			NOT = { tag = PAP }
+			NOT = { tag = HLR }
+			OR = {
+				culture_group = british
+				primary_culture = welsh
+			}
+			OR = {
+				ai = no
+				AND = {
+					ai = yes
+					num_of_cities = 3
+				}
+			}
+		}
+		allow = {
+			adm_tech = 10
+			is_subject = no
+			is_at_war = no
+			AND = {
+				OR = {
+					num_of_owned_provinces_with = {
+						value = 8
+						OR = {
+							region = northumbria
+							region = mercia
+							region = essex
+							region = welsh_region
+						}
+					}
+					NOT = {
+						any_province = {
+							OR = {
+								region = northumbria
+								region = mercia
+								region = essex
+								region = welsh_region
+							}
+							NOT = { owned_by = ROOT }
+						}
+					}
+				}
+				OR = {
+					num_of_owned_provinces_with = {
+						value = 5
+						OR = {
+							region = lowlands
+							region = highlands
+						}
+					}
+					NOT = {
+						any_province = {
+							OR = {
+								region = lowlands
+								region = highlands
+							}
+							NOT = { owned_by = ROOT }
+						}
+					}
+				}
+			}
+		}
+		effect = {
+			british_isles = {
+				limit = {
+					NOT = { owned_by = ROOT }
+				}
+				add_claim = GBR
+			}
+			add_country_modifier = {
+				name = "centralization_modifier"
+				duration = 7300
+			}
+			add_prestige = 25
+			change_tag = GBR
+		}
+		ai_will_do = {
+			factor = 1
+		}
+		ai_importance = 400
+	}
+}

@@ -1,0 +1,74 @@
+country_decisions = {
+
+	netherlands_nation = {
+		major = yes
+		potential = {
+			NOT = { exists = NED }
+			NOT = { tag = PAP }
+			NOT = { tag = HLR }
+			OR = {
+				primary_culture = dutch
+				primary_culture = flemish
+				tag = BUR
+			}
+			OR = {
+				ai = no
+				AND = {
+					ai = yes
+					num_of_cities = 3
+				}
+			}
+		}
+		allow = {
+			adm_tech = 10
+			is_subject = no
+			is_at_war = no
+			OR = {
+				num_of_owned_provinces_with = {
+					value = 8
+					region = the_low_countries 
+				}
+				NOT = {
+					any_province = {
+						region = the_low_countries 
+						NOT = { owned_by = ROOT }
+					}
+				}
+			}		
+		}
+	 	effect = {
+	  		if = {
+	  			limit = {
+	  				tag = BUR
+	  			}
+	  			change_primary_culture = dutch
+	  			french_region = {
+					limit = {
+						owned_by = BUR
+					}
+	  				remove_core = BUR
+	  				add_core = FRA
+	  				cede_province = FRA
+	  			}
+	  		}
+			the_low_countries = {
+				limit = {
+					NOT = { owned_by = ROOT }
+				}
+				add_claim = NED
+			}
+			add_prestige = 25
+			change_tag = NED
+			swap_free_idea_group = yes		#keep progress
+		}
+		ai_will_do = {
+			factor = 1
+			modifier = {
+				factor = 0
+				tag = BUR
+			}
+		}
+		ai_importance = 400
+	}
+	
+}

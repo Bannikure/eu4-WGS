@@ -1,0 +1,63 @@
+country_decisions = {
+
+	mughal_nation = {
+		major = yes
+		potential = {
+			NOT = { exists = MUG }
+			NOT = { tag = PER }
+			NOT = { tag = TUR }
+			OR = {
+				culture_group = iranian
+				primary_culture = turkmeni
+				primary_culture = uzbehk
+			}
+			OR = {
+				ai = no
+				AND = {
+					ai = yes
+					num_of_cities = 5
+				}
+			}
+		}
+		allow = {
+			is_at_war = no
+			is_subject = no
+			OR = {
+				num_of_owned_provinces_with = {
+					value = 13
+					region = indian_region 
+				}
+				NOT = {
+					any_province = {
+						region = indian_region 
+						NOT = { owned_by = ROOT }
+					}
+				}
+			}			
+		}
+		effect = {
+			indian_region = {
+				limit = {
+					NOT = { owned_by = ROOT }
+				}
+				add_claim = MUG
+			}
+			add_prestige = 25
+			change_tag = MUG
+			change_government = despotic_monarchy
+			if = {
+				limit = {
+					technology_group = nomad_group
+				}
+				change_technology_group = muslim
+			}
+			change_unit_type = indian
+			swap_free_idea_group = yes		#keep progress
+		}
+		ai_will_do = {
+			factor = 1
+		}
+		ai_importance = 400
+	}
+
+}
