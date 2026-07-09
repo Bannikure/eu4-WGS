@@ -1,0 +1,247 @@
+# Triggered modifiers are here.
+# these are checked for each countries once/month and then applied.
+#
+# Effects are fully scriptable here.
+
+
+######################################
+# Western Influences.
+######################################
+western_arms_trade = {
+	potential = {
+		NOT = { technology_group = western }
+	}
+
+	trigger = {
+		any_neighbor_country = {
+			technology_group = western
+			is_subject = no
+			alliance_with = ROOT
+			has_opinion = { who = ROOT value = 150 }
+		}
+	}
+
+	technology_cost = -0.10
+}
+
+
+######################################
+# Counter Revolution
+######################################
+counter_revolution = {
+	potential = {
+		revolution_target_exists = yes
+		is_revolution_target = no
+	}
+
+	trigger = {
+		capital_scope = { continent = europe }
+		revolution_target_exists = yes
+		is_revolution_target = no
+		is_subject = no
+		NOT = {
+			revolution_target = {
+				war_with = ROOT
+			}
+			revolution_target = {
+				truce_with = ROOT
+			}
+			revolution_target = {
+				alliance_with = ROOT
+			}  
+		}
+		OR = {
+			government = absolute_monarchy
+			government = enlightened_despotism
+			government = despotic_monarchy
+			government = feudal_monarchy
+			government = administrative_monarchy
+			government = constitutional_monarchy
+			government = bureaucratic_despotism
+			government = elective_monarchy
+		}
+	}
+
+	prestige = -5
+	stability_cost_modifier = 0.3
+	global_unrest = 5
+}
+
+
+
+######################################
+# Reaction
+######################################
+reaction = {
+	potential = {
+		revolution_target_exists = yes
+		capital_scope = { continent = europe }
+	}
+
+	trigger = {
+		capital_scope = { continent = europe }
+		revolution_target_exists = yes
+		is_revolution_target = no
+		is_subject = no
+		OR = {
+			government = absolute_monarchy
+			government = enlightened_despotism
+			government = despotic_monarchy
+			government = feudal_monarchy
+			government = administrative_monarchy
+			government = constitutional_monarchy
+			government = bureaucratic_despotism
+		}
+		revolution_target = {
+			war_with = ROOT
+		}  
+
+	}
+
+	prestige = 10
+	stability_cost_modifier = -0.1
+	global_unrest = -10
+}
+
+######################################
+# Crusader
+######################################
+crusader = {
+	potential = {
+		religion = catholic
+		crusade_target = {
+			exists = yes
+		}
+		
+	}
+
+	trigger = {
+		
+		crusade_target = {
+			war_with = ROOT
+			any_province = {
+				controlled_by = root
+			}
+		}  
+		land_maintenance = 1.0
+	}
+
+	global_manpower_modifier = 0.3
+	global_tax_modifier = 0.1
+	land_morale = 0.10
+	prestige = 1
+	papal_influence = 1
+	devotion = 0.25
+	#icon = 9
+}
+
+######################################
+# Excommunication
+######################################
+excommunication = {
+	potential = {
+		religion = catholic	
+	}
+
+	trigger = {
+		is_excommunicated = yes
+		
+	}
+
+	prestige = -2
+	tolerance_own = -3
+	devotion = -5
+	papal_influence = -10
+	#icon = 10
+}
+
+##################################################
+# China modifiers
+##################################################
+the_mandate_of_heaven = {
+	potential = {
+		government = celestial_empire
+		is_westernising = no
+		NOT = { technology_group = western }
+	}
+	
+	trigger = {	
+		is_westernising = no
+		stability = 0
+		legitimacy = 60
+		num_of_cities = 20
+	}
+
+	stability_cost_modifier = -0.10
+	global_unrest = -5
+}
+
+the_mandate_of_heaven_lost = {
+	potential = {
+		government = celestial_empire
+		is_westernising = no
+		NOT = { technology_group = western }
+	}
+
+	trigger = {
+		is_westernising = no
+		OR = {
+			NOT = { stability = 0 }
+			NOT = { legitimacy = 60 }
+			NOT = { num_of_cities = 20 }	
+		}
+	}
+
+	stability_cost_modifier = 0.5
+	global_unrest = 5
+}
+
+##################################################
+# HRE modifiers
+##################################################
+hre_dominant_catholic = {
+	potential = {
+		capital_scope = {
+			continent = europe
+		}
+		OR = {
+			religion = catholic
+			religion = protestant
+		}
+	}
+
+	trigger = {
+		religion = catholic
+		hre_religion = catholic
+		hre_religion_locked = yes
+	}
+	
+	legitimacy = 0.25
+	tolerance_own = 1
+	global_missionary_strength = 0.01
+	imperial_authority = 0.25
+}
+
+hre_dominant_protestant = {
+	potential = {
+		capital_scope = {
+			continent = europe
+		}
+		OR = {
+			religion = catholic
+			religion = protestant
+		}
+	}
+
+	trigger = {
+		religion = protestant
+		hre_religion = protestant
+		hre_religion_locked = yes
+	}
+	
+	legitimacy = 0.25
+	tolerance_own = 1
+	global_missionary_strength = 0.01
+	imperial_authority = 0.25
+}
+

@@ -1,0 +1,257 @@
+force_convert_mission = {
+
+	type = neighbor_countries
+
+	category = MIL
+
+	allow = {
+		ROOT = { 
+			religion = catholic 
+			has_country_modifier = counter_reformation
+		}
+		OR = {
+			religion = reformed
+			religion = protestant
+		}
+		NOT = { num_of_cities = ROOT }
+	}
+	abort = {
+		OR = {
+			ROOT = { NOT = { religion = catholic } }
+			AND = {
+				NOT = { religion = reformed }
+				NOT = { religion = protestant }
+			}
+		}
+	}
+	success = {
+		religion = ROOT
+	}
+	chance = {
+		factor = 1000
+		modifier = {
+			factor = 1.1
+			NOT = { army_size = ROOT }
+		}	
+		modifier = {
+			factor = 1.1
+			ROOT = { has_idea_group = religious_ideas }
+		}	
+		modifier = {
+			factor = 1.25
+			is_defender_of_faith = yes
+		}
+	}
+	effect = {
+		ROOT = {
+			add_prestige = 100
+			add_papal_influence = 20
+		}
+	}
+}
+
+
+convert_province_mission = {
+
+	type = our_provinces
+
+	category = ADM
+
+	allow = {
+		FROM = {
+			is_at_war = no
+			num_of_missionaries = 1
+		}
+		NOT =  { religion = FROM }
+		NOT = { has_province_modifier = religious_migration }
+	}
+	abort = {
+		OR = {
+			has_province_modifier = religious_migration
+			NOT = { owned_by = FROM }
+		}
+	}
+	success = {
+		religion = FROM
+	}
+	chance = {
+		factor = 1000
+		modifier = {
+			factor = 1.05
+			FROM = { has_idea_group = religious_ideas }
+		}		
+		modifier = {
+			factor = 1.05
+			FROM = {  num_of_missionaries = 2 }
+		}
+		modifier = {
+			factor = 1.05
+			FROM = {  is_defender_of_faith = yes }
+		}				
+	}
+	effect = {
+		owner = {
+			add_prestige = 10
+		}
+	}
+}
+
+
+solidify_our_papal_relations = {
+
+	type = country
+
+	category = DIP
+
+	allow = {
+		religion = catholic
+		NOT = { tag = PAP }
+		exists = PAP
+		NOT = { war_with = PAP }
+		is_excommunicated = no
+		PAP = {
+			NOT = { has_opinion = { who = ROOT value = 50 } }
+		}
+	}
+	abort = {
+		OR = {
+			NOT = { religion = catholic }
+			tag = PAP
+			NOT = { exists = PAP }
+			war_with = PAP
+			is_excommunicated = yes
+		}
+	}
+	success = {
+		PAP = { has_opinion = { who = ROOT value = 150 } }
+	}
+	chance = {
+		factor = 1000
+		modifier = {
+			factor = 1.1
+			is_defender_of_faith = yes
+		}
+		modifier = {
+			factor = 1.05
+			dip = 4
+		}		
+		modifier = {
+			factor = 1.1
+			has_idea_group = religious_ideas
+		}
+	}
+	effect = {
+		add_prestige = 5
+	}
+}
+
+control_the_pope = {
+
+	type = country
+
+	category = DIP
+
+	allow = {
+		papacy_active = yes
+		religion = catholic
+		is_excommunicated = no
+		is_papal_controller = no
+		papal_influence = 0
+		NOT = { tag = PAP }
+		OR = {
+			government = theocracy
+			num_of_cities = 5
+		}
+	}
+	abort = {
+		OR = {
+			papacy_active = no
+			NOT = { religion = catholic }
+			is_excommunicated = yes
+		}
+	}
+	success = {
+		is_papal_controller = yes
+	}
+	chance = {
+		factor = 1000
+		modifier = {
+			factor = 1.1
+			is_defender_of_faith = yes
+		}
+		modifier = {
+			factor = 1.1
+			papal_influence = 10
+		}
+		modifier = {
+			factor = 1.1
+			papal_influence = 25
+		}
+		modifier = {
+			factor = 1.1
+			papal_influence = 50
+		}		
+		modifier = {
+			factor = 1.1
+			has_idea_group = religious_ideas
+		}
+	}
+	effect = {
+		add_prestige = 5
+	}
+}
+
+achive_religious_unity = {
+
+	type = country
+
+	category = ADM
+
+	allow = {
+		has_factions = no
+		NOT = { religious_unity = 1 }
+		NOT = { has_idea = ecumenism }
+	}
+	abort = {
+		has_idea = ecumenism
+	}
+	success = {
+		religious_unity = 1
+	}
+	chance = {
+		factor = 1000
+		modifier = {
+			factor = 1.1
+			is_defender_of_faith = yes
+		}
+		modifier = {
+			factor = 1.1
+			has_idea_group = religious_ideas
+		}
+		modifier = {
+			factor = 1.1
+			NOT = { religious_unity = 0.5 }
+		}
+		modifier = {
+			factor = 1.1
+			NOT = { religious_unity = 0.6 }
+		}
+		modifier = {
+			factor = 1.1
+			NOT = { religious_unity = 0.7 }
+		}
+		modifier = {
+			factor = 1.1
+			NOT = { religious_unity = 0.8 }
+		}
+		modifier = {
+			factor = 1.5
+			has_idea = devoutness
+		}	
+	}
+	effect = {
+		add_prestige = 10
+		add_adm_power = 25
+		add_dip_power = 25
+	}
+}

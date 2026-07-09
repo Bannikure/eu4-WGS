@@ -1,0 +1,57 @@
+
+establish_footholding_in_manchuria = {
+
+	type = country
+	
+	category = MIL
+	ai_mission = yes
+	
+	allow = {
+		tag = JAP
+		government = feudal_monarchy
+		exists = MCH
+		is_subject = no
+		MCH = {
+			is_subject = no
+		}
+		NOT = { manchuria = { owned_by = JAP } }
+		manchuria = {
+			has_port = yes
+			owned_by = MCH
+		}
+	}
+	abort = {
+		OR = {
+			is_subject = yes
+			NOT = {
+				manchuria = {
+					has_port = yes
+					owned_by = MCH
+				}
+			}
+		}
+	}
+	success = {
+		manchuria = { owned_by = JAP }
+	}
+	chance = {
+		factor = 1000
+		modifier = {
+			factor = 2
+			NOT = { has_opinion = { who = MCH value = 0 } }
+		}
+	}
+	immediate = {
+		manchuria = {
+			add_claim = ROOT
+		}
+	}
+	abort_effect = {
+		manchuria = {
+			remove_claim = ROOT
+		}
+	}
+	effect = {
+		add_prestige = 5
+	}
+}

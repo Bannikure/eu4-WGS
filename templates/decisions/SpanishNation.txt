@@ -1,0 +1,128 @@
+country_decisions = {
+
+	spanish_nation = {
+		major = yes
+		potential = {
+			NOT = { exists = SPA }
+			NOT = { tag = PAP }
+			NOT = { tag = HLR }
+			NOT = { tag = FRA }		# Basque is a valid culture for both FRA and SPA
+			NOT = { tag = KNI }		# Maltese is part of iberian culture group
+			NOT = { tag = GRA }
+			OR = {
+				ai = no
+				ARA = { ai = no }
+				AND = {
+					NOT = { tag = ARA }
+					NOT = { tag = CAS }
+				}
+				is_year = 1500
+			}
+			OR = {
+				ai = no
+				AND = {
+					ai = yes
+					num_of_cities = 3	
+				}
+			}
+			OR = {
+				ai = no
+				AND = {
+					ai = yes
+					NOT = { tag = POR }
+				}
+			}
+			OR = {
+				culture_group = iberian
+				primary_culture = basque
+			}
+		}
+		allow = {
+			adm_tech = 10
+			is_subject = no
+			is_at_war = no
+			NOT = { exists = GRA }
+			OR = {
+				num_of_owned_provinces_with = {
+					value = 21
+					region = spanish_region 
+				}
+				NOT = {
+					any_province = {
+						region = spanish_region 
+						NOT = { owned_by = ROOT }
+					}
+				}
+			}				
+		}
+		effect = {
+			spanish_region = {
+				limit = {
+					NOT = { owned_by = ROOT }
+				}
+				add_claim = SPA
+			}
+			add_country_modifier = {
+				name = "centralization_modifier"
+				duration = 7300
+			}
+			add_prestige = 25
+			change_tag = SPA
+		}
+		ai_will_do = {
+			factor = 1
+		}
+		ai_importance = 400
+	}
+	
+	spanish_nation_diplomatically = {
+		major = yes
+		potential = {
+			is_tutorial_active = no
+			tag = CAS
+			OR = {
+				ai = no
+				AND = {
+					ai = yes
+					OR = {
+						ARA = {	junior_union_with = CAS	}
+						ARA = {	vassal_of = CAS	}
+					}
+				}
+			}
+		}
+		allow = {
+			adm_tech = 10
+			is_subject = no
+			is_at_war = no
+			legitimacy = 100
+			NOT = { exists = GRA }
+			OR = {
+				ARA = {	junior_union_with = CAS	}
+				ARA = {	vassal_of = CAS	}
+			}
+		}
+		effect = {
+			change_tag = SPA
+			if = {
+				limit = {
+					ARA = {
+						ai = yes
+					}
+				}
+				inherit = ARA
+			}	
+			spanish_region = {
+				limit = {
+					NOT = { owned_by = ROOT }
+				}
+				add_claim = SPA
+			}
+		}
+		ai_will_do = {
+			factor = 1
+		}
+		ai_importance = 200
+	}	
+	
+}

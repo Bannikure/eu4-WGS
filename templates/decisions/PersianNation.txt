@@ -1,0 +1,58 @@
+country_decisions = {
+
+	persian_nation = {
+		major = yes
+		potential = {
+			NOT = { exists = PER }
+			NOT = { tag = MUG }
+			OR = {
+				culture_group = iranian
+				primary_culture = azerbadjani
+			}
+		}
+		allow = {
+			is_subject = no
+			is_at_war = no
+			OR = {
+				num_of_owned_provinces_with = {
+					value = 13
+					region = persian_region 
+				}
+				NOT = {
+					any_province = {
+						region = persian_region 
+						NOT = { owned_by = ROOT }
+					}
+				}
+			}	
+		}
+		effect = {
+			persian_region = {
+				limit = {
+					NOT = { owned_by = ROOT }
+				}
+				add_claim = PER
+			}
+			add_country_modifier = {
+				name = "centralization_modifier"
+				duration = 7300
+			}
+			add_prestige = 25
+			change_tag = PER
+			change_government = despotic_monarchy
+			change_primary_culture = persian
+			if = {
+				limit = {
+					technology_group = nomad_group
+				}
+				change_technology_group = muslim
+				change_unit_type = muslim
+			}
+			swap_free_idea_group = yes		#keep progress
+		}
+		ai_will_do = {
+			factor = 1
+		}
+	}
+	
+}

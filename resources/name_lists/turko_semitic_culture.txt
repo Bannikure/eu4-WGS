@@ -1,0 +1,557 @@
+﻿Ubeda
+Abu-Dhabi
+Abu-Ghraib
+Abu-Qir
+Al-Hasa
+Al-Ahwaz
+Faro 
+Akhmim
+Eritrea
+Jordan
+Arcos
+Arnedo
+Jericho
+Orihuela
+Ecija
+Ashdod
+Israel
+Iskenderun
+Iskandariya
+Alexandria
+Asmara
+Aswan
+Lisbon
+Seville
+Atar
+Elche
+Al-Andalus
+Al-Fahm
+Umm
+Qasr
+Al-Qaiwain
+Antioch
+Nouakchott
+Jerusalem 
+Eilat
+Batna
+Beja
+Baqa
+Al-Gharbiyye
+Bahrain
+Burgos
+Albacete
+Basra
+Valencia
+Badajoz
+Baquba
+Baghdad
+Pamplona
+Alpuente
+Benghazi
+Boutilimit
+Said
+Sudan
+Boumerdes
+Beit Jala
+Beit Hanoun
+Beit Lahia
+Bethlehem
+Beirut
+Bet She'an
+Beersheba
+Tihamah
+Taroudant
+Tabuk
+Tidjikja
+Tadmor
+Teruel
+Chad
+Tudela
+Tikrit
+Tlemcen
+Tunis
+Tipasa
+Tichit
+Jabalia
+Gibraltar
+Jebel Ali
+Byblos
+Jubail
+Jeddah
+Girona
+Algiers
+Algeciras
+Alcira
+Jenin
+Geneina
+Giza
+Hejaz
+Almada
+Hadhramaut
+Harmah
+Aleppo
+Homs
+Hula
+Al-Hibah
+Haifa
+Haidar
+Kharga
+Khan Yunis
+Khobar
+Khirbet Beit Lei
+Khartoum
+Hebron
+Dakhla
+Casablanca
+Dar-es-Salaam
+Denia
+Dubai
+Dellys
+Damascus
+Doha
+Ramallah
+Rabat
+Rafah
+Ar-Raqqah
+Ramadi
+Ramla
+Ronda
+Riyadh
+Ras Tanura
+Ras al-Khaimah
+Zanzibar
+Zagazig
+Zuwara
+Zouerat
+Samarra
+Ceuta
+Sakhnin
+Zaragoza
+Socotra
+Sulaymaniyah
+Samawah
+Zamora
+Sudan
+Syria
+Sousse
+Suez
+Sharjah
+Simancas
+Sacavem
+Sharm El-Sheikh
+Shefa-Amr
+Silves
+Salamanca
+Shinas
+Faro 
+Chinguetti
+Safita
+Sohar
+Safed
+Salalah
+Sanaa
+Sidon
+Ain Kana
+Tiberias
+Tripoli
+Tarragona
+Tarazona
+Tortosa
+Tarifa
+Tangiers
+Tulkarm
+Tayibe
+Tira
+Dhofar
+Dhahran
+Abadan
+Ajman
+Aden
+Iraq
+Arar
+Al-Arish
+Ashkelon
+Aqaba
+Akko
+Ukbara
+Amman
+Oman
+Annaba
+Unaizah
+Hurghada
+Granada
+Gaza
+Fes
+Fujairah
+Jaffa
+Yaffa
+Fallujah
+Pattani
+Qamishli
+Cairo
+Jerusalem
+Carthage
+Cartagena
+Carmona
+Constantine
+Alcazarquivir
+Qatar
+Qatif
+Calatayud
+Qalqilyah
+Coimbra
+Qalansawe
+Calahorra
+Comoros
+Qina
+Quneitra
+Cuenca
+Kairouan
+Karachi
+Karbala
+Kirkuk
+Kut
+Kufa
+Kom Ombo
+Kuwait
+Kaedi
+kferet
+Latakia
+Lleida
+Lebanon
+Lod
+Alicante
+Lorca
+Libya
+León
+Mertola
+Merida
+Malaga
+Al-Muhammara
+Medina
+Marrakech
+Martil
+Marsala
+Marsa Matruh
+Murcia
+Muscat
+Misr
+Morocco
+Maghreb
+Mecca
+Malta
+Melilla
+Manama
+Al Mansurah
+Morón
+Moroni
+Mauritania
+Mosul
+Madura
+Nablus
+Najera
+Nazareth
+Nasiriyah
+Najd
+Najaf
+Nizwa
+Ouadane
+Guadalajara
+Al-Wajajah
+Ouarzazate
+Huesca
+Oualata
+Huelva
+Oran
+Evora
+Jaffa
+Yavne
+Lucena
+Yemen
+Yanbu
+Al-Bahr
+
+Ubbadah Al-Arab
+Abu Zaby
+Abu Gurayb
+Abu Qir
+Al-Ahsa
+Uhsunubah
+Ahmim
+Iritriyya
+Al-Urdunn
+Arkus
+Arnit
+Ariha
+Uryulah
+Istiggah
+Isdud
+Isra'il
+Iskandarun
+Iskandariyyah
+Asmara
+Aswan
+Isbunah
+Isbiliyyah
+Atar
+Als
+Antakiyyah
+Anwaksut
+Ursalim
+Aylah
+Batnah
+Bagat Az-Zayt
+Baqah Al-Garbiyyah
+Al-Bahrayn
+Burtuqal
+Burgus
+Al-Basit
+Al-Basrah
+Balansiyyah
+Batalyaws
+Ba'qubah
+Bagdad
+Banbalunah
+Al-Bunt
+Bangazi
+Butilimit
+Bur Said
+Bur Sudan
+Bumardas
+Bayt Gala
+Bayt Hanun
+Bayt Lahiyyah
+Bayt Lahm
+Bayrut
+Baysan
+Bi'r As-Sab
+Tihamah
+Tarudant
+Tabuk
+Tigikgah
+Tadmur
+Tirwal
+Tasad
+Tutilah
+Tikrit
+Tilimsan
+At-Tunis
+Tibazah
+Tisit
+Gabaliyya
+Gabal Tariq
+Gabal Aliyy
+Gubayl
+Al-Gubayl
+Giddah
+Garundah
+Al-Gaza'ir
+Al-Gazirah Al-Hadra
+Gazirah Suqr
+Ganin
+Al-Gunaynah
+Gayyan
+Gibuti
+Al-Gizah
+Al-Higaz
+Hisn Al-Ma'din
+Hadramawt
+Harmah
+Halab
+Hims
+Hula
+Al-Hibah
+Hayfa
+Al-Harigah
+Han Yunis
+Al-Hubar
+Hirbat Bayt Lahi
+Al-Hartum
+Al-Halil
+Ad-Dahilah
+Ad-Dar Al-Bayda
+Dar As-Salam
+Daniyyah
+Dubayy
+Dallas
+Dimasq As-Sam
+Ad-Dawhah
+Ram Allah
+Ar-Rabat
+Rafah
+Ar-Raqqah
+Ar-Ramadi
+Ar-Ramlah
+Rundah
+Ar-Riyad
+Ra's Tanurah
+Ra's Al-Haymah
+Zingibar
+Az-Zaqaziq
+Zuwarah
+Az-Zuwayrat
+Samarra
+Sabtah
+Sahnin
+Saraqustah
+As-Sa'udiyyah
+Suqutrah
+As-Sulaymaniyyah
+As-Samawah
+Sammurah
+As-Sudan
+As-Suriya
+Susah
+As-Suways
+As-Sargah
+Sant Mankas
+Sant Yaqub
+Saqaban
+Saris
+Sarm As-Sayh
+Safa Amr
+Siqubiyyah
+Silb
+Salamanqah
+Sinas
+Santara
+Santarin
+Santamariyyat Al-Garb
+Sinqit
+Fita
+Suhar
+As-Sahara Al-Arabiyyah
+Sahrah Bilay
+Safad
+Salalah
+San'a
+Sur
+As-Sumal
+Sayda
+Ain Kana
+Tabariyyah
+Tarabulus
+Tarrakunah
+Tarasunah
+Turtusah
+Tarifah
+Talabayrah
+Tulaytulah
+Tangah
+Tulkarm
+Tayyibah
+Tirah
+Zufar
+Az-Zahran
+Abadan
+Agman
+Adan
+Al-Iraq
+Ar'ar
+Al-Aris
+Asqalan
+Al-Aqabah
+Akka
+Ukbara
+Amman
+Uman
+Annabah
+Unayzah
+Al-Gardaqah
+Garnatah
+Gazzah
+Fas
+Fugayrah
+Filastin
+Al-Fallugah
+Fattani
+Qabis
+Qadis
+Al-Qamisli
+Al-Qahirah
+Al-Quds
+Qartag
+Qartagannah Al-Halfa
+Qurtubah
+Qarmunah
+Qusantinah
+Al-Qasr Al-Kabir
+Qasr Abi Danis
+Qatar
+Qatif
+Qal'ah Ayyub
+Qalqilyah
+Qulumriyyah
+Qalansawah
+Qalahurrah
+Al-Qamar
+Qina
+Al-Qunaytirah
+Qunkah
+Al-Qayrawn
+Karachi
+Karbala
+Kirkuk
+Kut
+Al-Kufah
+Kawm Umbu
+Al-Kuwayt
+Kayhaydi
+Kufairet
+Al-Ladiqiyyah
+Laridah
+Al-Lubnan
+Al-Ludd
+Al-Laqant
+Lawraqah
+Libiyya
+Liyyun
+Martulah
+Maridah
+Malaqah
+Al-Muhammara
+Al-Magrit
+Al-Mudawwar
+Madinat Sadunah
+Al-Madinah Al-Munawwarah
+Marrakis
+Martil
+Marsa Aliyy
+Marsa Matruh
+Mursiyyah
+Al-Mariyyah
+Masqat
+Misr
+Al-Magrib
+Makkah Al-Mukarramah
+Maltah
+Malilah
+Al-Manamah
+Al-Mansurah
+Mawrur
+Muruni
+Al-Muritaniyya
+Mawsil
+Mandurah
+Nabulus
+Nagirah
+An-Nasirah
+Nasiriyyah
+Nagamina
+Nagd
+An-Nagaf
+Nizwa
+Wadan
+Wadi Al-Hejarah
+Al-Wajajah
+Warzazat
+Wasqah
+Walatah
+Walbah
+Wahran
+Yaburah
+Yafa
+Yibnah
+Al-Yussanah
+Al-Yaman
+Yanbu Al-Bahr

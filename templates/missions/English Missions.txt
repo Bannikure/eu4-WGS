@@ -1,0 +1,630 @@
+
+conquer_scotland = {
+	
+	type = country
+
+	category = MIL
+	ai_mission = yes
+	
+	target_provinces = {
+		OR = {
+			region = highlands
+			region = lowlands
+		}
+		owned_by = SCO
+	}
+	allow = {
+		OR = {
+			tag = ENG
+			tag = GBR
+		}
+		is_subject = no
+		is_year = 1603
+		SCO = {
+			is_subject = no
+			OR = {
+				highlands = { owned_by = SCO }
+				lowlands = { owned_by = SCO }
+			}
+		}
+		NOT = { has_opinion = { who = SCO value = 50 } }
+	}
+	abort = {
+		OR = {
+			is_subject = yes
+			SCO = { is_subject_of = ROOT }
+			any_target_province = {
+				NOT = { owned_by = ROOT }
+				NOT = { owned_by = SCO }
+			}
+		}
+	}
+	success = {
+		NOT = { exists = SCO }
+		all_target_province = {
+			owned_by = ROOT
+		}
+	}
+	chance = {
+		factor = 1000
+		modifier = {
+			factor = 2
+			mil = 4
+		}
+		modifier = {
+			factor = 2
+			mil = 5
+		}
+	}
+	immediate = {
+		every_target_province = {
+			add_claim = ROOT
+		}
+	}
+	abort_effect = {
+		every_target_province = {
+			remove_claim = ROOT
+		}
+	}
+	effect = {
+		add_prestige = 10
+	}
+}
+
+
+vassalize_scotland = {
+	
+	type = country
+
+	category = MIL
+	ai_mission = yes
+	
+	allow = {
+		OR = {
+			tag = ENG
+			tag = GBR
+		}
+		is_subject = no
+		exists = SCO
+		SCO = {
+			is_subject = no
+			NOT = { num_of_cities = ROOT }
+		}
+	}
+	abort = {
+		OR = {
+			is_subject = yes
+			NOT = { exists = SCO }
+			SCO = { is_subject = yes }
+		}
+	}
+	success = {
+		SCO = { vassal_of = ROOT }
+	}
+	chance = {
+		factor = 1000
+		modifier = {
+			factor = 2
+			dip = 4
+		}
+		modifier = {
+			factor = 2
+			dip = 5
+		}
+	}
+	immediate = {
+		add_casus_belli = {
+			type = cb_vassalize_mission
+			months = 120
+			target = SCO
+		}
+	}
+	abort_effect = {
+		remove_casus_belli = {
+			type = cb_vassalize_mission
+			target = SCO
+		}
+	}
+	effect = {
+		add_prestige = 10
+		hidden_effect = {
+			remove_casus_belli = {
+				type = cb_vassalize_mission
+				target = SCO
+			}
+		}
+	}
+}
+
+
+england_discovers_north_america = {
+	
+	type = country
+
+	category = DIP
+	
+	allow = {
+		OR = {
+			tag = ENG
+			tag = GBR
+		}
+		has_idea = quest_for_the_new_world
+		num_of_ports = 3
+		num_of_heavy_ship = 1
+		northeastern_america = { range = ROOT }
+		NOT = { northeastern_america = { has_discovered = ROOT } }
+	}
+	abort = {
+		OR = {
+			NOT = { has_idea = quest_for_the_new_world }
+			NOT = { num_of_ports = 1 }
+		}
+	}
+	success = {
+		northeastern_america = { has_discovered = ROOT }
+	}
+	chance = {
+		factor = 1000
+		modifier = {
+			factor = 2
+			has_idea = land_of_opportunity
+		}
+		modifier = {
+			factor = 2
+			has_idea = colonial_ventures
+		}
+		modifier = {
+			factor = 2
+			num_of_ports = 10
+		}
+		modifier = {
+			factor = 2
+			num_of_ports = 20
+		}
+	}
+	effect = {
+		add_dip_power = 25
+		add_country_modifier = {
+			name = "colonial_enthusiasm"
+			duration = 1875
+		}
+	}
+}
+
+
+english_colony_in_north_america = {
+	
+	type = country
+
+	category = DIP
+	
+	allow = {
+		OR = {
+			tag = ENG
+			tag = GBR
+		}
+		num_of_colonists = 1
+		num_of_ports = 3
+		northeastern_america = {
+			has_discovered = ROOT
+			is_empty = yes
+			range = ROOT
+		}
+		NOT = { northeastern_america = { owned_by = ROOT } }
+	}
+	abort = {
+		OR = {
+			NOT = { num_of_ports = 1 }
+			AND = {
+				NOT = { northeastern_america = { is_empty = yes } }
+				NOT = { northeastern_america = { owned_by = ROOT } }
+			}
+		}
+	}
+	success = {
+		northeastern_america = { owned_by = ROOT }
+	}
+	chance = {
+		factor = 1000
+		modifier = {
+			factor = 2
+			has_idea = land_of_opportunity
+		}
+		modifier = {
+			factor = 2
+			has_idea = colonial_ventures
+		}
+		modifier = {
+			factor = 2
+			num_of_colonists = 2
+		}
+		modifier = {
+			factor = 2
+			num_of_colonists = 3
+		}
+	}
+	effect = {
+		add_prestige = 10
+	}
+}
+
+
+england_discovers_the_carribean = {
+	
+	type = country
+
+	category = DIP
+	
+	allow = {
+		OR = {
+			tag = ENG
+			tag = GBR
+		}
+		num_of_ports = 3
+		has_idea = quest_for_the_new_world
+		northeastern_america = { has_discovered = ROOT }
+		the_carribean = { range = ROOT }
+		NOT = { the_carribean = { has_discovered = ROOT } }
+	}
+	abort = {
+		OR = {
+			NOT = { has_idea = quest_for_the_new_world }
+			NOT = { num_of_ports = 1 }
+		}
+	}
+	success = {
+		the_carribean = { has_discovered = ROOT }
+	}
+	chance = {
+		factor = 1000
+		modifier = {
+			factor = 2
+			has_idea = land_of_opportunity
+		}
+		modifier = {
+			factor = 2
+			has_idea = colonial_ventures
+		}	
+	}
+	effect = {
+		add_dip_power = 25
+		add_country_modifier = {
+			name = "colonial_enthusiasm"
+			duration = 730
+		}
+	}
+}
+
+
+english_colony_in_the_carribean = {
+	
+	type = country
+
+	category = DIP
+	
+	allow = {
+		OR = {
+			tag = ENG
+			tag = GBR
+		}
+		num_of_colonists = 1
+		num_of_ports = 3
+		the_carribean = {
+			has_discovered = ROOT
+			is_empty = yes
+			range = ROOT
+		}
+		NOT = { the_carribean = { owned_by = ROOT } }
+	}
+	abort = {
+		OR = {
+			NOT = { num_of_ports = 1 }
+			AND = {
+				NOT = { the_carribean = { is_empty = yes } }
+				NOT = { the_carribean = { owned_by = ROOT } }
+			}
+		}
+	}
+	success = {
+		the_carribean = { owned_by = ROOT }
+	}
+	chance = {
+		factor = 1000
+		modifier = {
+			factor = 2
+			has_idea = land_of_opportunity
+		}
+		modifier = {
+			factor = 2
+			has_idea = colonial_ventures
+		}
+		modifier = {
+			factor = 2
+			num_of_colonists = 2
+		}
+		modifier = {
+			factor = 2
+			num_of_colonists = 3
+		}
+		modifier = {
+			factor = 0.5
+			any_subject_country = {
+				the_carribean = { owned_by = PREV }
+			}
+		}
+	}
+	effect = {
+		add_prestige = 10
+	}
+}
+
+
+england_discovers_india = {
+	
+	type = country
+
+	category = DIP
+	
+	allow = {
+		OR = {
+			tag = ENG
+			tag = GBR
+		}
+		num_of_ports = 3
+		has_idea = quest_for_the_new_world
+		northeastern_america = { has_discovered = ROOT }
+		the_carribean = { has_discovered = ROOT } 
+		indian_coast = { range = ROOT }
+		NOT = { indian_coast = { has_discovered = ROOT } }
+	}
+	abort = {
+		OR = {
+			NOT = { num_of_ports = 1 }
+			NOT = {	has_idea = quest_for_the_new_world }
+		}
+	}
+	success = {
+		indian_coast = { has_discovered = ROOT }
+	}
+	chance = {
+		factor = 1000
+		modifier = {
+			factor = 2
+			has_idea = land_of_opportunity
+		}
+		modifier = {
+			factor = 2
+			has_idea = colonial_ventures
+		}	
+	}
+	effect = {
+		add_dip_power = 25
+		add_country_modifier = {
+			name = "colonial_enthusiasm"
+			duration = 730
+		}
+	}
+}
+
+
+conquer_indian_coastal_province = {
+	
+	type = country
+	ai_mission = yes
+
+	category = MIL
+	
+	allow = {
+		OR = {
+			tag = ENG
+			tag = GBR
+		}
+		num_of_ports = 3
+		indian_coast = { has_discovered = ROOT }
+		NOT = { indian_coast = { owned_by = ROOT } }
+	}
+	abort = {
+		is_subject = yes
+	}
+	success = {
+		indian_coast = { owned_by = ROOT }
+	}
+	chance = {
+		factor = 1000
+		modifier = {
+			factor = 5
+			has_idea = land_of_opportunity
+		}
+		modifier = {
+			factor = 5
+			has_idea = colonial_ventures
+		}
+	}
+	immediate = {
+		indian_coast = {
+			limit = { has_discovered = ROOT }
+			add_claim = ROOT
+		}
+	}
+	abort_effect = {
+		indian_coast = {
+			remove_claim = ROOT
+		}
+	}
+	effect = {
+		add_treasury = 50
+	}
+}
+ 
+
+england_discovers_australia = {
+	
+	type = country
+
+	category = DIP
+	
+	allow = {
+		OR = {
+			tag = ENG
+			tag = GBR
+		}
+		num_of_ports = 3
+		has_idea = quest_for_the_new_world
+		northeastern_america = { has_discovered = ROOT }
+		indian_coast = { has_discovered = ROOT }
+		australian_coast = { range = ROOT }
+		NOT = { australian_coast = { has_discovered = ROOT } }
+	}
+	abort = {
+		OR = {
+			NOT = { num_of_ports = 1 }
+			NOT = { has_idea = quest_for_the_new_world }
+		}
+	}
+	success = {
+		australian_coast = { has_discovered = ROOT }
+	}
+	chance = {
+		factor = 1000
+		modifier = {
+			factor = 2
+			has_idea = land_of_opportunity
+		}
+		modifier = {
+			factor = 2
+			has_idea = colonial_ventures
+		}	
+	}
+	effect = {
+		add_dip_power = 25
+		add_country_modifier = {
+			name = "colonial_enthusiasm"
+			duration = 730
+		}
+	}
+}
+
+
+english_colony_in_australia = {
+	
+	type = country
+
+	category = DIP
+	
+	allow = {
+		OR = {
+			tag = ENG
+			tag = GBR
+		}
+		num_of_colonists = 1
+		num_of_ports = 3
+		australian_coast = {
+			has_discovered = ROOT
+			is_empty = yes
+			range = ROOT
+		}
+		NOT = { australian_coast = { owned_by = ROOT } }
+	}
+	abort = {
+		OR = {
+			NOT = { num_of_ports = 1 }
+			AND = {
+				NOT = { australian_coast = { is_empty = yes } }
+				NOT = { australian_coast = { owned_by = ROOT } }
+			}
+		}
+	}
+	success = {
+		australian_coast = { owned_by = ROOT }
+	}
+	chance = {
+		factor = 1000
+		modifier = {
+			factor = 2
+			has_idea = land_of_opportunity
+		}
+		modifier = {
+			factor = 2
+			has_idea = colonial_ventures
+		}
+		modifier = {
+			factor = 2
+			num_of_colonists = 2
+		}
+		modifier = {
+			factor = 2
+			num_of_colonists = 3
+		}
+	}
+	effect = {
+		add_prestige = 10
+	}
+}
+
+
+vassalize_france = {
+	
+	type = country
+
+	category = MIL
+	
+	allow = {
+		tag = ENG
+		exists = FRA
+		is_subject = no
+		NOT = { is_year = 1475 }
+		french_region = {
+			owned_by = ROOT
+			is_core = ROOT
+		}
+		FRA = {
+			is_subject = no
+			NOT = { num_of_infantry = ROOT }
+			NOT = { num_of_cavalry = ROOT }
+			NOT = { num_of_cities = ROOT }
+		}
+		exists = ORL
+		exists = PRO
+		exists = BOU
+		exists = AUV
+	}
+	abort = {
+		OR = {
+			is_subject = yes
+			NOT = { exists = FRA }
+			FRA = { is_subject = yes }
+		}
+	}
+	success = {
+		FRA = { vassal_of = ENG }
+	}
+	chance = {
+		factor = 1000
+		modifier = {
+			factor = 2
+			mil = 4
+		}
+	}
+	immediate = {
+		add_casus_belli = {
+			type = cb_vassalize_mission
+			months = 120
+			target = FRA
+		}
+	}
+	abort_effect = {
+		remove_casus_belli = {
+			type = cb_vassalize_mission
+			target = FRA
+		}
+	}
+	effect = {
+		add_prestige = 10
+		hidden_effect = {
+			remove_casus_belli = {
+				type = cb_vassalize_mission
+				target = FRA
+			}
+		}
+	}
+}

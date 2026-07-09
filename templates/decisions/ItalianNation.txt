@@ -1,0 +1,103 @@
+country_decisions = {
+
+	italian_nation = {
+		major = yes
+		potential = {
+			NOT = { exists = ITA }
+			NOT = { tag = PAP }
+			NOT = { tag = HLR }
+			culture_group = latin
+			OR = {
+				ai = no
+				AND = {
+					ai = yes
+					num_of_cities = 10
+				}
+			}
+		}
+		allow = {
+			adm_tech = 10
+			is_subject = no
+			is_at_war = no
+			OR = {
+				num_of_owned_provinces_with = {
+					value = 13
+					region = italian_region
+				}
+				NOT = {
+					any_province = {
+						region = italian_region
+						NOT = { owned_by = ROOT }
+					}
+				}
+			}				
+		}
+		effect = {
+			italian_region = {
+				limit = {
+					NOT = { owned_by = ROOT }
+				}
+				add_claim = ITA
+			}
+			add_prestige = 25
+			change_tag = ITA
+			if = {
+				limit = {
+					government = republic
+				}
+				change_government = despotic_monarchy
+			}
+			swap_free_idea_group = yes		#keep progress
+		}
+		ai_will_do = {
+			factor = 1
+			modifier = {
+				factor = 0
+				government = republic
+			}
+		}
+	}
+	
+	gods_kingdom = {
+		major = yes
+		potential = {
+			NOT = { exists = ITA }
+			tag = PAP
+			NOT = { has_country_modifier = kingdom_of_god }
+		}
+		allow = {
+			is_subject = no
+			is_at_war = no
+			OR = {
+				num_of_owned_provinces_with = {
+					value = 21
+					region = italian_region
+				}
+				NOT = {
+					any_province = {
+						region = italian_region
+						NOT = { owned_by = ROOT }
+					}
+				}
+			}
+		}
+		effect = {
+			italian_region = {
+				limit = {
+					NOT = { owned_by = ROOT }
+				}
+				add_claim = PAP
+			}
+			culture_group_union = latin
+			add_country_modifier = {
+				name = "kingdom_of_god"
+				duration = -1
+			}
+			country_event  = { id = catholic_flavor.2 }
+		}
+		ai_will_do = {
+			factor = 1
+		}
+	}
+
+}

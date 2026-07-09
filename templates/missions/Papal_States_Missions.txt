@@ -1,0 +1,31 @@
+
+catholic_italy = {
+
+	type = country
+
+	category = ADM
+	
+	allow = {
+		tag = PAP
+		is_subject = no
+		is_at_war = no
+		italian_region = { NOT = { religion = catholic } }
+	}
+	abort = {
+		is_subject = yes
+	}
+	success = {
+		NOT = { italian_region = { NOT = { religion = catholic } } }
+	}
+	chance = {
+		factor = 1000
+		modifier = {
+			factor = 10
+			dip = 4
+		}
+	}
+	effect = {
+		add_prestige = 25
+		add_army_tradition = 50
+	}
+}

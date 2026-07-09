@@ -1,0 +1,51 @@
+country_decisions = {
+
+	romanian_nation = {
+		major = yes
+		potential = {
+			NOT = { tag = HLR }
+			NOT = { tag = PAP }
+			NOT = { exists = RMN }
+			primary_culture = romanian
+		}
+		allow = {
+			is_subject = no
+			is_at_war = no
+			NOT = { exists = BYZ }
+			OR = {
+				num_of_owned_provinces_with = {
+					value = 5
+					culture = romanian
+				}
+				NOT = {
+					any_province = {
+						culture = romanian
+						NOT = { owned_by = ROOT }
+					}
+				}
+			}
+		}
+		effect = {
+			europe = {
+				limit = {
+					NOT = { owned_by = ROOT }
+					culture = romanian
+				}
+				add_claim = RMN
+			}
+			random_owned_province = {
+				add_base_tax = 1
+			}
+			add_country_modifier = {
+				name = "centralization_modifier"
+				duration = 7300
+			}
+			add_prestige = 25
+			change_tag = RMN
+		}
+		ai_will_do = {
+			factor = 1
+		}
+	}
+	
+}

@@ -1,0 +1,1052 @@
+conquer_finland = {
+
+	type = country
+	
+	category = MIL
+	ai_mission = yes
+	
+	target_provinces = {
+		region = finnish_region
+		owned_by = SWE
+	}
+	allow = {
+		tag = RUS
+		is_subject = no
+		is_neighbor_of = SWE
+		NOT = { war_with = SWE }
+		finnish_region = { owned_by = SWE }
+		NOT = { finnish_region = { owned_by = RUS } }
+	}
+	abort = {
+		OR = {
+			is_subject = yes
+			any_target_province = {
+				NOT = { owned_by = ROOT }
+				NOT = { owned_by = SWE }
+			}
+		}
+	}
+	success = {
+		NOT = { war_with = SWE }
+		all_target_province = {
+			owned_by = ROOT
+		}
+	}
+	chance = {
+		factor = 1000
+		modifier = {
+			factor = 2
+			mil = 4
+		}	
+	}
+	immediate = {
+		every_target_province = {
+			add_claim = ROOT
+		}
+	}
+	abort_effect = {
+		every_target_province = {
+			remove_claim = ROOT
+		}
+	}
+	effect = {
+		add_adm_power = 100
+	}
+}
+
+
+subjugate_tver = {
+	
+	type = country
+
+	category = MIL
+	ai_mission = yes
+	
+	target_provinces = {
+		owned_by = TVE
+	}
+	allow = {
+		OR = {
+			tag = MOS
+			tag = RUS
+		}
+		is_subject = no
+		TVE = {
+			is_neighbor_of = ROOT
+			NOT = { num_of_cities = ROOT }
+			religion_group = ROOT
+			NOT = { is_subject_of = ROOT }
+		}
+		NOT = { has_country_flag = tver_subjugated }
+	}
+	abort = {
+		OR = {
+			is_subject = yes
+			NOT = { exists = TVE }
+			NOT = { religion_group = ROOT }
+			TVE = { is_subject_of = ROOT }
+		}
+	}
+	success = {
+		NOT = { exists = TVE }
+		all_target_province = {
+			owned_by = ROOT
+		}
+	}
+	chance = {
+		factor = 1000
+		modifier = {
+			factor = 2
+			NOT = { has_opinion = { who = TVE value = 0 } }
+		}
+	}
+	immediate = {
+		every_target_province = {
+			add_claim = ROOT
+		}
+	}
+	abort_effect = {
+		every_target_province = {
+			remove_claim = ROOT
+		}
+	}
+	effect = {
+		add_prestige = 5
+		if = {
+			limit = {
+				any_target_province = {
+					province_id = 294
+				}
+			}
+			294 = {
+				add_base_tax = 1
+				add_province_manpower = 1
+			}
+		}
+		if = {
+			limit = {
+				NOT = {
+					any_target_province = {
+						province_id = 294
+					}
+				}
+			}
+			random_target_province = {
+				add_base_tax = 1
+				add_province_manpower = 1				
+			}
+		}
+		set_country_flag = tver_subjugated
+	}
+}
+
+
+annex_yaroslavl = {
+	
+	type = country
+
+	category = MIL
+	ai_mission = yes
+	
+	target_provinces = {
+		owned_by = YAR
+	}
+	allow = {
+		OR = {
+			tag = MOS
+			tag = RUS
+		}
+		is_subject = no
+		YAR = {
+			is_neighbor_of = ROOT
+			NOT = { num_of_cities = ROOT }
+			religion_group = ROOT
+			NOT = { is_subject_of = ROOT }
+		}
+		NOT = { has_country_flag = yaroslavl_subjugated }
+	}
+	abort = {
+		OR = {
+			is_subject = yes
+			NOT = { exists = YAR }
+			YAR = { NOT = { religion_group = ROOT } }
+			YAR = { is_subject_of = ROOT }
+		}
+	}
+	success = {
+		NOT = { exists = YAR }
+		all_target_province = {
+			owned_by = ROOT
+		}
+	}
+	chance = {
+		factor = 1000
+		modifier = {
+			factor = 2
+			has_opinion = { who = YAR value = 100 }
+		}
+		modifier = {
+			factor = 2
+			has_opinion = { who = YAR value = 200 }
+		}
+	}
+	immediate = {
+		every_target_province = {
+			add_claim = ROOT
+		}
+	}
+	abort_effect = {
+		every_target_province = {
+			remove_claim = ROOT
+		}
+	}
+	effect = {
+		add_prestige = 5
+		if = {
+			limit = {
+				any_target_province = {
+					province_id = 308
+				}
+			}
+			308 = {
+				add_base_tax = 1
+				add_province_manpower = 1
+			}
+		}
+		if = {
+			limit = {
+				NOT = {
+					any_target_province = {
+						province_id = 308
+					}
+				}
+			}
+			random_target_province = {
+				add_base_tax = 1
+				add_province_manpower = 1				
+			}
+		}
+		set_country_flag = yaroslavl_subjugated
+	}
+}
+
+
+annex_ryazan = {
+	
+	type = country
+
+	category = MIL
+	ai_mission = yes
+	
+	target_provinces = {
+		owned_by = RYA
+	}
+	allow = {
+		OR = {
+			tag = MOS
+			tag = RUS
+		}
+		is_subject = no
+		RYA = {
+			is_neighbor_of = ROOT
+			NOT = { num_of_cities = ROOT }
+			religion_group = ROOT
+			NOT = { is_subject_of = ROOT }
+		}
+		NOT = { has_country_flag = ryazan_subjugated }
+	}
+	abort = {
+		OR = {
+			is_subject = yes	
+			NOT = { exists = RYA }
+			RYA = { NOT = { religion_group = ROOT } }
+			RYA = { is_subject_of = ROOT }
+		}
+	}
+	success = {
+		NOT = { exists = RYA }
+		owns = 301
+	}
+	chance = {
+		factor = 1000
+		modifier = {
+			factor = 2
+			has_opinion = { who = RYA value = 100 }
+		}
+		modifier = {
+			factor = 2
+			has_opinion = { who = RYA value = 200 }
+		}
+	}
+	immediate = {
+		every_target_province = {
+			add_claim = ROOT
+		}
+	}
+	abort_effect = {
+		every_target_province = {
+			remove_claim = ROOT
+		}
+	}
+	effect = {
+		add_prestige = 5
+		if = {
+			limit = {
+				any_target_province = {
+					province_id = 300
+				}
+			}
+			300 = {
+				add_base_tax = 1
+				add_province_manpower = 1
+			}
+		}
+		if = {
+			limit = {
+				any_target_province = {
+					province_id = 301
+				}
+			}
+			301 = {
+				add_base_tax = 1
+				add_province_manpower = 1
+			}
+		}
+		if = {
+			limit = {
+				NOT = {
+					any_target_province = {
+						OR = {
+							province_id = 300
+							province_id = 301
+						}
+					}
+				}
+			}
+			random_target_province = {
+				add_base_tax = 1
+				add_province_manpower = 1				
+			}
+		}
+		set_country_flag = ryazan_subjugated
+	}
+}
+
+
+russia_discovers_western_siberia = {
+
+	type = country
+	
+	category = DIP
+	
+	allow = {
+		OR = {
+			tag = MOS
+			tag = RUS
+		}
+		has_idea = quest_for_the_new_world
+		NOT = { western_siberia = { has_discovered =  ROOT } }
+		western_siberia = { range = ROOT }
+	}
+	abort = {
+		NOT = { has_idea = quest_for_the_new_world }
+	}
+	success = {
+		western_siberia = { has_discovered =  ROOT }
+	}
+	chance = {
+		factor = 1000
+		modifier = {
+			factor = 2
+			innovativeness_ideas = 4
+		}
+		modifier = {
+			factor = 2
+			num_of_explorers = 2
+		}
+	}
+	effect = {
+		add_treasury = 100
+	}
+}
+
+
+russian_colony_in_west_siberia = {
+
+	type = country
+	
+	category = DIP
+	
+	allow = {
+		tag = RUS
+		western_siberia = {
+			has_discovered = ROOT
+			is_empty = yes
+		}
+		has_idea = quest_for_the_new_world
+		NOT = { western_siberia = { owned_by = ROOT } }
+	}
+	abort = {
+		OR = {
+			NOT = { has_idea = quest_for_the_new_world }
+			AND = {
+				NOT = { western_siberia = { is_empty = yes } }
+				NOT = { western_siberia = { owned_by = ROOT } }
+			}	
+		}
+	}
+	success = {
+		western_siberia = { owned_by = ROOT }
+	}
+	chance = {
+		factor = 1000
+		modifier = {
+			factor = 2
+			adm = 4
+		}
+		modifier = {
+			factor = 2
+			num_of_explorers = 1
+		}
+	}
+	effect = {
+		add_prestige = 10
+	}
+}
+
+
+russia_discovers_eastern_siberia = {
+
+	type = country
+	
+	category = DIP
+	
+	allow = {
+		OR = {
+			tag = MOS
+			tag = RUS
+		}
+		has_idea = quest_for_the_new_world
+		western_siberia = { has_discovered =  ROOT }
+		NOT = { eastern_siberia = { has_discovered =  ROOT } }
+		eastern_siberia = { range = ROOT }
+	}
+	abort = {
+		NOT = { has_idea = quest_for_the_new_world }
+	}
+	success = {
+		eastern_siberia = { has_discovered =  ROOT }
+	}
+	chance = {
+		factor = 1000
+		modifier = {
+			factor = 2
+			innovativeness_ideas = 4
+		}
+	}
+	effect = {
+		add_prestige = 5
+		add_adm_power = 50
+	}
+}
+
+
+russian_colony_in_east_siberia = {
+
+	type = country
+	
+	category = DIP
+	
+	allow = {
+		tag = RUS
+		has_idea = quest_for_the_new_world
+		western_siberia = { owned_by = ROOT }
+		eastern_siberia = {
+			has_discovered = ROOT
+			is_empty = yes
+		}
+		NOT = { eastern_siberia = { owned_by = ROOT } }
+	}
+	abort = {
+		OR = {
+			NOT = { has_idea = quest_for_the_new_world }
+			AND = {
+				NOT = { eastern_siberia = { is_empty = yes } }
+				NOT = { eastern_siberia = { owned_by = ROOT } }
+			}
+			NOT = { western_siberia = { owned_by = ROOT } }
+		}
+	}
+	success = {
+		eastern_siberia = { owned_by = ROOT }
+	}
+	chance = {
+		factor = 1000
+		modifier = {
+			factor = 2
+			adm = 4
+		}
+		modifier = {
+			factor = 2
+			num_of_colonists = 2
+		}
+	}
+	effect = {
+		add_prestige = 10
+	}
+}
+
+
+annex_the_qasim_khanate = {
+	
+	type = country
+
+	category = MIL
+	ai_mission = yes
+	
+	target_provinces = {
+		owned_by = QAS
+	}
+	allow = {
+		OR = {
+			tag = MOS
+			tag = RUS
+		}
+		is_subject = no
+		QAS = {
+			is_neighbor_of = ROOT
+			NOT = { num_of_cities = ROOT }
+			religion_group = ROOT
+			NOT = { is_subject_of = ROOT }
+		}
+		NOT = { has_country_flag = qasim_subjugated }
+	}
+	abort = {
+		OR = {
+			is_subject = yes
+			NOT = { exists = QAS }
+			QAS = { NOT = { religion_group = ROOT } }
+			QAS = { is_subject_of = ROOT }
+		}
+	}
+	success = {
+		NOT = { exists = QAS }
+		all_target_province = {
+			owned_by = ROOT
+		}
+	}
+	chance = {
+		factor = 1000
+		modifier = {
+			factor = 2
+			NOT = { has_opinion = { who = QAS value = 0 } }
+		}
+		modifier = {
+			factor = 2
+			NOT = { has_opinion = { who = QAS value = -50 } }
+		}
+	}
+	immediate = {
+		every_target_province = {
+			add_claim = ROOT
+		}
+	}
+	abort_effect = {
+		every_target_province = {
+			remove_claim = ROOT
+		}
+	}
+	effect = {
+		add_prestige = 5
+		set_country_flag = qasim_subjugated
+	}
+}
+
+
+defend_russia_against_the_mongols = {
+	
+	type = country
+
+	category = MIL
+	
+	allow = {
+		OR = {
+			tag = MOS
+			tag = RUS
+		}
+		GOL = {
+			is_neighbor_of = ROOT
+			NOT = { war_with = ROOT }
+			NOT = { alliance_with = ROOT }
+			NOT = { is_subject_of = ROOT }
+			any_owned_province = { culture = russian }
+		}
+	}
+	abort = {
+		OR = {
+			NOT = { exists = GOL }
+			NOT = { war_with = GOL }
+		}
+	}
+	success = {
+		NOT = { war_with = GOL }
+		GOL = {
+			NOT = {
+				any_owned_province = { culture = russian }
+			}
+		}
+	}
+	chance = {
+		factor = 1000
+		modifier = {
+			factor = 2
+			is_monarch_leader = yes
+		}
+		modifier = {
+			factor = 2
+			mil = 4
+		}
+	}
+	effect = {
+		add_prestige = 5
+		add_army_tradition = 5
+	}
+}
+
+
+cross_the_mongol_border = {
+	
+	type = country
+
+	category = MIL
+	
+	allow = {
+		OR = {
+			tag = MOS
+			tag = RUS
+		}
+		GOL = { is_neighbor_of = ROOT }
+		NOT = { any_owned_province = { is_core = GOL } }
+	}
+	abort = {
+		is_subject = yes
+		AND = {
+			NOT = { exists = GOL }
+			NOT = { any_owned_province = { is_core = GOL } }
+		}
+	}
+	success = {
+		NOT = { war_with = GOL }
+		any_owned_province = { is_core = GOL }
+	}
+	chance = {
+		factor = 1000
+		modifier = {
+			factor = 2
+			is_monarch_leader = yes
+		}
+		modifier = {
+			factor = 2
+			mil = 4
+		}
+	}
+	effect = {
+		add_adm_power = 50
+		random_owned_province = {
+			limit = { is_core = GOL }
+			add_base_tax = 1
+			add_province_manpower = 1
+		}
+	}
+}
+
+
+subjugate_novgorod = {
+	
+	type = country
+
+	category = MIL
+	ai_mission = yes
+	
+	target_provinces = {
+		owned_by = NOV
+	}
+	allow = {
+		OR = {
+			tag = MOS
+			tag = RUS
+		}
+		is_subject = no
+		NOV = {
+			is_neighbor_of = ROOT
+			NOT = { num_of_cities = ROOT }
+			NOT = { is_subject_of = ROOT }
+		}
+	}
+	abort = {
+		OR = {
+			is_subject = yes
+			NOT = { exists = NOV }
+			NOV = { is_subject_of = ROOT }
+		}
+	}
+	success = {
+		NOT = { exists = NOV }
+		all_target_province = {
+			owned_by = ROOT
+		}
+	}
+	chance = {
+		factor = 5000
+		modifier = {
+			factor = 2
+			NOT = { has_opinion = { who = NOV value = 0 } }
+		}
+	}
+	immediate = {
+		every_target_province = {
+			add_claim = ROOT
+		}
+	}
+	abort_effect = {
+		every_target_province = {
+			remove_claim = ROOT
+		}
+	}
+	effect = {
+		add_prestige = 10
+	}
+}
+
+
+annex_novgorod = {
+	
+	type = country
+
+	category = DIP
+	
+	target_provinces = {
+		owned_by = NOV
+	}
+	allow = {
+		OR = {
+			tag = MOS
+			tag = RUS
+		}
+		is_subject = no
+		NOV = {
+			vassal_of = ROOT
+			is_neighbor_of = ROOT
+			NOT = { num_of_cities = ROOT }
+			religion_group = ROOT
+		}
+		NOT = { has_country_flag = novogorod_subjugated }
+	}
+	abort = {
+		OR = {
+			is_subject = yes
+			NOT = { exists = NOV }
+			NOV = { NOT = { religion_group = ROOT } }
+		}
+	}
+	success = {
+		NOT = { exists = NOV }
+		all_target_province = {
+			owned_by = ROOT
+		}
+	}
+	chance = {
+		factor = 1000
+		modifier = {
+			factor = 2
+			has_opinion = { who = NOV value = 100 }
+		}
+		modifier = {
+			factor = 2
+			has_opinion = { who = NOV value = 200 }
+		}
+	}
+	effect = {
+		add_prestige = 10
+		if = {
+			limit = {
+				any_target_province = {
+					province_id = 310
+				}
+			}
+			310 = {
+				add_base_tax = 1
+				add_province_manpower = 1
+			}
+		}
+		if = {
+			limit = {
+				NOT = {
+					any_target_province = {
+						province_id  =310
+					}
+				}
+			}
+			random_target_province = {
+				add_base_tax = 1
+				add_province_manpower = 1
+			}
+		}
+		set_country_flag = novogorod_subjugated
+	}
+}
+
+subjugate_crimea = {
+	
+	type = country
+
+	category = MIL
+	ai_mission = yes
+	
+	target_provinces = {
+		owned_by = CRI
+	}
+	allow = {
+		OR = {
+			tag = MOS
+			tag = RUS
+		}
+		is_subject = no
+		CRI = {
+			is_neighbor_of = ROOT
+			NOT = { num_of_cities = ROOT }
+			NOT = { is_subject_of = ROOT }
+		}
+	}
+	abort = {
+		OR = {
+			is_subject = yes
+			NOT = { exists = CRI }
+			CRI = { is_subject_of = ROOT }
+		}
+	}
+	success = {
+		NOT = { exists = CRI }
+		all_target_province = {
+			owned_by = ROOT
+		}
+	}
+	chance = {
+		factor = 1000
+		modifier = {
+			factor = 2
+			mil = 4
+		}
+		modifier = {
+			factor = 2
+			CRI = {
+				NOT = { mil = 0 }
+			}
+		}
+	}
+	immediate = {
+		every_target_province = {
+			add_claim = ROOT
+		}
+	}
+	abort_effect = {
+		every_target_province = {
+			remove_claim = ROOT
+		}
+	}
+	effect = {
+		add_prestige = 5
+	}
+}
+
+
+subjugate_kazan = {
+	
+	type = country
+
+	category = MIL
+	ai_mission = yes
+	
+	target_provinces = {
+		owned_by = KAZ
+	}
+	allow = {
+		OR = {
+			tag = MOS
+			tag = RUS
+		}
+		is_subject = no
+		KAZ = {
+			is_neighbor_of = ROOT
+			NOT = { num_of_cities = ROOT }
+			NOT = { is_subject_of = ROOT }
+		}
+	}
+	abort = {
+		OR = {
+			is_subject = yes
+			NOT = { exists = KAZ }
+			KAZ = { is_subject_of = ROOT }
+		}
+	}
+	success = {
+		NOT = { exists = KAZ }
+		all_target_province = {
+			owned_by = ROOT
+		}
+	}
+	chance = {
+		factor = 1000
+		modifier = {
+			factor = 2
+			mil = 4
+		}
+		modifier = {
+			factor = 2
+			KAZ = {
+				NOT = { mil = 0 }
+			}
+		}
+	}
+	immediate = {
+		every_target_province = {
+			add_claim = ROOT
+		}
+	}
+	abort_effect = {
+		every_target_province = {
+			remove_claim = ROOT
+		}
+	}
+	effect = {
+		add_prestige = 5
+	}
+}
+
+
+subjugate_the_siberian_khanate = {
+	
+	type = country
+
+	category = MIL
+	ai_mission = yes
+	
+	target_provinces = {
+		owned_by = SIB
+	}
+	allow = {
+		OR = {
+			tag = MOS
+			tag = RUS
+		}
+		is_subject = no
+		SIB = {
+			is_neighbor_of = ROOT
+			NOT = { num_of_cities = ROOT }
+			NOT = { is_subject_of = ROOT }
+		}
+	}
+	abort = {
+		OR = {
+			is_subject = yes
+			NOT = { exists = SIB }
+			SIB = { is_subject_of = ROOT }
+		}
+	}
+	success = {
+		NOT = { exists = SIB }
+		all_target_province = {
+			owned_by = ROOT
+		}
+	}
+	chance = {
+		factor = 1000
+		modifier = {
+			factor = 2
+			mil = 4
+		}
+		modifier = {
+			factor = 2
+			KAZ = {
+				NOT = { mil = 0 }
+			}
+		}
+	}
+	immediate = {
+		every_target_province = {
+			add_claim = ROOT
+		}
+	}
+	abort_effect = {
+		every_target_province = {
+			remove_claim = ROOT
+		}
+	}
+	effect = {
+		add_prestige = 5
+	}
+}
+
+
+subjugate_astrakhan = {
+	
+	type = country
+
+	category = MIL
+	
+	
+	target_provinces = {
+		owned_by = AST
+	}
+	allow = {
+		OR = {
+			tag = MOS
+			tag = RUS
+		}
+		is_subject = no
+		AST = {
+			is_neighbor_of = ROOT
+			NOT = { num_of_cities = ROOT }
+			NOT = { is_subject_of = ROOT }
+		}
+	}
+	abort = {
+		OR = {
+			is_subject = yes
+			NOT = { exists = AST }
+			AST = { is_subject_of = ROOT }
+		}
+	}
+	success = {
+		NOT = { exists = AST }
+		all_target_province = {
+			owned_by = ROOT
+		}
+	}
+	chance = {
+		factor = 1000
+		modifier = {
+			factor = 2
+			mil = 4
+		}
+		modifier = {
+			factor = 2
+			KAZ = {
+				NOT = { mil = 0 }
+			}
+		}
+	}
+	immediate = {
+		every_target_province = {
+			add_claim = ROOT
+		}
+	}
+	abort_effect = {
+		every_target_province = {
+			remove_claim = ROOT
+		}
+	}
+	effect = {
+		add_prestige = 5
+	}
+}

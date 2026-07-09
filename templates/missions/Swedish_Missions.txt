@@ -1,0 +1,302 @@
+
+vassalize_norway_swe = {
+	
+	type = country
+
+	category = MIL
+	ai_mission = yes
+	
+	allow = {
+		tag = SWE
+		is_subject = no
+		exists = NOR
+		NOR = {
+			is_neighbor_of = ROOT
+			NOT = { vassal_of = ROOT }
+			NOT = { num_of_cities = ROOT }
+			is_subject = no
+		}
+	}
+	abort = {
+		OR = {
+			NOT = { exists = NOR }
+			NOR = { is_subject = yes }
+			is_subject = yes			
+		}
+	}
+	success = {
+		NOR = { vassal_of = SWE }
+	}
+	chance = {
+		factor = 1000
+		modifier = {
+			factor = 2
+			NOT = { has_opinion = { who = NOR value = 0 } }
+		}
+	}
+	immediate = {
+		add_casus_belli = {
+			type = cb_vassalize_mission
+			months = 120
+			target = NOR
+		}
+	}
+	abort_effect = {
+		remove_casus_belli = {
+			type = cb_vassalize_mission
+			target = NOR
+		}
+	}
+	effect = {
+		add_army_tradition = 20
+		hidden_effect = {
+			remove_casus_belli = {
+				type = cb_vassalize_mission
+				target = NOR
+			}
+		}
+	}
+}
+
+
+annex_norway_swe = {
+	
+	type = country
+
+	category = DIP
+	
+	allow = {
+		tag = SWE
+		is_subject = no
+		exists = NOR
+		NOR = {
+			religion_group = ROOT
+			vassal_of = ROOT
+			is_neighbor_of = ROOT
+			NOT = { num_of_cities = ROOT }
+		}
+	}
+	abort = {
+		OR = {
+			NOT = { exists = NOR }
+			NOR = { NOT = { religion_group = ROOT } }
+			is_subject = yes
+		}
+	}
+	success = {
+		NOT = { exists = NOR }
+	}
+	chance = {
+		factor = 1000
+		modifier = {
+			factor = 2
+			has_opinion = { who = NOR value = 100 }
+		}
+		modifier = {
+			factor = 2
+			has_opinion = { who = NOR value = 200 }
+		}
+	}
+	immediate = {
+	}
+	abort_effect = {
+	}
+	effect = {
+		add_prestige = 20
+		add_stability = 1
+	}
+}
+
+
+no_territory_to_denmark = {
+
+	type = country
+
+	category = MIL
+	
+	allow = {
+		tag = SWE
+		is_subject = no
+		exists = DAN
+		swedish_region = { owned_by = DAN }
+		is_at_war = no
+		stability = 3
+		army_size = DAN
+		DAN = { is_at_war = no }
+	}
+	abort = {
+		OR = {
+			is_subject = yes
+			NOT = { exists = DAN }
+			NOT = { swedish_region = { owned_by = DAN } }
+		}
+	}
+	success = {
+		NOT = { swedish_region = { owned_by = DAN } }
+	}
+	chance = {
+		factor = 1000
+		modifier = {
+			factor = 2
+			mil = 4
+		}	
+	}
+	effect = {
+		add_prestige = 10
+		add_war_exhaustion = -5
+	}
+}
+
+
+reconquer_finland = {
+
+	type = country
+	
+	category = MIL
+	ai_mission = yes
+	
+	allow = {
+		tag = SWE
+		is_subject = no
+		OR = {
+			exists = MOS
+			exists = RUS
+		}
+		OR = {
+			finnish_region = { owned_by = MOS }
+			finnish_region = { owned_by = RUS }
+		}
+	}
+	abort = {
+		OR = {
+			AND = {
+				NOT = { finnish_region = { owned_by = MOS } }
+				NOT = { finnish_region = { owned_by = RUS } }
+			}
+			is_subject = yes
+		}
+	}
+	success = {
+		NOT = { war_with = MOS }
+		NOT = { war_with = RUS }
+		NOT = { finnish_region = { owned_by = MOS } }
+		NOT = { finnish_region = { owned_by = RUS } }
+	}
+	chance = {
+		factor = 1000
+		modifier = {
+			factor = 2
+			mil = 4
+		}	
+	}
+	effect = {
+		add_mil_power = 100
+		add_stability = 1
+	}
+}
+
+
+swedish_colony_in_north_america = {
+	
+	type = country
+
+	category = DIP
+	
+	allow = {
+		tag = SWE
+		is_year = 1600
+		northeastern_america = {
+			has_discovered = ROOT
+			is_empty = yes
+		}
+		NOT = {
+			northeastern_america = {
+				owned_by = ROOT
+			}
+		}
+		num_of_colonists = 1
+	}
+	abort = {
+		NOT = { northeastern_america = { is_empty = yes } }
+		NOT = { northeastern_america = { owned_by = ROOT } }
+	}
+	success = {
+		northeastern_america = { owned_by = ROOT }
+	}
+	chance = {
+		factor = 1000
+		modifier = {
+			factor = 2
+			has_idea = land_of_opportunity
+		}
+		modifier = {
+			factor = 2
+			has_idea = colonial_ventures
+		}
+	}
+	effect = {
+		add_prestige = 10
+	}
+}
+
+
+fortify_the_eastern_border = {
+	
+	type = our_provinces
+
+	category = ADM
+	
+	allow = {
+		owner = { tag = SWE }
+		can_build = fort2
+		region = finnish_region
+		has_building = fort1
+		NOT = { has_building = fort2 }
+		any_neighbor_province = {
+			region = russian_region
+			OR = {
+				owned_by = MOS
+				owned_by = RUS
+			}
+		}
+	}
+	abort = {
+		NOT = {
+			any_neighbor_province = {
+				region = russian_region
+				OR = {
+					owned_by = MOS
+					owned_by = RUS
+				}
+			}
+		}
+	}
+	success = {
+		has_building = fort2
+	}
+	chance = {
+		factor = 1000
+		modifier = {
+			factor = 2
+			OR = {
+				AND = {
+					owner = { NOT = { has_opinion = { who = MOS value = 0 } } }
+					any_neighbor_province = {
+						region = russian_region
+						owned_by = MOS
+					}
+				}
+				AND = {
+					owner = { NOT = { has_opinion = { who = RUS value = 0 } } }
+					any_neighbor_province = {
+						region = russian_region
+						owned_by = RUS
+					}
+				}
+			}
+		}
+	}
+	effect = {
+		add_army_tradition = 10
+	}
+}

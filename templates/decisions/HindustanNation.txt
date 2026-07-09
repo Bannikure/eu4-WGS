@@ -1,0 +1,192 @@
+country_decisions = {
+
+	hindustan_nation_dravidian = {
+		major = yes
+		potential = {
+			NOT = { exists = HIN }
+			NOT = { tag = MUG }
+			culture_group = dravidian
+			NOT = { technology_group = nomad_group }
+			OR = {
+				ai = no
+				AND = {
+					ai = yes
+					num_of_cities = 5
+				}
+			}
+		}
+		allow = {
+			is_subject = no
+			culture_group = dravidian
+			is_at_war = no
+			stability = 3
+			OR = {
+				num_of_owned_provinces_with = {
+					value = 21
+					region = indian_region 
+				}
+				NOT = {
+					any_province = {
+						region = indian_region 
+						NOT = { owned_by = ROOT }
+					}
+				}
+			}
+		}
+		effect = {
+			indian_region = {
+				limit = {
+					NOT = { owned_by = ROOT }
+				}
+				add_claim = HIN
+			}
+			add_prestige = 10
+			change_tag = HIN
+		}
+		ai_will_do = {
+			factor = 1
+		}
+		ai_importance = 50
+	}
+
+	hindustan_nation_western_aryan = {
+		major = yes
+		potential = {
+			NOT = { exists = HIN }
+			NOT = { tag = MUG }
+			culture_group = western_aryan
+			NOT = { technology_group = nomad_group }
+			OR = {
+				ai = no
+				AND = {
+					ai = yes
+					num_of_cities = 5
+				}
+			}
+		}
+		allow = {
+			is_subject = no
+			culture_group = western_aryan
+			is_at_war = no
+			stability = 3
+			OR = {
+				num_of_owned_provinces_with = {
+					value = 21
+					region = indian_region 
+				}
+				NOT = {
+					any_province = {
+						region = indian_region 
+						NOT = { owned_by = ROOT }
+					}
+				}
+			}
+		}
+		effect = {
+			indian_region = {
+				limit = {
+					NOT = { owned_by = ROOT }
+				}
+				add_claim = HIN
+			}
+			add_prestige = 10
+			change_tag = HIN
+		}
+		ai_will_do = {
+			factor = 1
+		}
+		ai_importance = 50
+	}
+
+	hindustan_nation_hindusthani = {
+		major = yes
+		potential = {
+			NOT = { exists = HIN }
+			NOT = { tag = MUG }
+			culture_group = hindusthani
+			NOT = { technology_group = nomad_group }
+			OR = {
+				ai = no
+				AND = {
+					ai = yes
+					num_of_cities = 5
+				}
+			}
+		}
+		allow = {
+			is_subject = no
+			culture_group = hindusthani
+			is_at_war = no
+			stability = 3
+			OR = {
+				num_of_owned_provinces_with = {
+					value = 21
+					region = indian_region 
+				}
+				NOT = {
+					any_province = {
+						region = indian_region 
+						NOT = { owned_by = ROOT }
+					}
+				}
+			}
+		}
+		effect = {
+			indian_region = {
+				limit = {
+					NOT = { owned_by = ROOT }
+				}
+				add_claim = HIN
+			}
+			add_prestige = 10
+			change_tag = HIN
+		}
+		ai_will_do = {
+			factor = 1
+		}
+		ai_importance = 50
+	}
+
+	hindustan_nation_eastern_aryan = {
+		major = yes
+		potential = {
+			NOT = { exists = HIN }
+			NOT = { tag = MUG }
+			culture_group = eastern_aryan
+			NOT = { technology_group = nomad_group }
+		}
+		allow = {
+			is_subject = no
+			culture_group = eastern_aryan
+			is_at_war = no
+			stability = 3
+			OR = {
+				num_of_owned_provinces_with = {
+					value = 21
+					region = indian_region 
+				}
+				NOT = {
+					any_province = {
+						region = indian_region 
+						NOT = { owned_by = ROOT }
+					}
+				}
+			}
+		}
+		effect = {
+			indian_region = {
+				limit = {
+					NOT = { owned_by = ROOT }
+				}
+				add_claim = HIN
+			}
+			add_prestige = 10
+			change_tag = HIN
+		}
+		ai_will_do = {
+			factor = 1
+		}
+		ai_importance = 50
+	}
+
+}

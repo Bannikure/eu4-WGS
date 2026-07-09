@@ -1,0 +1,106 @@
+lithuania_poland_relations = {
+	
+	type = country
+
+	category = DIP
+	
+	allow = {
+		tag = LIT
+		exists = POL
+		is_subject = no
+		government = monarchy
+		NOT = { war_with = POL }
+		NOT = { marriage_with = POL }
+		POL = {
+			is_subject = no
+			government = monarchy
+		}
+	}
+	abort = {
+		OR = {
+			is_subject = yes
+			NOT = { government = monarchy }
+			war_with = POL
+			NOT = { exists = POL }
+			POL = {
+				OR = {
+					is_subject = yes
+					NOT = { government = monarchy }
+				}
+			}
+		}
+	}
+	success = {
+		marriage_with = POL
+		POL = { has_opinion = { who = LIT value = 100 } }
+	}
+	chance = {
+		factor = 1000
+		modifier = {
+			factor = 2
+			NOT = { has_opinion = { who = POL value = 0 } }
+		}
+		modifier = {
+			factor = 2
+			NOT = { has_opinion = { who = POL value = -100 } }
+		}
+	}
+	effect = {
+		add_stability = 1
+	}
+}
+
+
+defeat_the_livonian_order = {
+	
+	type = country
+
+	category = MIL
+	ai_mission = yes
+	
+	target_provinces = {
+		owned_by = LIV
+	}
+	allow = {
+		tag = LIT
+		exists = LIV
+		is_subject = no
+		NOT = { has_opinion = { who = LIV value = 0 } }
+		LIV = {
+			is_neighbor_of = ROOT
+			NOT = { num_of_cities = ROOT }
+		}
+	}
+	abort = {
+		OR = {
+			is_subject = yes
+			NOT = { exists = LIV }
+		}
+	}
+	success = {
+		NOT = { exists = LIV }
+		all_target_province = {
+			owned_by = ROOT
+		}
+	}
+	chance = {
+		factor = 1000
+		modifier = {
+			factor = 2
+			mil = 4
+		}
+	}
+	immediate = {
+		every_target_province = {
+			add_claim = ROOT
+		}
+	}
+	abort_effect = {
+		every_target_province = {
+			remove_claim = ROOT
+		}
+	}
+	effect = {
+		add_prestige = 10
+	}
+}

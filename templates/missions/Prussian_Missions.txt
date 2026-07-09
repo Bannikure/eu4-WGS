@@ -1,0 +1,311 @@
+
+brandenburg_prussia_relations = {
+	
+	type = country
+
+	category = DIP
+	
+	allow = {
+		tag = BRA
+		exists = PRU
+		NOT = { war_with = PRU }
+		NOT = { has_opinion = { who = PRU value = 100 } }
+	}
+	abort = {
+		OR = {
+			NOT = { exists = PRU }
+			war_with = PRU
+		}
+	}
+	success = {
+		PRU = { has_opinion = { who = BRA value = 150 } }
+	}
+	chance = {
+		factor = 1000
+		modifier = {
+			factor = 2
+			NOT = { has_opinion = { who = PRU value = 0 } }
+		}
+		modifier = {
+			factor = 2
+			NOT = { has_opinion = { who = PRU value = -100 } }
+		}
+	}
+	effect = {
+		add_stability = 1
+	}
+}
+
+
+prussia_brandenburg_relations = {
+	
+	type = country
+
+	category = DIP
+	
+	allow = {
+		tag = PRU
+		exists = BRA
+		NOT = { war_with = BRA }
+		NOT = { has_opinion = { who = BRA value = 100 } }
+	}
+	abort = {
+		OR = {
+			NOT = { exists = BRA }
+			war_with = BRA
+		}
+	}
+	success = {
+		BRA = { has_opinion = { who = PRU value = 150 } }
+	}
+	chance = {
+		factor = 1000
+		modifier = {
+			factor = 2
+			NOT = { has_opinion = { who = BRA value = 0 } }
+		}
+		modifier = {
+			factor = 2
+			NOT = { has_opinion = { who = BRA value = -100 } }
+		}
+	}
+	effect = {
+		add_stability = 1
+	}
+}
+
+
+vassalize_prussia = {
+	
+	type = country
+
+	category = MIL
+	ai_mission = yes
+	
+	allow = {
+		tag = BRA
+		exists = PRU
+		is_subject = no
+		PRU = {
+			is_subject = no
+			is_neighbor_of = ROOT
+			NOT = { num_of_cities = ROOT }
+		}
+	}
+	abort = {
+		OR = {
+			is_subject = yes
+			NOT = { exists = PRU }
+			PRU = { is_subject = yes }
+		}
+	}
+	success = {
+		PRU = { vassal_of = BRA }
+	}
+	chance = {
+		factor = 1000
+		modifier = {
+			factor = 2
+			NOT = { has_opinion = { who = PRU value = 0 } }
+		}
+	}
+	immediate = {
+		add_casus_belli = {
+			type = cb_vassalize_mission
+			months = 120
+			target = PRU
+		}
+	}
+	abort_effect = {
+		remove_casus_belli = {
+			type = cb_vassalize_mission
+			target = PRU
+		}
+	}
+	effect = {
+		add_prestige = 10
+		hidden_effect = {
+			remove_casus_belli = {
+				type = cb_vassalize_mission
+				target = PRU
+			}
+		}
+	}
+}
+
+
+annex_prussia = {
+	
+	type = country
+
+	category = DIP
+	
+	target_provinces = {
+		owned_by = PRU
+	}
+	allow = {
+		tag = BRA
+		exists = PRU
+		is_subject = no
+		PRU = {
+			vassal_of = BRA
+			is_neighbor_of = ROOT
+			NOT = { num_of_cities = ROOT }
+			religion_group = ROOT
+		}
+	}
+	abort = {
+		OR = {
+			NOT = { exists = PRU }
+			PRU = { NOT = { religion_group = ROOT } }
+		}
+	}
+	success = {
+		NOT = { exists = PRU }
+		all_target_province = {
+			owned_by = ROOT
+		}
+	}
+	chance = {
+		factor = 1000
+		modifier = {
+			factor = 2
+			has_opinion = { who = PRU value = 100 }
+		}
+		modifier = {
+			factor = 2
+			has_opinion = { who = PRU value = 200 }
+		}
+	}
+	immediate = {
+		every_target_province = {
+			add_core = ROOT
+		}
+	}
+	abort_effect = {
+		every_target_province = {
+			remove_core = ROOT
+		}
+	}
+	effect = {
+		add_prestige = 10
+		hidden_effect = {
+			every_target_province = {
+				remove_core = ROOT
+			}
+		}
+	}
+}
+
+
+brandenburg_breaks_free_from_poland = {
+	
+	type = country
+
+	category = MIL
+	
+	allow = {
+		tag = BRA
+		exists = POL
+		vassal_of = POL
+	}
+	abort = {
+		NOT = { exists = POL }
+	}
+	success = {
+		NOT = { vassal_of = POL }
+	}
+	chance = {
+		factor = 1000
+		modifier = {
+			factor = 2
+			NOT = { has_opinion = { who = POL value = 0 } }
+		}
+		modifier = {
+			factor = 2
+			NOT = { has_opinion = { who = POL value = -50 } }
+		}
+	}
+	effect = {
+		add_prestige = 10
+		add_army_tradition = 30
+	}
+}
+
+
+prussia_breaks_free_from_poland = {
+	
+	type = country
+
+	category = MIL
+	
+	allow = {
+		tag = PRU
+		exists = POL
+		vassal_of = POL
+	}
+	abort = {
+		NOT = { exists = POL }
+	}
+	success = {
+		NOT = { vassal_of = POL }
+	}
+	chance = {
+		factor = 1000
+		modifier = {
+			factor = 2
+			NOT = { has_opinion = { who = POL value = 0 } }
+		}
+		modifier = {
+			factor = 2
+			NOT = { has_opinion = { who = POL value = -50 } }
+		}
+	}
+	effect = {
+		add_prestige = 10
+		add_army_tradition = 30
+	}
+}
+
+
+subjugate_westphalia = {
+	
+	type = country
+
+	category = MIL
+	ai_mission = yes
+	
+	allow = {
+		tag = PRU
+		exists = WES
+		is_subject = no
+		NOT = { westphalian_region = { owned_by = ROOT } }
+		WES = { is_neighbor_of = ROOT }
+	}
+	abort = {
+		is_subject = yes
+	}
+	success = {
+		westphalian_region = { owned_by = ROOT }
+	}
+	chance = {
+		factor = 1000
+		modifier = {
+			factor = 2
+			mil = 4
+		}	
+	}
+	immediate = {
+		westphalian_region = {
+			add_claim = ROOT
+		}
+	}
+	abort_effect = {
+		westphalian_region = {
+			remove_claim = ROOT
+		}
+	}
+	effect = {
+		add_prestige = 10
+	}
+}

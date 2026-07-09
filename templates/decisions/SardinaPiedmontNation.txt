@@ -1,0 +1,104 @@
+country_decisions = {
+
+	sardinia_piedmont_nation = {
+		major = yes
+		potential = {
+			NOT = { exists = SPI }
+			government = monarchy
+			OR = {
+				tag = SAV
+				tag = SAR
+			}
+		}
+		allow = {
+			adm_tech = 10
+			is_subject = no
+			is_at_war = no
+			OR = {
+				AND = {
+					tag = SAR
+					NOT = { exists = SAV }
+				}
+				AND = {
+					tag = SAV
+					NOT = { exists = SAR }
+				}
+			}
+			OR = {
+				num_of_owned_provinces_with = {
+					value = 5
+					region = lombardia
+				}
+				NOT = {
+					any_province = {
+						region = lombardia
+						NOT = { owned_by = ROOT }
+					}
+				}
+			}			
+		}
+		effect = {
+			change_tag = SPI
+			add_prestige = 10
+		}
+		ai_will_do = {
+			factor = 1
+		}
+	}
+	
+	sardinia_piedmont_nation_inherit = {
+		major = yes
+		potential = {
+			NOT = { exists = SPI }
+			government = monarchy
+			OR = {
+				AND = {
+					tag = SAV
+					SAR = { ai = yes }
+				}
+				AND = {
+					tag = SAR
+					SAV = { ai = yes }
+				}
+			}
+		}
+		allow = {
+			adm_tech = 10
+			is_subject = no
+			is_at_war = no
+			prestige = 75
+			dip = 3
+			adm = 3
+			OR = {
+				AND = {
+					tag = SAR
+					senior_union_with = SAV
+				}
+				AND = {
+					tag = SAV
+					senior_union_with = SAR
+				}
+			}
+		}
+		effect = {
+			if = {
+				limit = {
+					tag = SAV
+				}
+				inherit = SAR
+			}
+			if = {
+				limit = {
+					tag = SAR
+				}
+				inherit = SAV
+			}
+			change_tag = SPI
+			add_prestige = 25
+		}
+		ai_will_do = {
+			factor = 1
+		}
+	}
+
+}

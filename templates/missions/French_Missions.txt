@@ -1,0 +1,860 @@
+annex_orleans = {
+	
+	type = country
+
+	category = DIP
+	
+	target_provinces = {
+		owned_by = ORL
+	}
+	allow = {
+		tag = FRA
+		is_subject = no
+		ORL = {
+			vassal_of = ROOT
+			is_neighbor_of = ROOT
+			NOT = { num_of_cities = ROOT }
+			religion_group = ROOT
+		}
+	}
+	success = {
+		NOT = { exists = ORL }
+		all_target_province = {
+			owned_by = ROOT
+		}
+	}
+	abort = {
+		OR = {
+			is_subject = yes
+			NOT = { exists = ORL }
+			ORL = { NOT = { vassal_of = ROOT } }
+			ORL = { NOT = { religion_group = ROOT } }
+		}
+	}
+	chance = {
+		factor = 1000
+		modifier = {
+			factor = 2
+			dip = 4
+		}
+	}
+	effect = {
+		add_prestige = 5
+	}
+}
+
+
+annex_provence = {
+	
+	type = country
+
+	category = DIP
+	
+	target_provinces = {
+		owned_by = PRO
+	}
+	allow = {
+		tag = FRA
+		is_subject = no
+		NOT = { exists = ORL }
+		PRO = {
+			vassal_of = ROOT
+			is_neighbor_of = ROOT
+			NOT = { num_of_cities = ROOT }
+			religion_group = ROOT
+		}
+	}
+	success = {
+		NOT = { exists = PRO }
+		all_target_province = {
+			owned_by = ROOT
+		}
+	}
+	abort = {
+		OR = {
+			is_subject = yes	
+			NOT = { exists = PRO }
+			PRO = { NOT = { vassal_of = ROOT } }
+			PRO = { NOT = { religion_group = ROOT } }
+		}
+	}
+	chance = {
+		factor = 1000
+		modifier = {
+			factor = 2
+			dip = 4
+		}
+	}
+	effect = {
+		add_prestige = 5
+	}
+}
+
+
+annex_auvergne = {
+	
+	type = country
+
+	category = DIP
+	
+	target_provinces = {
+		owned_by = AUV
+	}
+	allow = {
+		tag = FRA
+		is_subject = no	
+		NOT = { exists = ORL }
+		AUV = {
+			vassal_of = ROOT
+			is_neighbor_of = ROOT
+			NOT = { num_of_cities = ROOT }
+			religion_group = ROOT
+		}
+	}
+	abort = {
+		OR = {
+			is_subject = yes
+			NOT = { exists = AUV }
+			AUV = { 
+				OR = {
+					NOT = { vassal_of = ROOT }
+					NOT = { religion_group = ROOT }
+				}
+			}
+		}
+	}
+	success = {
+		NOT = { exists = AUV }
+		all_target_province = {
+			owned_by = ROOT
+		}
+	}
+	chance = {
+		factor = 1000
+		modifier = {
+			factor = 2
+			dip = 4
+		}
+	}
+	effect = {
+		add_prestige = 5
+	}
+}
+
+
+annex_bourbonnais = {
+	
+	type = country
+	
+	category = DIP
+	
+	target_provinces = {
+		owned_by = BOU
+	}
+	allow = {
+		tag = FRA
+		is_subject = no
+		NOT = { exists = ORL }
+		BOU = {
+			vassal_of = ROOT
+			is_neighbor_of = ROOT
+			NOT = { num_of_cities = ROOT }
+			religion_group = ROOT
+		}
+	}
+	abort = {
+		OR = {
+			is_subject = yes
+			NOT = { exists = BOU }
+			BOU = { NOT = { vassal_of = ROOT } }
+			BOU = { NOT = { religion_group = ROOT } }
+		}
+	}
+	success = {
+		NOT = { exists = BOU }
+		all_target_province = {
+			owned_by = ROOT
+		}
+	}
+	chance = {
+		factor = 1000
+		modifier = {
+			factor = 2
+			dip = 4
+		}
+	}
+	effect = {
+		add_prestige = 5
+	}
+}
+
+
+subjugate_brittany = {
+	
+	type = country
+
+	category = MIL
+	ai_mission = yes
+	
+	allow = {
+		OR = {
+			tag = FRA
+			tag = RFR
+		}
+		is_subject = no
+		NOT = { exists = ORL }
+		NOT = { exists = AUV }
+		NOT = { exists = BOU }
+		NOT = { exists = PRO }
+		BRI = {
+			is_subject = no
+			is_neighbor_of = ROOT
+			NOT = { num_of_cities = ROOT }
+		}
+	}
+	abort = {
+		OR = {
+			is_subject = yes
+			NOT = { exists = BRI }
+			BRI = { is_subject = yes }
+		}
+	}
+	success = {
+		BRI = { vassal_of = ROOT }
+	}
+	chance = {
+		factor = 1000
+		modifier = {
+			factor = 2
+			NOT = { has_opinion = { who = BRI value = 0 } }
+		}
+	}
+	immediate = {
+		add_casus_belli = {
+			type = cb_vassalize_mission
+			months = 120
+			target = BRI
+		}
+	}
+	abort_effect = {
+		remove_casus_belli = {
+			type = cb_vassalize_mission
+			target = BRI
+		}
+	}
+	effect = {
+		add_treasury = 50
+		hidden_effect = {
+			remove_casus_belli = {
+				type = cb_vassalize_mission
+				target = BRI
+			}
+		}
+	}
+}
+
+
+annex_savoy = {
+	
+	type = country
+
+	category = MIL
+	ai_mission = yes
+	
+	target_provinces = {
+		owned_by = SAV
+	}
+	allow = {
+		OR = {
+			tag = FRA
+			tag = RFR
+		}
+		is_subject = no	
+		NOT = { exists = ORL }
+		NOT = { exists = AUV }
+		NOT = { exists = BOU }
+		NOT = { exists = PRO }
+		SAV = {
+			is_neighbor_of = ROOT
+			NOT = { num_of_cities = ROOT }
+			religion_group = ROOT
+		}
+	}
+	abort = {
+		OR = {
+			is_subject = yes
+			NOT = { exists = SAV }
+			SAV = { NOT = { religion_group = ROOT } }
+		}
+	}
+	success = {
+		NOT = { exists = SAV }
+		all_target_province = {
+			owned_by = ROOT
+		}
+	}
+	chance = {
+		factor = 1000
+		modifier = {
+			factor = 2
+			dip = 4
+		}
+		modifier = {
+			factor = 2
+			has_opinion = { who = SAV value = 100 }
+		}
+		modifier = {
+			factor = 2
+			has_opinion = { who = SAV value = 200 }
+		}
+	}
+	immediate = {
+		every_target_province = {
+			add_claim = ROOT
+		}
+	}
+	abort_effect = {
+		every_target_province = {
+			remove_claim = ROOT
+		}
+	}
+	effect = {
+		add_prestige = 5
+	}
+}
+
+
+annex_alsace = {
+	
+	type = country
+
+	category = MIL
+	ai_mission = yes
+	
+	target_provinces = {
+		owned_by = ALS
+	}
+	allow = {
+		OR = {
+			tag = FRA
+			tag = RFR
+		}
+		is_subject = no	
+		ALS = {
+			is_neighbor_of = ROOT
+			NOT = { num_of_cities = ROOT }
+			religion_group = ROOT
+		}
+	}
+	abort = {
+		OR = {
+			is_subject = yes
+			NOT = { exists = ALS }
+			ALS = { NOT = { religion_group = ROOT } }
+		}
+	}
+	success = {
+		NOT = { exists = ALS }
+		all_target_province = {
+			owned_by = ROOT
+		}
+	}
+	chance = {
+		factor = 1000
+		modifier = {
+			factor = 2
+			dip = 4
+		}
+		modifier = {
+			factor = 2
+			has_opinion = { who = ALS value = 100 }
+		}
+		modifier = {
+			factor = 2
+			has_opinion = { who = ALS value = 200 }
+		}
+	}
+	immediate = {
+		every_target_province = {
+			add_claim = ROOT
+		}
+	}
+	abort_effect = {
+		every_target_province = {
+			remove_claim = ROOT
+		}
+	}
+	effect = {
+		add_prestige = 10
+	}
+}
+
+
+france_discovers_north_america = {
+	
+	type = country
+
+	category = DIP
+	
+	allow = {
+		OR = {
+			tag = FRA
+			tag = RFR
+		}
+		has_idea = quest_for_the_new_world
+		NOT = { northeastern_america = { has_discovered = ROOT } }
+		northeastern_america = { range = ROOT }
+		num_of_ports = 1
+	}
+	abort = {
+		OR = {
+			NOT = { has_idea = quest_for_the_new_world }
+			NOT = { num_of_ports = 1 }
+		}
+	}
+	success = {
+		northeastern_america = {
+			has_discovered = ROOT
+		}
+	}
+	chance = {
+		factor = 1000
+		modifier = {
+			factor = 2
+			has_idea = land_of_opportunity
+		}
+		modifier = {
+			factor = 2
+			has_idea = colonial_ventures
+		}	
+	}
+	effect = {
+		add_dip_power = 25
+		add_country_modifier = {
+			name = "colonial_enthusiasm"
+			duration = 1875
+		}
+	}
+}
+
+
+french_colony_in_north_america = {
+	
+	type = country
+
+	category = DIP
+	
+	allow = {
+		OR = {
+			tag = FRA
+			tag = RFR
+		}
+		northeastern_america = {
+			has_discovered = ROOT
+			is_empty = yes
+			range = ROOT
+		}
+		NOT = { northeastern_america = { owned_by = ROOT } }
+		num_of_colonists = 1
+		num_of_ports = 1
+	}
+	abort = {
+		OR = {
+			NOT = { num_of_ports = 1 }
+			AND = {
+				NOT = { northeastern_america = { owned_by = ROOT } }
+				NOT = { northeastern_america = { is_empty = yes } }
+			}
+		}
+	}
+	success = {
+		northeastern_america = { owned_by = ROOT }
+	}
+	chance = {
+		factor = 1000
+		modifier = {
+			factor = 2
+			has_idea = land_of_opportunity
+		}
+		modifier = {
+			factor = 2
+			has_idea = colonial_ventures
+		}
+		modifier = {
+			factor = 2
+			num_of_colonists = 2
+		}
+		modifier = {
+			factor = 2
+			num_of_colonists = 3
+		}
+	}
+	effect = {
+		add_prestige = 10
+	}
+}
+
+
+france_discovers_the_carribean = {
+	
+	type = country
+
+	category = DIP
+	
+	allow = {
+		OR = {
+			tag = FRA
+			tag = RFR
+		}
+		has_idea = quest_for_the_new_world
+		NOT = { the_carribean = { has_discovered = ROOT } }
+		the_carribean = { range = ROOT }
+		num_of_ports = 1
+	}
+	abort = {
+		OR = {
+			NOT = { has_idea = quest_for_the_new_world }
+			NOT = { num_of_ports = 1 }
+		}
+	}
+	success = {
+		the_carribean = {
+			has_discovered = ROOT
+		}
+	}
+	chance = {
+		factor = 1000
+		modifier = {
+			factor = 2
+			has_idea = land_of_opportunity
+		}
+		modifier = {
+			factor = 2
+			has_idea = colonial_ventures
+		}	
+	}
+	effect = {
+		add_dip_power = 25
+		add_country_modifier = {
+			name = "colonial_enthusiasm"
+			duration = 730
+		}
+	}
+}
+
+
+french_colony_in_the_carribean = {
+	
+	type = country
+
+	category = DIP
+
+	allow = {
+		OR = {
+			tag = FRA
+			tag = RFR
+		}
+		the_carribean = {
+			has_discovered = ROOT
+			is_empty = yes
+			range = ROOT
+		}
+		NOT = { the_carribean = { owned_by = ROOT } }
+		num_of_colonists = 1
+		num_of_ports = 1
+	}
+	abort = {
+		OR = {
+			NOT = { num_of_ports = 1 }
+			AND = {
+				NOT = { the_carribean = { owned_by = ROOT } }
+				NOT = { the_carribean = { is_empty = yes } }
+			}	
+		}
+	}
+	success = {
+		the_carribean = { owned_by = ROOT }
+	}
+	chance = {
+		factor = 1000
+		modifier = {
+			factor = 2
+			has_idea = land_of_opportunity
+		}
+		modifier = {
+			factor = 2
+			has_idea = colonial_ventures
+		}
+		modifier = {
+			factor = 2
+			num_of_colonists = 2
+		}
+		modifier = {
+			factor = 2
+			num_of_colonists = 3
+		}
+	}
+	effect = {
+		add_prestige = 10
+	}
+}
+
+
+defend_france_against_england = {
+	
+	type = country
+
+	category = MIL
+	
+	allow = {
+		tag = FRA
+		exists = ENG
+		is_subject = no
+		NOT = { is_year = 1475 }
+		french_region = { owned_by = ENG }
+	}
+	abort = {
+		is_subject = yes
+	}
+	success = {
+		NOT = { war_with = ENG }
+		NOT = { french_region = { owned_by = ENG } }
+	}
+	chance = {
+		factor = 1000
+		modifier = {
+			factor = 2
+			mil = 4
+		}
+		modifier = {
+			factor = 2
+			ENG = { NOT = { mil = 2 } }
+		}
+	}
+	effect = {
+		add_adm_power = 50
+		add_army_tradition = 50
+	}
+}
+
+
+france_the_united_states_relations = {
+	
+	type = country
+
+	category = DIP
+	
+	allow = {
+		OR = {
+			tag = FRA
+			tag = RFR
+		}
+		exists = USA
+		NOT = { war_with = USA }
+		NOT = { has_opinion = { who = USA value = 100 } }
+	}
+	abort = {
+		OR = {
+			NOT = { exists = USA }
+			war_with = USA
+		}
+	}
+	success = {
+		USA = { has_opinion = { who = ROOT value = 150 } }
+	}
+	chance = {
+		factor = 1000
+		modifier = {
+			factor = 2
+			NOT = { has_opinion = { who = USA value = 0 } }
+		}
+		modifier = {
+			factor = 2
+			NOT = { has_opinion = { who = USA value = -100 } }
+		}	
+	}
+	effect = {
+		add_prestige = 5
+	}
+}
+
+
+subjugate_lorraine = {
+	
+	type = country
+
+	category = MIL
+	ai_mission = yes
+	
+	allow = {
+		OR = {
+			tag = FRA
+			tag = RFR
+		}
+		is_subject = no	
+		NOT = { exists = ORL }
+		NOT = { exists = AUV }
+		NOT = { exists = BOU }
+		NOT = { exists = PRO }
+		LOR = {
+			is_subject = no
+			is_neighbor_of = ROOT
+			NOT = { num_of_cities = ROOT }
+		}
+	}
+	abort = {
+		OR = {
+			is_subject = yes
+			NOT = { exists = LOR }
+			LOR = { is_subject = yes }
+		}
+	}
+	success = {
+		LOR = { vassal_of = ROOT }
+	}
+	chance = {
+		factor = 1000
+		modifier = {
+			factor = 2
+			NOT = { has_opinion = { who = LOR value = 0 } }
+		}
+	}
+	immediate = {
+		add_casus_belli = {
+			type = cb_vassalize_mission
+			months = 120
+			target = LOR
+		}
+	}
+	abort_effect = {
+		remove_casus_belli = {
+			type = cb_vassalize_mission
+			target = LOR
+		}
+	}
+	effect = {
+		add_prestige = 10
+		hidden_effect = {
+			remove_casus_belli = {
+				type = cb_vassalize_mission
+				target = LOR
+			}
+		}
+	}
+}
+
+
+annex_lorraine = {
+	
+	type = country
+
+	category = DIP
+	
+	target_provinces = {
+		owned_by = LOR
+	}
+	allow = {
+		OR = {
+			tag = FRA
+			tag = RFR
+		}
+		is_subject = no	
+		NOT = { exists = ORL }
+		NOT = { exists = AUV }
+		NOT = { exists = BOU }
+		NOT = { exists = PRO }		
+		LOR = {
+			vassal_of = ROOT
+			is_neighbor_of = ROOT
+			NOT = { num_of_cities = ROOT }
+			religion_group = ROOT
+		}
+	}
+	abort = {
+		OR = {
+			is_subject = yes
+			NOT = { exists = LOR }
+			LOR = { NOT = { religion_group = ROOT } }
+		}
+	}
+	success = {
+		NOT = { exists = LOR }
+		all_target_province = {
+			owned_by = ROOT
+		}
+	}
+	chance = {
+		factor = 1000
+		modifier = {
+			factor = 2
+			dip = 4
+		}
+		modifier = {
+			factor = 2
+			has_opinion = { who = LOR value = 100 }
+		}
+		modifier = {
+			factor = 2
+			has_opinion = { who = LOR value = 200 }
+		}
+	}
+	immediate = {
+		every_target_province = {
+			add_claim = ROOT
+		}
+	}
+	abort_effect = {
+		every_target_province = {
+			remove_claim = ROOT
+		}
+	}
+	effect = {
+		add_prestige = 10
+	}
+}
+
+
+defend_the_netherlands = {
+	
+	type = country
+
+	category = MIL
+	
+	allow = {
+		tag = FRA
+		exists = SPA
+		is_subject = no
+		SPA = { is_neighbor_of = ROOT }
+		the_low_countries = {
+			owned_by = SPA
+			any_neighbor_province = {
+				owned_by = FRA
+			}
+		}
+	}
+	abort = {
+		is_subject = yes
+	}
+	success = {
+		NOT = { war_with = SPA }
+		NOT = { the_low_countries = { owned_by = SPA } }
+		the_low_countries = { owned_by = ROOT }
+	}
+	chance = {
+		factor = 1000
+		modifier = {
+			factor = 2
+			SPA = { NOT = { num_of_cities = ROOT } }
+		}
+		modifier = {
+			factor = 2
+			SPA = {
+				NOT = { num_of_infantry = ROOT }
+				NOT = { num_of_cavalry = ROOT }
+			}
+		}
+	}
+	effect = {
+		add_army_tradition = 50
+	}
+}

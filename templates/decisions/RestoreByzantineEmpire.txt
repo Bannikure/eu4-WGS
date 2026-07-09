@@ -1,0 +1,54 @@
+country_decisions = {
+
+	restore_byzantine_empire = {
+		major = yes
+		potential = {
+			NOT = { exists = BYZ }
+			NOT = { tag = HLR }
+			NOT = { tag = TUR }
+			primary_culture = greek
+			religion = orthodox
+		}
+		allow = {
+			OR = {
+				num_of_owned_provinces_with = {
+					value = 13
+					region = greece_region
+				}
+				NOT = {
+					any_province = {
+						region = greece_region
+						NOT = { owned_by = ROOT }
+					}
+				}
+			}
+			is_at_war = no
+		}
+		effect = {
+			greece_region = {
+				limit = { NOT = { owned_by = ROOT } }
+				add_core = BYZ
+			}	
+			random_owned_province = {
+				limit = { culture = greek }
+				add_base_tax = 1
+			}
+			random_owned_province = {
+				limit = { culture = greek }
+				add_base_tax = 1
+			}
+			add_country_modifier = {
+				name = "centralization_modifier"
+				duration = 7300
+			}
+			add_prestige = 10
+			change_tag = BYZ
+			change_government = imperial_government
+			swap_free_idea_group = yes
+		}
+		ai_will_do = {
+			factor = 1
+		}
+	}
+	
+}

@@ -1,0 +1,58 @@
+# Triggered modifiers are here.
+# these are checked for each countries once/month and then applied.
+#
+# Effects are fully scriptable here.
+
+######################################
+# Colonial Interests
+######################################
+colonial_interests = {
+	potential = {
+		OR = {
+			AND = {
+				technology_group = western
+				num_of_ports = 2
+				num_of_cities = 6
+			}
+			AND = {
+				technology_group = eastern
+				num_of_ports = 3
+				num_of_cities = 9
+			}
+			AND = {
+				technology_group = ottoman
+				num_of_ports = 3
+				num_of_cities = 9
+			}
+			AND = {
+				technology_group = muslim
+				num_of_ports = 4
+				num_of_cities = 12
+			}
+			AND = {
+				technology_group = indian
+				num_of_ports = 5
+				num_of_cities = 15
+			}
+			AND = {
+				technology_group = chinese
+				num_of_ports = 5
+				num_of_cities = 15
+			}
+		}
+	}
+
+	trigger = {
+		OR = {
+			has_idea = free_merchants
+			has_idea = optimism
+			has_idea = merchant_adventures
+			has_idea = nationalistic_enthusiasm
+			has_idea = excellent_shipwrights
+			has_idea = improved_shipyards
+			has_idea = quest_for_the_new_world
+		}
+	}
+
+	colonists = 1
+}
