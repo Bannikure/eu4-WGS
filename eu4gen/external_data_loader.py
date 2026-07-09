@@ -1,601 +1,495 @@
-"""
-Module: External Data Loader
-=============================
+# =========================================================================
+# EU4 World Generator Studio - External Data Loader
+# =========================================================================
+# Handles loading and parsing of external data files (DLL, XML, JSON, CSV, TXT)
 
-Handles loading and parsing of external data files (DLL, XML, CCP, JSON, CSV) 
-from an 'additional_data' folder.
-
-Supports:
-- Dynamic DLL plugin loading (Windows-specific)
-- XML configuration parsing
-- C++ template serialization
-- JSON/YAML configuration files
-- Custom binary data formats
-
-This module integrates with the main EU4 generator to override procedural 
-defaults with user-provided data.
-"""
-
-from __future__ import annotations
-
-import os
 import json
 import csv
-import platform
+import ctypes
 import logging
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Callable
+from typing import Dict, List, Any, Optional, Union
 import xml.etree.ElementTree as ET
+
+from .constants import ADDITIONAL_DATA_DIR, SUPPORTED_FORMATS
 
 logger = logging.getLogger(__name__)
 
-# Platform-specific DLL loading
-if platform.system() == "Windows":
-    import ctypes
-    from ctypes import WINFUNCTYPE, c_int, c_char_p
-else:
-    ctypes = None
-
 
 class ExternalDataLoader:
-    """
-    Loads external data files from 'additional_data' folder and provides 
-    interfaces for integrating them into mod generation.
-    """
+    """Centralized loader for all external data formats."""
 
-    def __init__(self, data_folder: str = "additional_data") -> None:
-        """
-        Initialize the external data loader.
-
-        Args:
-            data_folder: Path to the additional_data directory
-        """
-        self.data_folder = Path(data_folder)
-        self.data_folder.mkdir(exist_ok=True)
-        
-        # Create subdirectories
-        self.subdirs = {
-            "dll": self.data_folder / "plugins",
-            "xml": self.data_folder / "configs",
-            "cpp": self.data_folder / "templates",
-            "json": self.data_folder / "data",
-            "csv": self.data_folder / "datasets",
-            "bin": self.data_folder / "binary",
-        }
-        
-        for subdir in self.subdirs.values():
-            subdir.mkdir(exist_ok=True)
-        
-        # Storage for loaded data
-        self.loaded_dll_functions: Dict[str, Callable] = {}
-        self.xml_configs: Dict[str, ET.Element] = {}
-        self.json_data: Dict[str, Any] = {}
-        self.csv_data: Dict[str, List[Dict[str, Any]]] = {}
-        self.cpp_templates: Dict[str, str] = {}
-        self.binary_data: Dict[str, bytes] = {}
-        
-        logger.info(f"External Data Loader initialized at: {self.data_folder}")
-
-    # =====================================================================
-    #  DLL PLUGIN LOADING (Windows)
-    # =====================================================================
-
-    def load_dll_plugins(self, dll_folder: Optional[str] = None) -> Dict[str, Callable]:
-        """
-        Load DLL plugins from the plugins folder.
-        
-        Expected DLL interface:
-        - Function: 'GenerateCustomTerrain' -> c_int (returns hash or status)
-        - Function: 'ModifyProvinces' -> c_int (modifies province data)
-        - Function: 'ApplyTradeBonus' -> c_int (applies trade modifiers)
-        
-        Returns:
-            Dictionary mapping function names to callable ctypes functions
-        """
-        if ctypes is None:
-            logger.warning("DLL loading not available on non-Windows platforms")
-            return {}
-        
-        dll_path = dll_folder or self.subdirs["dll"]
-        
-        if not dll_path.exists():
-            logger.warning(f"DLL folder not found: {dll_path}")
-            return {}
-        
-        for dll_file in dll_path.glob("*.dll"):
-            try:
-                lib = ctypes.CDLL(str(dll_file))
-                logger.info(f"Loaded DLL: {dll_file.name}")
-                
-                # Try to load known functions
-                known_functions = [
-                    "GenerateCustomTerrain",
-                    "ModifyProvinces",
-                    "ApplyTradeBonus",
-                    "CustomizeReligion",
-                    "GenerateTradeNodes",
-                ]
-                
-                for func_name in known_functions:
-                    try:
-                        func = getattr(lib, func_name)
-                        func.argtypes = []
-                        func.restype = c_int
-                        self.loaded_dll_functions[func_name] = func
-                        logger.info(f"  ✓ Loaded function: {func_name}")
-                    except AttributeError:
-                        pass
-                        
-            except Exception as e:
-                logger.error(f"Failed to load DLL {dll_file.name}: {e}")
-        
-        return self.loaded_dll_functions
-
-    def call_dll_function(self, function_name: str, *args: Any, **kwargs: Any) -> Any:
-        """
-        Call a loaded DLL function safely with error handling.
+    def __init__(self, data_dir: Optional[Path] = None):
+        """Initialize the external data loader.
         
         Args:
-            function_name: Name of the function to call
-            *args: Positional arguments
-            **kwargs: Keyword arguments
+            data_dir: Directory containing additional data files. Defaults to ADDITIONAL_DATA_DIR.
+        """
+        self.data_dir = data_dir or ADDITIONAL_DATA_DIR
+        self.cache: Dict[str, Any] = {}
+        self._ensure_dir_exists()
+
+    def _ensure_dir_exists(self) -> None:
+        """Create data directory if it doesn't exist."""
+        self.data_dir.mkdir(parents=True, exist_ok=True)
+        logger.info(f"Data directory ensured at: {self.data_dir}")
+
+    def load_file(self, filename: str) -> Any:
+        """Load any supported file format automatically.
+        
+        Args:
+            filename: Name of the file to load.
             
         Returns:
-            Function result or None if function not found
+            Parsed data from the file.
+            
+        Raises:
+            FileNotFoundError: If file doesn't exist.
+            ValueError: If file format is not supported.
         """
-        if function_name not in self.loaded_dll_functions:
-            logger.warning(f"DLL function not found: {function_name}")
-            return None
+        filepath = self.data_dir / filename
         
+        if not filepath.exists():
+            raise FileNotFoundError(f"File not found: {filepath}")
+        
+        # Check cache first
+        if filename in self.cache:
+            logger.debug(f"Loading {filename} from cache")
+            return self.cache[filename]
+        
+        suffix = filepath.suffix.lower()
+        
+        # Route to appropriate loader
+        if suffix == ".json":
+            data = self.load_json(filepath)
+        elif suffix == ".xml":
+            data = self.load_xml(filepath)
+        elif suffix == ".csv":
+            data = self.load_csv(filepath)
+        elif suffix == ".txt":
+            data = self.load_txt(filepath)
+        elif suffix == ".dll":
+            data = self.load_dll(filepath)
+        elif suffix in [".dat", ".bin"]:
+            data = self.load_binary(filepath)
+        elif suffix == ".lua":
+            data = self.load_lua(filepath)
+        else:
+            raise ValueError(f"Unsupported file format: {suffix}")
+        
+        # Cache the result
+        self.cache[filename] = data
+        logger.info(f"Successfully loaded {filename}")
+        return data
+
+    @staticmethod
+    def load_json(filepath: Path) -> Dict[str, Any]:
+        """Load a JSON file.
+        
+        Args:
+            filepath: Path to JSON file.
+            
+        Returns:
+            Parsed JSON data as dictionary.
+        """
         try:
-            func = self.loaded_dll_functions[function_name]
-            result = func(*args)
-            logger.debug(f"DLL function {function_name} returned: {result}")
+            with open(filepath, 'r', encoding='utf-8') as f:
+                return json.load(f)
+        except json.JSONDecodeError as e:
+            logger.error(f"Invalid JSON in {filepath}: {e}")
+            raise
+
+    @staticmethod
+    def load_xml(filepath: Path) -> ET.Element:
+        """Load an XML file.
+        
+        Args:
+            filepath: Path to XML file.
+            
+        Returns:
+            Parsed XML root element.
+        """
+        try:
+            tree = ET.parse(filepath)
+            return tree.getroot()
+        except ET.ParseError as e:
+            logger.error(f"Invalid XML in {filepath}: {e}")
+            raise
+
+    @staticmethod
+    def load_csv(filepath: Path) -> List[Dict[str, str]]:
+        """Load a CSV file.
+        
+        Args:
+            filepath: Path to CSV file.
+            
+        Returns:
+            List of dictionaries representing rows.
+        """
+        try:
+            rows = []
+            with open(filepath, 'r', encoding='utf-8') as f:
+                reader = csv.DictReader(f)
+                rows = list(reader)
+            return rows
+        except Exception as e:
+            logger.error(f"Error reading CSV {filepath}: {e}")
+            raise
+
+    @staticmethod
+    def load_txt(filepath: Path) -> Dict[str, Any]:
+        """Load a TXT file (EU4 script format).
+        
+        Args:
+            filepath: Path to TXT file.
+            
+        Returns:
+            Parsed script data as dictionary.
+        """
+        try:
+            with open(filepath, 'r', encoding='utf-8') as f:
+                content = f.read()
+            
+            # Parse EU4 script format
+            parsed = ExternalDataLoader._parse_eu4_script(content)
+            return parsed
+        except Exception as e:
+            logger.error(f"Error reading TXT {filepath}: {e}")
+            raise
+
+    @staticmethod
+    def load_dll(filepath: Path) -> Dict[str, Any]:
+        """Load a DLL file and extract metadata.
+        
+        Args:
+            filepath: Path to DLL file.
+            
+        Returns:
+            Dictionary containing DLL information.
+        """
+        try:
+            # Try to load DLL using ctypes
+            dll_data = {
+                "path": str(filepath),
+                "filename": filepath.name,
+                "size": filepath.stat().st_size,
+                "type": "DLL",
+            }
+            
+            # Attempt to load and get basic info
+            try:
+                lib = ctypes.CDLL(str(filepath))
+                dll_data["loaded"] = True
+                dll_data["functions"] = []
+                logger.info(f"Successfully loaded DLL: {filepath.name}")
+            except OSError as e:
+                dll_data["loaded"] = False
+                dll_data["error"] = str(e)
+                logger.warning(f"Could not load DLL {filepath.name}: {e}")
+            
+            return dll_data
+        except Exception as e:
+            logger.error(f"Error reading DLL {filepath}: {e}")
+            raise
+
+    @staticmethod
+    def load_binary(filepath: Path) -> bytes:
+        """Load a binary file.
+        
+        Args:
+            filepath: Path to binary file.
+            
+        Returns:
+            Raw binary data.
+        """
+        try:
+            with open(filepath, 'rb') as f:
+                return f.read()
+        except Exception as e:
+            logger.error(f"Error reading binary {filepath}: {e}")
+            raise
+
+    @staticmethod
+    def load_lua(filepath: Path) -> str:
+        """Load a Lua script file.
+        
+        Args:
+            filepath: Path to Lua file.
+            
+        Returns:
+            Lua script content as string.
+        """
+        try:
+            with open(filepath, 'r', encoding='utf-8') as f:
+                return f.read()
+        except Exception as e:
+            logger.error(f"Error reading Lua {filepath}: {e}")
+            raise
+
+    @staticmethod
+    def _parse_eu4_script(content: str) -> Dict[str, Any]:
+        """Parse EU4 script format (.txt files).
+        
+        This handles the key = value format used in EU4 scripts.
+        
+        Args:
+            content: Raw script content.
+            
+        Returns:
+            Parsed script data.
+        """
+        result = {}
+        stack = [result]
+        
+        for line in content.split('\n'):
+            line = line.strip()
+            
+            # Skip comments and empty lines
+            if not line or line.startswith('#'):
+                continue
+            
+            # Handle nested blocks
+            if line.endswith('{'):
+                key = line.replace('{', '').strip()
+                new_dict = {}
+                stack[-1][key] = new_dict
+                stack.append(new_dict)
+            elif line == '}':
+                if len(stack) > 1:
+                    stack.pop()
+            elif '=' in line:
+                key, value = line.split('=', 1)
+                key = key.strip()
+                value = value.strip().rstrip('\t')
+                
+                # Try to convert to appropriate type
+                if value.lower() == 'yes':
+                    value = True
+                elif value.lower() == 'no':
+                    value = False
+                elif value.replace('.', '', 1).isdigit():
+                    value = float(value) if '.' in value else int(value)
+                
+                stack[-1][key] = value
+        
+        return result
+
+    def load_all_from_directory(self, subdirectory: str = "") -> Dict[str, Any]:
+        """Load all supported files from a directory.
+        
+        Args:
+            subdirectory: Subdirectory within data_dir to search. Empty string for root.
+            
+        Returns:
+            Dictionary with filename: data pairs.
+        """
+        search_dir = self.data_dir / subdirectory if subdirectory else self.data_dir
+        result = {}
+        
+        if not search_dir.exists():
+            logger.warning(f"Directory not found: {search_dir}")
             return result
-        except Exception as e:
-            logger.error(f"Error calling DLL function {function_name}: {e}")
-            return None
-
-    # =====================================================================
-    #  XML CONFIGURATION PARSING
-    # =====================================================================
-
-    def load_xml_configs(self, xml_folder: Optional[str] = None) -> Dict[str, ET.Element]:
-        """
-        Load and parse XML configuration files.
         
-        Expected XML structure:
-        ```xml
-        <eu4_config>
-            <map_settings>...</map_settings>
-            <trade_nodes>...</trade_nodes>
-            <provinces>...</provinces>
-        </eu4_config>
-        ```
-        
-        Returns:
-            Dictionary mapping filenames to parsed XML ElementTree roots
-        """
-        xml_path = xml_folder or self.subdirs["xml"]
-        
-        if not xml_path.exists():
-            logger.warning(f"XML folder not found: {xml_path}")
-            return {}
-        
-        for xml_file in xml_path.glob("*.xml"):
-            try:
-                tree = ET.parse(xml_file)
-                root = tree.getroot()
-                self.xml_configs[xml_file.stem] = root
-                logger.info(f"Loaded XML: {xml_file.name}")
-            except ET.ParseError as e:
-                logger.error(f"Failed to parse XML {xml_file.name}: {e}")
-            except Exception as e:
-                logger.error(f"Error loading XML {xml_file.name}: {e}")
-        
-        return self.xml_configs
-
-    def get_xml_element(self, config_name: str, xpath: str) -> Optional[ET.Element]:
-        """
-        Extract an element from loaded XML by XPath.
-        
-        Args:
-            config_name: Name of loaded XML config
-            xpath: XPath query
-            
-        Returns:
-            Matching Element or None
-        """
-        if config_name not in self.xml_configs:
-            logger.warning(f"XML config not found: {config_name}")
-            return None
-        
-        root = self.xml_configs[config_name]
-        try:
-            element = root.find(xpath)
-            return element
-        except Exception as e:
-            logger.error(f"XPath query failed: {e}")
-            return None
-
-    def get_xml_all(self, config_name: str, xpath: str) -> List[ET.Element]:
-        """Get all elements matching XPath."""
-        if config_name not in self.xml_configs:
-            return []
-        
-        root = self.xml_configs[config_name]
-        try:
-            elements = root.findall(xpath)
-            return elements
-        except Exception as e:
-            logger.error(f"XPath query failed: {e}")
-            return []
-
-    # =====================================================================
-    #  JSON CONFIGURATION LOADING
-    # =====================================================================
-
-    def load_json_data(self, json_folder: Optional[str] = None) -> Dict[str, Any]:
-        """
-        Load JSON configuration and data files.
-        
-        Expected JSON format:
-        ```json
-        {
-            "provinces": [...],
-            "countries": [...],
-            "trade_goods": {...}
-        }
-        ```
-        
-        Returns:
-            Dictionary mapping filenames to parsed JSON data
-        """
-        json_path = json_folder or self.subdirs["json"]
-        
-        if not json_path.exists():
-            logger.warning(f"JSON folder not found: {json_path}")
-            return {}
-        
-        for json_file in json_path.glob("*.json"):
-            try:
-                with open(json_file, "r", encoding="utf-8") as f:
-                    data = json.load(f)
-                self.json_data[json_file.stem] = data
-                logger.info(f"Loaded JSON: {json_file.name}")
-            except json.JSONDecodeError as e:
-                logger.error(f"Failed to parse JSON {json_file.name}: {e}")
-            except Exception as e:
-                logger.error(f"Error loading JSON {json_file.name}: {e}")
-        
-        return self.json_data
-
-    def get_json_data(self, config_name: str) -> Optional[Any]:
-        """Get parsed JSON data by name."""
-        return self.json_data.get(config_name)
-
-    # =====================================================================
-    #  CSV DATASET LOADING
-    # =====================================================================
-
-    def load_csv_datasets(self, csv_folder: Optional[str] = None) -> Dict[str, List[Dict[str, Any]]]:
-        """
-        Load CSV data files (provinces, trade goods, cultures, etc.).
-        
-        Expected CSV headers:
-        - Provinces: province_id, name, x, y, terrain, culture, religion
-        - Trade Goods: good_id, name, base_price, color_r, color_g, color_b
-        
-        Returns:
-            Dictionary mapping filenames to list of row dicts
-        """
-        csv_path = csv_folder or self.subdirs["csv"]
-        
-        if not csv_path.exists():
-            logger.warning(f"CSV folder not found: {csv_path}")
-            return {}
-        
-        for csv_file in csv_path.glob("*.csv"):
-            try:
-                with open(csv_file, "r", encoding="utf-8") as f:
-                    reader = csv.DictReader(f)
-                    data = list(reader)
-                self.csv_data[csv_file.stem] = data
-                logger.info(f"Loaded CSV: {csv_file.name} ({len(data)} rows)")
-            except Exception as e:
-                logger.error(f"Error loading CSV {csv_file.name}: {e}")
-        
-        return self.csv_data
-
-    def get_csv_data(self, dataset_name: str) -> Optional[List[Dict[str, Any]]]:
-        """Get parsed CSV data by name."""
-        return self.csv_data.get(dataset_name)
-
-    # =====================================================================
-    #  C++ TEMPLATE SERIALIZATION
-    # =====================================================================
-
-    def load_cpp_templates(self, cpp_folder: Optional[str] = None) -> Dict[str, str]:
-        """
-        Load C++ template files (for advanced procedural generation).
-        
-        These templates can be used as blueprints for complex generation logic.
-        
-        Returns:
-            Dictionary mapping filenames to template content
-        """
-        cpp_path = cpp_folder or self.subdirs["cpp"]
-        
-        if not cpp_path.exists():
-            logger.warning(f"C++ template folder not found: {cpp_path}")
-            return {}
-        
-        for cpp_file in cpp_path.glob("*.cpp"):
-            try:
-                with open(cpp_file, "r", encoding="utf-8") as f:
-                    content = f.read()
-                self.cpp_templates[cpp_file.stem] = content
-                logger.info(f"Loaded C++ template: {cpp_file.name}")
-            except Exception as e:
-                logger.error(f"Error loading C++ template {cpp_file.name}: {e}")
-        
-        return self.cpp_templates
-
-    def get_cpp_template(self, template_name: str) -> Optional[str]:
-        """Get C++ template content by name."""
-        return self.cpp_templates.get(template_name)
-
-    # =====================================================================
-    #  BINARY DATA LOADING
-    # =====================================================================
-
-    def load_binary_data(self, binary_folder: Optional[str] = None) -> Dict[str, bytes]:
-        """
-        Load binary data files (.bin, .dat, .custom).
-        
-        Returns:
-            Dictionary mapping filenames to binary content
-        """
-        binary_path = binary_folder or self.subdirs["bin"]
-        
-        if not binary_path.exists():
-            logger.warning(f"Binary folder not found: {binary_path}")
-            return {}
-        
-        for binary_file in binary_path.glob("*"):
-            if binary_file.is_file():
+        for filepath in search_dir.iterdir():
+            if filepath.is_file() and filepath.suffix.lower() in self._get_all_extensions():
                 try:
-                    with open(binary_file, "rb") as f:
-                        data = f.read()
-                    self.binary_data[binary_file.stem] = data
-                    logger.info(f"Loaded binary: {binary_file.name} ({len(data)} bytes)")
+                    result[filepath.name] = self.load_file(filepath.name if not subdirectory else f"{subdirectory}/{filepath.name}")
                 except Exception as e:
-                    logger.error(f"Error loading binary {binary_file.name}: {e}")
+                    logger.error(f"Failed to load {filepath.name}: {e}")
         
-        return self.binary_data
+        return result
 
-    def get_binary_data(self, data_name: str) -> Optional[bytes]:
-        """Get binary data by name."""
-        return self.binary_data.get(data_name)
-
-    # =====================================================================
-    #  DATA INTEGRATION HELPERS
-    # =====================================================================
-
-    def load_all(self) -> None:
-        """Load all available external data at once."""
-        logger.info("Loading all external data...")
-        self.load_dll_plugins()
-        self.load_xml_configs()
-        self.load_json_data()
-        self.load_csv_datasets()
-        self.load_cpp_templates()
-        self.load_binary_data()
-        logger.info("External data loading complete")
-
-    def get_province_overrides(self) -> Optional[List[Dict[str, Any]]]:
-        """
-        Get province data overrides from CSV or JSON.
+    @staticmethod
+    def _get_all_extensions() -> List[str]:
+        """Get all supported file extensions.
         
         Returns:
-            List of province override dictionaries
+            List of supported extensions.
         """
-        # Try CSV first
-        if "provinces" in self.csv_data:
-            return self.csv_data["provinces"]
-        
-        # Try JSON
-        if "provinces" in self.json_data:
-            return self.json_data.get("provinces", {}).get("data", [])
-        
-        return None
+        extensions = []
+        for format_exts in SUPPORTED_FORMATS.values():
+            extensions.extend(format_exts)
+        return extensions
 
-    def get_trade_goods_overrides(self) -> Optional[Dict[str, Any]]:
-        """
-        Get trade goods data from external files.
-        
-        Returns:
-            Dictionary of trade goods definitions
-        """
-        if "trade_goods" in self.csv_data:
-            return {"csv": self.csv_data["trade_goods"]}
-        
-        if "trade_goods" in self.json_data:
-            return self.json_data.get("trade_goods", {})
-        
-        return None
 
-    def get_country_overrides(self) -> Optional[List[Dict[str, Any]]]:
-        """
-        Get country/nation data overrides.
-        
-        Returns:
-            List of country override dictionaries
-        """
-        if "countries" in self.csv_data:
-            return self.csv_data["countries"]
-        
-        if "countries" in self.json_data:
-            return self.json_data.get("countries", {}).get("data", [])
-        
-        return None
+class ProvinceDataLoader(ExternalDataLoader):
+    """Specialized loader for province-related data files."""
 
-    def get_map_settings(self) -> Optional[Dict[str, Any]]:
-        """
-        Get custom map settings from external data.
+    def load_province_definitions(self, filename: str = "province_definitions.csv") -> List[Dict[str, Any]]:
+        """Load province definitions from CSV.
         
-        Returns:
-            Dictionary of map settings
-        """
-        if "map_settings" in self.json_data:
-            return self.json_data["map_settings"]
-        
-        # Try XML
-        if "config" in self.xml_configs:
-            map_element = self.xml_configs["config"].find("map_settings")
-            if map_element is not None:
-                return {
-                    "width": map_element.findtext("width"),
-                    "height": map_element.findtext("height"),
-                    "layout": map_element.findtext("layout"),
-                }
-        
-        return None
-
-    def apply_dll_customizations(self, generation_data: Dict[str, Any]) -> Dict[str, Any]:
-        """
-        Apply DLL-based customizations to generated data.
+        Expected format:
+        id,name,region,terrain,trade_good,development
         
         Args:
-            generation_data: Generated mod data dictionary
+            filename: Name of the definitions file.
             
         Returns:
-            Modified generation data
+            List of province definitions.
         """
-        if "CustomizeReligion" in self.loaded_dll_functions:
-            result = self.call_dll_function("CustomizeReligion")
-            if result:
-                logger.info("Applied DLL religious customization")
+        data = self.load_csv(self.data_dir / filename)
         
-        if "GenerateTradeNodes" in self.loaded_dll_functions:
-            result = self.call_dll_function("GenerateTradeNodes")
-            if result:
-                logger.info("Applied DLL trade node generation")
+        # Convert numeric fields
+        for province in data:
+            if 'id' in province:
+                province['id'] = int(province['id'])
+            if 'development' in province:
+                province['development'] = float(province['development'])
         
-        return generation_data
+        return data
 
-    # =====================================================================
-    #  UTILITY METHODS
-    # =====================================================================
-
-    def list_available_data(self) -> Dict[str, List[str]]:
-        """
-        List all available external data by type.
+    def load_sea_province_data(self, filename: str = "sea_provinces.json") -> List[Dict[str, Any]]:
+        """Load sea province data.
         
+        Args:
+            filename: Name of the sea provinces file.
+            
         Returns:
-            Dictionary mapping data types to list of available items
+            List of sea province definitions.
         """
-        return {
-            "dll": list(self.loaded_dll_functions.keys()),
-            "xml": list(self.xml_configs.keys()),
-            "json": list(self.json_data.keys()),
-            "csv": list(self.csv_data.keys()),
-            "cpp": list(self.cpp_templates.keys()),
-            "binary": list(self.binary_data.keys()),
-        }
+        return self.load_json(self.data_dir / filename)
 
-    def validate_data_integrity(self) -> bool:
-        """
-        Validate loaded data for completeness and consistency.
+    def load_province_names(self, filename: str = "province_names.txt") -> Dict[int, str]:
+        """Load province names from TXT file.
         
+        Args:
+            filename: Name of the province names file.
+            
         Returns:
-            True if all critical data is present
+            Dictionary mapping province IDs to names.
         """
-        validation_passed = True
+        parsed = self.load_txt(self.data_dir / filename)
         
-        # Check for required CSV headers
-        for dataset_name, rows in self.csv_data.items():
-            if not rows:
-                logger.warning(f"Empty CSV dataset: {dataset_name}")
-                validation_passed = False
+        # Flatten the parsed structure if needed
+        result = {}
+        for key, value in parsed.items():
+            try:
+                result[int(key)] = str(value)
+            except (ValueError, TypeError):
+                pass
         
-        # Check for valid JSON structure
-        for json_name, data in self.json_data.items():
-            if not isinstance(data, (dict, list)):
-                logger.warning(f"Invalid JSON structure: {json_name}")
-                validation_passed = False
-        
-        # Check for valid XML roots
-        for xml_name, root in self.xml_configs.items():
-            if root is None or not isinstance(root, ET.Element):
-                logger.warning(f"Invalid XML structure: {xml_name}")
-                validation_passed = False
-        
-        return validation_passed
+        return result
 
-    def export_summary(self) -> str:
-        """
-        Generate a summary report of loaded external data.
+
+class CountryDataLoader(ExternalDataLoader):
+    """Specialized loader for country/nation-related data."""
+
+    def load_custom_countries(self, filename: str = "custom_countries.json") -> List[Dict[str, Any]]:
+        """Load custom country definitions.
         
+        Args:
+            filename: Name of the custom countries file.
+            
         Returns:
-            Formatted summary string
+            List of custom country definitions.
         """
-        summary = "\n=== EXTERNAL DATA SUMMARY ===\n"
-        summary += f"DLL Functions: {len(self.loaded_dll_functions)}\n"
-        summary += f"XML Configs: {len(self.xml_configs)}\n"
-        summary += f"JSON Datasets: {len(self.json_data)}\n"
-        summary += f"CSV Datasets: {len(self.csv_data)} (total rows: {sum(len(d) for d in self.csv_data.values())})\n"
-        summary += f"C++ Templates: {len(self.cpp_templates)}\n"
-        summary += f"Binary Files: {len(self.binary_data)}\n"
-        summary += "==========================\n"
-        return summary
+        return self.load_json(self.data_dir / filename)
+
+    def load_country_colors(self, filename: str = "country_colors.txt") -> Dict[str, str]:
+        """Load country color definitions.
+        
+        Args:
+            filename: Name of the country colors file.
+            
+        Returns:
+            Dictionary mapping country tags to RGB colors.
+        """
+        return self.load_txt(self.data_dir / filename)
 
 
-# =====================================================================
-#  INTEGRATION WITH EU4GEN MAIN APPLICATION
-# =====================================================================
+class EconomyDataLoader(ExternalDataLoader):
+    """Specialized loader for economic data."""
 
-def integrate_external_data_into_generation(
-    loader: ExternalDataLoader,
-    generation_data: Dict[str, Any],
-) -> Dict[str, Any]:
+    def load_trade_goods(self, filename: str = "trade_goods.csv") -> List[Dict[str, Any]]:
+        """Load trade goods definitions.
+        
+        Args:
+            filename: Name of the trade goods file.
+            
+        Returns:
+            List of trade goods with properties.
+        """
+        return self.load_csv(self.data_dir / filename)
+
+    def load_trade_nodes(self, filename: str = "trade_nodes.json") -> Dict[str, Any]:
+        """Load trade node definitions.
+        
+        Args:
+            filename: Name of the trade nodes file.
+            
+        Returns:
+            Dictionary of trade nodes and their properties.
+        """
+        return self.load_json(self.data_dir / filename)
+
+    def load_trade_routes(self, filename: str = "trade_routes.xml") -> ET.Element:
+        """Load trade routes from XML.
+        
+        Args:
+            filename: Name of the trade routes file.
+            
+        Returns:
+            XML element tree of trade routes.
+        """
+        return self.load_xml(self.data_dir / filename)
+
+
+class ReligionCultureDataLoader(ExternalDataLoader):
+    """Specialized loader for religion and culture data."""
+
+    def load_religions(self, filename: str = "religions.json") -> Dict[str, Any]:
+        """Load religion definitions.
+        
+        Args:
+            filename: Name of the religions file.
+            
+        Returns:
+            Dictionary of religion definitions.
+        """
+        return self.load_json(self.data_dir / filename)
+
+    def load_cultures(self, filename: str = "cultures.csv") -> List[Dict[str, str]]:
+        """Load culture definitions.
+        
+        Args:
+            filename: Name of the cultures file.
+            
+        Returns:
+            List of culture definitions.
+        """
+        return self.load_csv(self.data_dir / filename)
+
+
+def create_sample_data_files() -> None:
+    """Create sample data files for testing.
+    
+    This generates example files in the additional_data directory.
     """
-    Merge external data into the main generation pipeline.
+    # Sample trade goods
+    sample_trade_goods = [
+        {"name": "grain", "price": 1.0, "regions": "plains,grassland"},
+        {"name": "spices", "price": 3.0, "regions": "tropical"},
+        {"name": "gold", "price": 4.0, "regions": "mountains"},
+    ]
     
-    Args:
-        loader: Initialized ExternalDataLoader instance
-        generation_data: Generated mod data
-        
-    Returns:
-        Modified generation data with external overrides applied
-    """
-    logger.info("Integrating external data...")
+    trade_goods_path = ADDITIONAL_DATA_DIR / "trade_goods.csv"
+    if not trade_goods_path.exists():
+        with open(trade_goods_path, 'w', newline='', encoding='utf-8') as f:
+            writer = csv.DictWriter(f, fieldnames=["name", "price", "regions"])
+            writer.writeheader()
+            writer.writerows(sample_trade_goods)
+        logger.info(f"Created sample file: {trade_goods_path}")
     
-    # Apply province overrides
-    province_overrides = loader.get_province_overrides()
-    if province_overrides:
-        logger.info(f"Applying {len(province_overrides)} province overrides")
-        generation_data["province_overrides"] = province_overrides
+    # Sample provinces
+    sample_provinces = {
+        "1": "Capital",
+        "2": "Northern Plains",
+        "3": "Mountain Pass",
+    }
     
-    # Apply trade goods overrides
-    trade_overrides = loader.get_trade_goods_overrides()
-    if trade_overrides:
-        logger.info("Applying trade goods overrides")
-        generation_data["trade_goods_overrides"] = trade_overrides
-    
-    # Apply country overrides
-    country_overrides = loader.get_country_overrides()
-    if country_overrides:
-        logger.info(f"Applying {len(country_overrides)} country overrides")
-        generation_data["country_overrides"] = country_overrides
-    
-    # Apply map settings
-    map_settings = loader.get_map_settings()
-    if map_settings:
-        logger.info("Applying custom map settings")
-        generation_data["custom_map_settings"] = map_settings
-    
-    # Apply DLL customizations
-    generation_data = loader.apply_dll_customizations(generation_data)
-    
-    return generation_data
+    provinces_path = ADDITIONAL_DATA_DIR / "province_names.txt"
+    if not provinces_path.exists():
+        with open(provinces_path, 'w', encoding='utf-8') as f:
+            for prov_id, name in sample_provinces.items():
+                f.write(f"{prov_id} = {name}\n")
+        logger.info(f"Created sample file: {provinces_path}")
