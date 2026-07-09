@@ -1,254 +1,375 @@
-"""
-EU4 World Generator – Global constants and static data tables.
+# =========================================================================
+# EU4 World Generator Studio - Constants & Configuration
+# =========================================================================
 
-All magic numbers, name pools, and lookup tables live here so every other
-module can import them from a single source of truth.
-"""
+import os
+from pathlib import Path
+from enum import Enum
 
-from typing import Final
+# =========================================================================
+# PATHS & DIRECTORIES
+# =========================================================================
 
-# ---------------------------------------------------------------------------
-# Map geometry
-# ---------------------------------------------------------------------------
+PROJECT_ROOT = Path(__file__).parent.parent
+DATA_DIR = PROJECT_ROOT / "data"
+ADDITIONAL_DATA_DIR = PROJECT_ROOT / "additional_data"
+OUTPUT_DIR = PROJECT_ROOT / "output"
+TEMPLATES_DIR = PROJECT_ROOT / "templates"
+EMBLEMS_DIR = PROJECT_ROOT / "emblems"
 
-MAP_WIDTH:  Final[int] = 5632
-MAP_HEIGHT: Final[int] = 2048
-SEA_LEVEL_THRESHOLD: Final[int] = 115
-OCEAN_COLOR: Final[tuple[int, int, int]] = (10, 30, 70)
+# Create directories if they don't exist
+for directory in [DATA_DIR, ADDITIONAL_DATA_DIR, OUTPUT_DIR, TEMPLATES_DIR, EMBLEMS_DIR]:
+    directory.mkdir(parents=True, exist_ok=True)
 
-# ---------------------------------------------------------------------------
-# Country name generation pools
-# ---------------------------------------------------------------------------
+# =========================================================================
+# MAP & WORLD GENERATION
+# =========================================================================
 
-ADJECTIVES: Final[list[str]] = [
-    "Grand", "Holy", "Iron", "United", "New", "High", "Eternal",
-    "Solar", "Greater", "Ashen",
-]
+DEFAULT_MAP_WIDTH = 5632
+DEFAULT_MAP_HEIGHT = 2048
+PROVINCE_SIZE_MIN = 50  # Minimum province pixel area
+PROVINCE_SIZE_MAX = 5000  # Maximum province pixel area
 
-ACRONYMS: Final[list[tuple[str, str]]] = [
-    ("U.S.D.", "United Satellite Dominion"),
-    ("S.P.Q.R.", "Senate and People of Rome"),
-    ("U.P.R.", "United Provinces Republic"),
-    ("F.S.T.", "Federated Sovereign Territories"),
-]
+# Heightmap settings
+HEIGHTMAP_SCALE = 255  # Standard grayscale range
+WATER_LEVEL_THRESHOLD = 100  # Below this = water/sea
+MOUNTAIN_THRESHOLD = 200  # Above this = mountain
+PLAINS_THRESHOLD = 150
 
-ROOT_NAMES: Final[list[str]] = [
-    "Mosik", "Bruce", "Valoria", "Atreides", "Rohan", "Carthon", "Orodruin", "Elysia",
-    "Gondor", "Aethelgard", "Skye", "Navarra", "Harkonnen", "Zonaria", "Illyria", "Merovia",
-]
+# =========================================================================
+# PROVINCE GENERATION
+# =========================================================================
 
-GOVERNMENTS: Final[dict[str, list[str]]] = {
-    "monarchy":  ["Empire", "Kingdom", "Queendom", "Principality", "Sovereignty", "Dynasty"],
-    "republic":  ["Republic", "Commonwealth", "Federation", "League", "Dominion", "Directorate"],
-    "theocracy": ["Theocracy", "Holy See", "Order", "Conclave"],
+class ProvinceType(Enum):
+    LAND = "land"
+    SEA = "sea"
+    LAKE = "lake"
+    COASTAL = "coastal"
+
+# Province ID ranges
+PROVINCE_ID_START = 1
+PROVINCE_ID_LAND_MAX = 3000
+PROVINCE_ID_SEA_START = 3001
+PROVINCE_ID_SEA_MAX = 5000
+
+# Province colors (RGB) for BMP generation
+PROVINCE_COLOR_PALETTE = {
+    "water": (0, 0, 255),      # Blue for water
+    "impassable": (0, 0, 0),   # Black for impassable
+    "wasteland": (100, 100, 100),  # Gray for wasteland
 }
 
-# ---------------------------------------------------------------------------
-# Flag generation
-# ---------------------------------------------------------------------------
+# =========================================================================
+# TERRAIN & CLIMATE
+# =========================================================================
 
-FLAG_PALETTE: Final[list[tuple[int, int, int]]] = [
-    (180, 20,  20),
-    (20,  50,  150),
-    (220, 180, 20),
-    (20,  120, 40),
-    (240, 240, 240),
-    (25,  25,  25),
-    (110, 40,  140),
-]
+class Terrain(Enum):
+    GRASSLANDS = "grasslands"
+    HILLS = "hills"
+    MOUNTAINS = "mountains"
+    DESERT = "desert"
+    FOREST = "forest"
+    STEPPE = "steppe"
+    COASTAL = "coastal"
+    OCEAN = "ocean"
 
-# ---------------------------------------------------------------------------
-# Ruler skill generation
-# ---------------------------------------------------------------------------
-
-SKILL_LEVELS:  Final[list[int]]   = [0, 1, 2, 3, 4, 5, 6]
-SKILL_WEIGHTS: Final[list[float]] = [0.05, 0.12, 0.22, 0.22, 0.22, 0.12, 0.05]
-
-LEADER_MONIKERS: Final[list[str]] = [
-    "the Great", "the Conqueror", "the Builder",
-    "the Mad", "the Just", "the Cruel", "",
-]
-
-# ---------------------------------------------------------------------------
-# National idea modifier pools
-# ---------------------------------------------------------------------------
-
-ADVANCED_MODIFIERS: Final[list[str]] = [
-    "trade_efficiency = 0.15",
-    "global_trade_power = 0.20",
-    "technology_cost = -0.10",
-    "production_efficiency = 0.15",
-    "idea_cost = -0.10",
-    "global_ship_trade_power = 0.25",
-    "merchants = 1",
-    "discipline = 0.05",
-    "global_institution_spread = 0.20",
-]
-
-PRIMITIVE_MODIFIERS: Final[list[str]] = [
-    "land_attrition = -0.15",
-    "fort_defense = 0.15",
-    "infantry_power = 0.10",
-    "stability_cost_modifier = -0.15",
-    "manpower_recovery_speed = 0.15",
-    "hostile_attrition = 1.0",
-    "unrest = -2",
-    "defensiveness = 0.20",
-]
-
-# ---------------------------------------------------------------------------
-# Trade goods
-# ---------------------------------------------------------------------------
-
-_GoodEntry = dict[str, object]
-
-RICH_COMMODITIES: Final[dict[str, _GoodEntry]] = {
-    "solar_silk": {
-        "base_price": 5.0,
-        "prov_buff": "production_efficiency = 0.10",
-        "global_buff": "trade_efficiency = 0.10",
-    },
-    "spiceweave_glass": {
-        "base_price": 4.5,
-        "prov_buff": "local_trade_power_modifier = 0.15",
-        "global_buff": "global_trade_power = 0.15",
-    },
-    "abyssal_pearls": {
-        "base_price": 6.0,
-        "prov_buff": "local_tax_modifier = 0.20",
-        "global_buff": "technology_cost = -0.05",
-    },
-    "island_nectar": {
-        "base_price": 4.0,
-        "prov_buff": "local_manpower_modifier = 0.15",
-        "global_buff": "land_morale = 0.05",
-    },
+TERRAIN_MODIFIERS = {
+    Terrain.GRASSLANDS: {"supply": 2.0, "speed": 1.0},
+    Terrain.HILLS: {"supply": 1.5, "speed": 0.8},
+    Terrain.MOUNTAINS: {"supply": 1.0, "speed": 0.6},
+    Terrain.DESERT: {"supply": 0.5, "speed": 0.7},
+    Terrain.FOREST: {"supply": 1.0, "speed": 0.5},
+    Terrain.STEPPE: {"supply": 1.0, "speed": 1.2},
 }
 
-BARREN_COMMODITIES: Final[dict[str, _GoodEntry]] = {
-    "corrupt_sludge": {
-        "base_price": 1.0,
-        "prov_buff": "local_unrest = 1",
-        "global_buff": "global_corruption = 0.01",
-    },
-    "brittle_stone": {
-        "base_price": 1.2,
-        "prov_buff": "fort_defense = -0.10",
-        "global_buff": "stability_cost_modifier = 0.10",
-    },
-    "salted_mud": {
-        "base_price": 0.8,
-        "prov_buff": "local_autonomy_growth = 0.05",
-        "global_buff": "all_power_cost = 0.05",
-    },
+# =========================================================================
+# TRADE & ECONOMY
+# =========================================================================
+
+class TradeGood(Enum):
+    GRAIN = "grain"
+    WINE = "wine"
+    WOOL = "wool"
+    SILK = "silk"
+    SPICES = "spices"
+    COAL = "coal"
+    IRON = "iron"
+    COPPER = "copper"
+    GOLD = "gold"
+    SILVER = "silver"
+    GEMS = "gems"
+    SALT = "salt"
+    TROPICAL_WOOD = "tropical_wood"
+    FURS = "furs"
+    FISH = "fish"
+    NAVAL_SUPPLIES = "naval_supplies"
+    LUMBER = "lumber"
+    COPPER_ORE = "copper_ore"
+
+TRADE_GOOD_PRICES = {
+    TradeGood.GRAIN: 1.0,
+    TradeGood.WINE: 1.5,
+    TradeGood.WOOL: 1.3,
+    TradeGood.SILK: 2.0,
+    TradeGood.SPICES: 3.0,
+    TradeGood.COAL: 1.2,
+    TradeGood.IRON: 1.5,
+    TradeGood.COPPER: 1.8,
+    TradeGood.GOLD: 4.0,
+    TradeGood.SILVER: 3.5,
+    TradeGood.GEMS: 5.0,
+    TradeGood.SALT: 1.1,
+    TradeGood.TROPICAL_WOOD: 2.5,
+    TradeGood.FURS: 2.0,
+    TradeGood.FISH: 1.0,
+    TradeGood.NAVAL_SUPPLIES: 2.5,
+    TradeGood.LUMBER: 1.0,
+    TradeGood.COPPER_ORE: 1.3,
 }
 
-# ---------------------------------------------------------------------------
-# Province size generation
-# ---------------------------------------------------------------------------
+# Trade node configuration
+class TradeNode(Enum):
+    PRODUCTION = "production"
+    COLLECTION = "collection"
+    TRANSIT = "transit"
 
-SIZE_CLEARANCE: Final[dict[str, int]] = {
-    "tiny":   12,
-    "small":  25,
-    "medium": 50,
-    "large":  90,
-    "huge":   160,
+# =========================================================================
+# RELIGION & CULTURE
+# =========================================================================
+
+class Religion(Enum):
+    CATHOLIC = "catholic"
+    PROTESTANT = "protestant"
+    ORTHODOX = "orthodox"
+    SUNNI = "sunni"
+    SHIA = "shia"
+    IBADI = "ibadi"
+    HINDU = "hindu"
+    BUDDHIST = "buddhist"
+    CONFUCIAN = "confucian"
+    SHINTO = "shinto"
+    ANIMIST = "animist"
+    FETISHIST = "fetishist"
+    JEWISH = "jewish"
+    ZOROASTRIAN = "zoroastrian"
+
+RELIGION_COLORS = {
+    Religion.CATHOLIC: "#C00000",
+    Religion.PROTESTANT: "#0000FF",
+    Religion.ORTHODOX: "#FFFF00",
+    Religion.SUNNI: "#00AA00",
+    Religion.SHIA: "#FF6600",
+    Religion.IBADI: "#FFAA00",
+    Religion.HINDU: "#FF00FF",
+    Religion.BUDDHIST: "#FF6600",
+    Religion.CONFUCIAN: "#00FFFF",
+    Religion.SHINTO: "#FF99FF",
+    Religion.ANIMIST: "#999999",
+    Religion.FETISHIST: "#666666",
+    Religion.JEWISH: "#0099FF",
+    Religion.ZOROASTRIAN: "#CCAA00",
 }
 
-SIZE_CHOICES:  Final[list[str]]   = ["tiny", "small", "medium", "large", "huge"]
-SIZE_WEIGHTS:  Final[list[float]] = [0.15, 0.40, 0.30, 0.10, 0.05]
+class Culture(Enum):
+    LATIN = "latin"
+    GERMANIC = "germanic"
+    FRENCH = "french"
+    IBERIAN = "iberian"
+    ITALIAN = "italian"
+    BRITISH = "british"
+    SCANDINAVIAN = "scandinavian"
+    GREEK = "greek"
+    BALKAN = "balkan"
+    SLAVIC = "slavic"
+    TURKISH = "turkish"
+    PERSIAN = "persian"
+    ARABIC = "arabic"
+    CHINESE = "chinese"
+    JAPANESE = "japanese"
+    INDIAN = "indian"
 
-# ---------------------------------------------------------------------------
-# Culture generation
-# ---------------------------------------------------------------------------
+# =========================================================================
+# GOVERNMENT & POLITICAL SYSTEMS
+# =========================================================================
 
-CULTURE_GROUP_TEMPLATES: Final[list[dict[str, object]]] = [
-    {
-        "id": "afro_asian_core",
-        "weight": 0.35,
-        "name_patterns": ["{root}i", "{root}an", "{root}ite"],
-        "regions": ["africa", "asia"],
-    },
-    {
-        "id": "african_highland",
-        "weight": 0.20,
-        "name_patterns": ["{root}an", "{root}ese"],
-        "regions": ["africa"],
-    },
-    {
-        "id": "asian_coastal",
-        "weight": 0.20,
-        "name_patterns": ["{root}i", "{root}ese"],
-        "regions": ["asia"],
-    },
-    {
-        "id": "steppe_frontier",
-        "weight": 0.15,
-        "name_patterns": ["{root}ic", "{root}an"],
-        "regions": ["frontier"],
-    },
-    {
-        "id": "island_syncretic",
-        "weight": 0.10,
-        "name_patterns": ["{root}an", "{root}i"],
-        "regions": ["islands"],
-    },
+class GovernmentType(Enum):
+    MONARCHY = "monarchy"
+    REPUBLIC = "republic"
+    THEOCRACY = "theocracy"
+    TRIBAL = "tribal"
+    NATIVE_COUNCIL = "native_council"
+    ELECTIVE_MONARCHY = "elective_monarchy"
+    OLIGARCHIC_REPUBLIC = "oligarchic_republic"
+    MERCHANT_REPUBLIC = "merchant_republic"
+
+class GovernmentRank(Enum):
+    DUCHY = 1
+    KINGDOM = 2
+    EMPIRE = 3
+
+# =========================================================================
+# MILITARY
+# =========================================================================
+
+class UnitType(Enum):
+    INFANTRY = "infantry"
+    CAVALRY = "cavalry"
+    ARTILLERY = "artillery"
+    GALLEY = "galley"
+    HEAVY_SHIP = "heavy_ship"
+    LIGHT_SHIP = "light_ship"
+    TRANSPORT = "transport"
+
+UNIT_COSTS = {
+    UnitType.INFANTRY: {"gold": 50, "manpower": 0.5},
+    UnitType.CAVALRY: {"gold": 100, "manpower": 0.3},
+    UnitType.ARTILLERY: {"gold": 150, "manpower": 0.1},
+    UnitType.GALLEY: {"gold": 200, "manpower": 0.8},
+    UnitType.HEAVY_SHIP: {"gold": 300, "manpower": 1.0},
+    UnitType.LIGHT_SHIP: {"gold": 250, "manpower": 0.7},
+    UnitType.TRANSPORT: {"gold": 180, "manpower": 0.6},
+}
+
+# =========================================================================
+# DEVELOPMENT & ECONOMY
+# =========================================================================
+
+DEVELOPMENT_MIN = 1
+DEVELOPMENT_MAX = 40
+DEVELOPMENT_BASE = 5
+
+# Development categories and their modifiers
+DEVELOPMENT_MODIFIERS = {
+    "production": 0.33,
+    "trade": 0.33,
+    "tax": 0.34,
+}
+
+# =========================================================================
+# NATION & COUNTRY GENERATION
+# =========================================================================
+
+class NationTier(Enum):
+    VILLAGE = 1
+    TOWN = 2
+    CITY = 3
+    METROPOLIS = 4
+
+# Nation generation parameters
+NATION_GEN_CONFIG = {
+    "min_provinces": 1,
+    "max_provinces": 50,
+    "min_development": 5,
+    "max_development": 100,
+    "population_per_dev": 10000,
+}
+
+# =========================================================================
+# SCRIPTING & FILE FORMATS
+# =========================================================================
+
+# EU4 Script file extensions
+EU4_SCRIPT_EXTENSIONS = [
+    ".txt",      # Main script files
+    ".csv",      # Data files (trade goods, religions, etc.)
+    ".gfx",      # Graphics definitions
+    ".fxh",      # Shader files
+    ".yml",      # Localization files
 ]
 
-CULTURE_ROOT_SYLLABLES: Final[list[str]] = [
-    "Zar", "Kal", "Ash", "Nur", "Tal", "Mak", "Har", "Sah",
-    "Yan", "Ras", "Bel", "Tor", "Kha", "Lum", "Var", "Jin",
+# Common EU4 data folders
+EU4_DATA_FOLDERS = [
+    "common/countries",
+    "common/country_colors",
+    "common/governments",
+    "common/government_ranks",
+    "common/government_reforms",
+    "common/religions",
+    "common/cultures",
+    "common/trade_companies",
+    "common/tradegoods",
+    "common/trading_companies",
+    "history/countries",
+    "history/diplomacy",
+    "history/provinces",
+    "history/wars",
+    "map/terrain",
+    "map/climate",
+    "map/positions",
+    "map/regions",
+    "localisation",
+    "events",
+    "missions",
 ]
 
-# ---------------------------------------------------------------------------
-# Mission archetypes (defined here so country.py can import before use)
-# ---------------------------------------------------------------------------
+# =========================================================================
+# LOCALIZATION
+# =========================================================================
 
-MISSION_ARCHETYPES: Final[list[dict[str, object]]] = [
-    {
-        "id": "coastal_trade",
-        "weight": 0.30,
-        "theme": "trade",
-        "effects": [
-            "global_trade_power = 0.10",
-            "trade_efficiency = 0.05",
-        ],
-    },
-    {
-        "id": "river_empire",
-        "weight": 0.25,
-        "theme": "development",
-        "effects": [
-            "production_efficiency = 0.10",
-            "manpower_recovery_speed = 0.10",
-        ],
-    },
-    {
-        "id": "holy_syncretism",
-        "weight": 0.20,
-        "theme": "religion",
-        "effects": [
-            "tolerance_own = 2",
-            "missionary_strength = 0.02",
-        ],
-    },
-    {
-        "id": "continental_unity",
-        "weight": 0.25,
-        "theme": "conquest",
-        "effects": [
-            "discipline = 0.03",
-            "land_morale = 0.05",
-        ],
-    },
-]
+LOCAL_LANGUAGE_CODES = {
+    "english": "l_english",
+    "french": "l_french",
+    "german": "l_german",
+    "spanish": "l_spanish",
+    "italian": "l_italian",
+    "portuguese": "l_portuguese",
+    "russian": "l_russian",
+    "polish": "l_polish",
+    "turkish": "l_turkish",
+    "japanese": "l_japanese",
+    "chinese": "l_simp_chinese",
+}
 
-# ---------------------------------------------------------------------------
-# Trade company regions (defined here so economy.py can stay thin)
-# ---------------------------------------------------------------------------
+# =========================================================================
+# VISUAL & UI SETTINGS
+# =========================================================================
 
-TRADE_COMPANY_REGIONS: Final[list[dict[str, str]]] = [
-    {"id": "afro_oceanic_company",  "name": "Afro-Oceanic Trade Company", "region": "africa"},
-    {"id": "silk_sun_company",      "name": "Silk Sun Trade Company",     "region": "asia"},
-    {"id": "island_spice_company",  "name": "Island Spice Company",       "region": "islands"},
-]
+# Default UI colors and styling
+UI_COLORS = {
+    "primary": "#1e1e1e",
+    "secondary": "#2d2d2d",
+    "accent": "#007acc",
+    "success": "#4ec9b0",
+    "warning": "#dcdcaa",
+    "error": "#f48771",
+    "text": "#d4d4d4",
+}
+
+# =========================================================================
+# VALIDATION RULES
+# =========================================================================
+
+VALIDATION_RULES = {
+    "province_name_max_length": 100,
+    "country_name_max_length": 50,
+    "max_countries": 500,
+    "max_provinces": 5000,
+    "min_trade_goods_variety": 0.3,  # At least 30% variety
+}
+
+# =========================================================================
+# PERFORMANCE & OPTIMIZATION
+# =========================================================================
+
+# Caching settings
+CACHE_ENABLED = True
+CACHE_DIR = PROJECT_ROOT / ".cache"
+CACHE_EXPIRY_SECONDS = 3600  # 1 hour
+
+# Multithreading
+MAX_WORKERS = 4  # Number of parallel workers
+CHUNK_SIZE = 256  # Process maps in chunks
+
+# =========================================================================
+# EXTERNAL DATA FORMATS
+# =========================================================================
+
+SUPPORTED_FORMATS = {
+    "xml": [".xml"],
+    "json": [".json"],
+    "csv": [".csv"],
+    "dll": [".dll"],
+    "txt": [".txt"],
+    "lua": [".lua"],
+    "binary": [".dat", ".bin"],
+}
