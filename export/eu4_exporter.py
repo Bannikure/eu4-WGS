@@ -53,8 +53,9 @@ MOD_SUBDIRS = [
 class MapFileExporter:
     """Exports all map-related bitmap and configuration files."""
 
-    def __init__(self, output_dir: str):
+    def __init__(self, output_dir: str, map_height: int = 2048):
         self.output_dir = output_dir
+        self.map_height = map_height
         self.map_dir = f"{output_dir}/map"
         ensure_dir(self.map_dir)
 
@@ -283,7 +284,6 @@ category = {
                              "stop_x", "stop_y", "adjacency_name", "Comment"])
         return path
 
-    @staticmethod
     def _generate_province_name(self, province) -> str:
         """Generate a flavorful province name based on continent."""
         from eu4_wgs_v8.content.world_content import CultureGenerator
@@ -484,7 +484,6 @@ hre = {"yes" if province.is_island else "no"}
         filename = f"{province.id} - {province_name}.txt"
         return write_text(f"{self.output_dir}/{filename}", content)
 
-    @staticmethod
     def _assign_trade_good(self, province, development: int) -> str:
         """Assigns trade good based on continent and development."""
         from eu4_wgs_v8.content.world_content import RICH_COMMODITIES, BARREN_COMMODITIES
@@ -579,7 +578,7 @@ class MasterExportOrchestrator:
         exported_files = {}
 
         # ── Map files ──────────────────────────────────────────
-        map_exporter = MapFileExporter(mod_root)
+        map_exporter = MapFileExporter(mod_root, map_height=self.map_height)
 
         exported_files["heightmap"] = map_exporter.save_heightmap(heightmap)
 
