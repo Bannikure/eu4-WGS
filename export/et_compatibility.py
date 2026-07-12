@@ -61,6 +61,8 @@ import copy
 from typing import Dict, List, Tuple, Optional, Any
 from dataclasses import dataclass, field
 
+from eu4_wgs_v8.common.io_utils import ensure_dir, write_text
+
 
 # ═══════════════════════════════════════════════════════════════════════
 #  EXTENDED TIMELINE BOOKMARK DEFINITIONS
@@ -317,7 +319,7 @@ class ETBookmarkExporter:
         Creates one bookmark per Extended Timeline start date, each with
         appropriate countries featured based on the inverted world theme.
         """
-        os.makedirs(output_dir, exist_ok=True)
+        ensure_dir(output_dir)
 
         advanced = advanced_tags or ["BHA", "HIN", "ABY", "MLI", "GZW", "MPH", "SGH", "KMR"]
         primitive = primitive_tags or []
@@ -357,15 +359,12 @@ class ETBookmarkExporter:
             ])
 
         content = "\n".join(lines)
-        path = os.path.join(output_dir, "extended_timeline_bookmarks.txt")
-        with open(path, "w", encoding="utf-8") as f:
-            f.write(content)
-        return path
+        return write_text(os.path.join(output_dir, "extended_timeline_bookmarks.txt"), content)
 
     @staticmethod
     def generate_bookmark_localisation(output_dir: str) -> str:
         """Generate localisation for all Extended Timeline bookmarks."""
-        os.makedirs(output_dir, exist_ok=True)
+        ensure_dir(output_dir)
 
         lines = ["l_english:", ""]
 
@@ -380,11 +379,10 @@ class ETBookmarkExporter:
             ])
 
         content = "\n".join(lines)
-        path = os.path.join(output_dir, "extended_timeline_bookmarks_l_english.yml")
-        with open(path, "wb") as f:
-            f.write(b'\xef\xbb\xbf')  # UTF-8 BOM
-            f.write(content.encode('utf-8'))
-        return path
+        return write_text(
+            os.path.join(output_dir, "extended_timeline_bookmarks_l_english.yml"),
+            content, encoding="utf-8-sig",
+        )
 
 
 def _generate_bookmark_name(bm: ETBookmark) -> str:
@@ -588,7 +586,7 @@ class ETProvinceHistoryExporter:
                                 output_dir: str,
                                 map_height: int = 2048) -> str:
         """Write a date-scoped province history file."""
-        os.makedirs(output_dir, exist_ok=True)
+        ensure_dir(output_dir)
 
         content = ETProvinceHistoryExporter.generate_date_scoped_province_history(
             province, owner_tag, is_advanced, continent, map_height
@@ -596,10 +594,7 @@ class ETProvinceHistoryExporter:
 
         province_name = f"Province_{province.id}"
         filename = f"{province.id} - {province_name}.txt"
-        path = os.path.join(output_dir, filename)
-        with open(path, "w", encoding="utf-8") as f:
-            f.write(content)
-        return path
+        return write_text(os.path.join(output_dir, filename), content)
 
 
 # ═══════════════════════════════════════════════════════════════════════
@@ -774,17 +769,14 @@ class ETCountryHistoryExporter:
                                is_advanced: bool,
                                output_dir: str) -> str:
         """Write a date-scoped country history file."""
-        os.makedirs(output_dir, exist_ok=True)
+        ensure_dir(output_dir)
 
         content = ETCountryHistoryExporter.generate_date_scoped_country_history(
             tag, country_data, is_advanced
         )
 
         filename = f"{tag} - {country_data.short_name}.txt"
-        path = os.path.join(output_dir, filename)
-        with open(path, "w", encoding="utf-8") as f:
-            f.write(content)
-        return path
+        return write_text(os.path.join(output_dir, filename), content)
 
 
 # ═══════════════════════════════════════════════════════════════════════
@@ -806,7 +798,7 @@ class ETTechnologyExporter:
         Generate a technology.txt that defines tech groups with appropriate
         penalties for the inverted world and Extended Timeline.
         """
-        os.makedirs(output_dir, exist_ok=True)
+        ensure_dir(output_dir)
 
         # Extended Timeline adds many more tech groups for different eras
         # In the inverted world, African/Asian groups have no penalty
@@ -978,10 +970,7 @@ high_american = {
 \t}
 }
 """
-        path = os.path.join(output_dir, "technology.txt")
-        with open(path, "w", encoding="utf-8") as f:
-            f.write(content)
-        return path
+        return write_text(os.path.join(output_dir, "technology.txt"), content)
 
 
 # ═══════════════════════════════════════════════════════════════════════
@@ -1016,9 +1005,7 @@ class ETModDescriptorGenerator:
             f'}}\n'
             f'{dep_line}\n'
         )
-        pointer_path = os.path.join(output_dir, f"{tech_name}.mod")
-        with open(pointer_path, "w", encoding="utf-8") as f:
-            f.write(pointer_content)
+        pointer_path = write_text(os.path.join(output_dir, f"{tech_name}.mod"), pointer_content)
 
         # In-mod descriptor (inside mod folder)
         descriptor_content = (
@@ -1026,9 +1013,7 @@ class ETModDescriptorGenerator:
             f'supported_version = "1.37.*.*"\n'
             f'{dep_line}\n'
         )
-        descriptor_path = os.path.join(output_dir, "descriptor.mod")
-        with open(descriptor_path, "w", encoding="utf-8") as f:
-            f.write(descriptor_content)
+        descriptor_path = write_text(os.path.join(output_dir, "descriptor.mod"), descriptor_content)
 
         return pointer_path, descriptor_path
 
@@ -1050,7 +1035,7 @@ class ETDiplomacyExporter:
         """
         Generate diplomacy entries with date scopes for different eras.
         """
-        os.makedirs(output_dir, exist_ok=True)
+        ensure_dir(output_dir)
         lines = [
             "# Extended Timeline Diplomacy for Inverted World",
             "# Diplomatic relationships change across eras",
@@ -1098,10 +1083,7 @@ class ETDiplomacyExporter:
                 ])
 
         content = "\n".join(lines)
-        path = os.path.join(output_dir, "extended_timeline_diplomacy.txt")
-        with open(path, "w", encoding="utf-8") as f:
-            f.write(content)
-        return path
+        return write_text(os.path.join(output_dir, "extended_timeline_diplomacy.txt"), content)
 
 
 # ═══════════════════════════════════════════════════════════════════════
@@ -1117,7 +1099,7 @@ class ETDefinesExporter:
     @staticmethod
     def generate_defines(output_dir: str) -> str:
         """Generate defines.lua with ET-compatible settings."""
-        os.makedirs(output_dir, exist_ok=True)
+        ensure_dir(output_dir)
 
         content = """-- Defines for Inverted World + Extended Timeline Compatibility
 -- Adjusts start dates and technology to work with ET's extended timeline
@@ -1140,10 +1122,7 @@ defines = {
     }
 }
 """
-        path = os.path.join(output_dir, "defines.lua")
-        with open(path, "w", encoding="utf-8") as f:
-            f.write(content)
-        return path
+        return write_text(os.path.join(output_dir, "defines.lua"), content)
 
 
 # ═══════════════════════════════════════════════════════════════════════

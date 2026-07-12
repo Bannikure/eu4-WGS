@@ -11,9 +11,10 @@ import csv
 import json
 import shutil
 import numpy as np
-from PIL import Image
 from typing import Dict, List, Tuple, Any, Optional
 from dataclasses import dataclass
+
+from eu4_wgs_v8.common.io_utils import ensure_dir, write_text, save_image
 
 
 # ═══════════════════════════════════════════════════════════════
@@ -55,50 +56,36 @@ class MapFileExporter:
     def __init__(self, output_dir: str):
         self.output_dir = output_dir
         self.map_dir = f"{output_dir}/map"
-        os.makedirs(self.map_dir, exist_ok=True)
+        ensure_dir(self.map_dir)
 
     def save_heightmap(self, heightmap: np.ndarray) -> str:
         """Save heightmap.bmp."""
-        path = f"{self.map_dir}/heightmap.bmp"
-        Image.fromarray(heightmap).save(path)
-        return path
+        return save_image(heightmap, f"{self.map_dir}/heightmap.bmp")
 
     def save_provinces_bmp(self, provinces_bmp: np.ndarray) -> str:
         """Save provinces.bmp."""
-        path = f"{self.map_dir}/provinces.bmp"
-        Image.fromarray(provinces_bmp).save(path)
-        return path
+        return save_image(provinces_bmp, f"{self.map_dir}/provinces.bmp")
 
     def save_world_normal(self, normal_map: np.ndarray) -> str:
         """Save world_normal.bmp."""
-        path = f"{self.map_dir}/world_normal.bmp"
-        Image.fromarray(normal_map, "RGB").save(path)
-        return path
+        return save_image(normal_map, f"{self.map_dir}/world_normal.bmp", "RGB")
 
     def save_terrain_bmp(self, terrain_bmp: np.ndarray) -> str:
         """Save terrain.bmp."""
-        path = f"{self.map_dir}/terrain.bmp"
-        Image.fromarray(terrain_bmp, "RGB").save(path)
-        return path
+        return save_image(terrain_bmp, f"{self.map_dir}/terrain.bmp", "RGB")
 
     def save_rivers_bmp(self, rivers_bmp: np.ndarray) -> str:
         """Save rivers.bmp."""
-        path = f"{self.map_dir}/rivers.bmp"
-        Image.fromarray(rivers_bmp, "RGB").save(path)
-        return path
+        return save_image(rivers_bmp, f"{self.map_dir}/rivers.bmp", "RGB")
 
     def save_watercolor_bmp(self, watercolor_bmp: np.ndarray) -> str:
         """Save watercolor.bmp."""
-        path = f"{self.map_dir}/watercolor.bmp"
-        Image.fromarray(watercolor_bmp, "RGB").save(path)
-        return path
+        return save_image(watercolor_bmp, f"{self.map_dir}/watercolor.bmp", "RGB")
 
     def save_trees_bmp(self, width: int = 5632, height: int = 2048) -> str:
         """Generate a blank trees.bmp (required by EU4)."""
-        path = f"{self.map_dir}/trees.bmp"
         blank = np.zeros((height, width, 4), dtype=np.uint8)
-        Image.fromarray(blank, "RGBA").save(path)
-        return path
+        return save_image(blank, f"{self.map_dir}/trees.bmp", "RGBA")
 
     def write_definition_csv(self, province_infos: list) -> str:
         """
@@ -149,10 +136,7 @@ only_titles = {{
 
 canal_definition = "canal_definitions.txt"
 """
-        path = f"{self.map_dir}/default.map"
-        with open(path, "w", encoding="utf-8") as f:
-            f.write(content)
-        return path
+        return write_text(f"{self.map_dir}/default.map", content)
 
     def write_positions_txt(self, positions_data: Dict[int, Dict]) -> str:
         """Writes all province position blocks to positions.txt."""
@@ -202,7 +186,6 @@ canal_definition = "canal_definitions.txt"
 
     def write_terrain_txt(self) -> str:
         """Writes terrain.txt defining terrain categories."""
-        path = f"{self.map_dir}/terrain.txt"
         content = """# Terrain categories definition
 category = {
     name = "ocean"
@@ -289,9 +272,7 @@ category = {
     movement_cost = 1.5
 }
 """
-        with open(path, "w", encoding="utf-8") as f:
-            f.write(content)
-        return path
+        return write_text(f"{self.map_dir}/terrain.txt", content)
 
     def write_adjacencies_csv(self) -> str:
         """Writes a basic adjacencies.csv (required by EU4)."""
@@ -340,7 +321,7 @@ class CountryFileExporter:
 
     def write_country_common_file(self, tag: str, country_data) -> str:
         """Creates common/countries/TAG.txt with map color and baseline settings."""
-        os.makedirs(f"{self.output_dir}/common/countries", exist_ok=True)
+        ensure_dir(f"{self.output_dir}/common/countries")
         r, g, b = country_data.color
 
         graph_culture = "indian" if country_data.is_advanced else "western"
@@ -357,14 +338,11 @@ ai_personality = {personality}
 # Government
 government = {country_data.government}
 """
-        path = f"{self.output_dir}/common/countries/{tag}.txt"
-        with open(path, "w", encoding="utf-8") as f:
-            f.write(content)
-        return path
+        return write_text(f"{self.output_dir}/common/countries/{tag}.txt", content)
 
     def write_country_tags(self, countries: Dict[str, Any]) -> str:
         """Writes common/country_tags/00_countries.txt."""
-        os.makedirs(f"{self.output_dir}/common/country_tags", exist_ok=True)
+        ensure_dir(f"{self.output_dir}/common/country_tags")
         path = f"{self.output_dir}/common/country_tags/00_countries.txt"
 
         with open(path, "w", encoding="utf-8") as f:
@@ -374,7 +352,7 @@ government = {country_data.government}
 
     def write_country_history_file(self, tag: str, country_data) -> str:
         """Writes history/countries/TAG - Name.txt with tech and ruler data."""
-        os.makedirs(f"{self.output_dir}/history/countries", exist_ok=True)
+        ensure_dir(f"{self.output_dir}/history/countries")
 
         inst = country_data.institutions if hasattr(country_data, 'institutions') else [0]*8
         inst_str = "\n".join(
@@ -413,25 +391,19 @@ mercantilism = {50 if country_data.is_advanced else 5}
 }}
 """
         filename = f"{tag} - {country_data.short_name}.txt"
-        path = f"{self.output_dir}/history/countries/{filename}"
-        with open(path, "w", encoding="utf-8") as f:
-            f.write(content)
-        return path
+        return write_text(f"{self.output_dir}/history/countries/{filename}", content)
 
     def write_national_ideas(self, tag: str, center_y: int) -> str:
         """Write national ideas file for a country."""
         from eu4_wgs_v8.content.world_content import IdeaGenerator
-        os.makedirs(f"{self.output_dir}/common/ideas", exist_ok=True)
+        ensure_dir(f"{self.output_dir}/common/ideas")
 
         ideas_content = IdeaGenerator.generate_national_ideas(tag, center_y, map_height=self.map_height)
-        path = f"{self.output_dir}/common/ideas/{tag}_ideas.txt"
-        with open(path, "w", encoding="utf-8") as f:
-            f.write(ideas_content)
-        return path
+        return write_text(f"{self.output_dir}/common/ideas/{tag}_ideas.txt", ideas_content)
 
     def write_localization(self, countries: Dict[str, Any]) -> str:
         """Writes display name definitions to the mod localisation folder."""
-        os.makedirs(f"{self.output_dir}/localisation", exist_ok=True)
+        ensure_dir(f"{self.output_dir}/localisation")
         path = f"{self.output_dir}/localisation/custom_countries_l_english.yml"
 
         content = "l_english:\n"
@@ -440,9 +412,7 @@ mercantilism = {50 if country_data.is_advanced else 5}
             content += f' {tag}_ADJ:0 "{data.short_name}an"\n'
             content += f' {tag}_DEF:0 "{data.full_name}"\n'
 
-        with open(path, "w", encoding="utf-8-sig") as f:
-            f.write(content)
-        return path
+        return write_text(path, content, encoding="utf-8-sig")
 
 
 # ═══════════════════════════════════════════════════════════════
@@ -455,7 +425,7 @@ class ProvinceHistoryExporter:
     def __init__(self, output_dir: str, map_height: int = 2048):
         self.map_height = map_height
         self.output_dir = f"{output_dir}/history/provinces"
-        os.makedirs(self.output_dir, exist_ok=True)
+        ensure_dir(self.output_dir)
 
     def write_province_history(self, province, country_tag: str = "FRA",
                                 country_data=None) -> str:
@@ -512,10 +482,7 @@ hre = {"yes" if province.is_island else "no"}
 }}
 """
         filename = f"{province.id} - {province_name}.txt"
-        path = f"{self.output_dir}/{filename}"
-        with open(path, "w", encoding="utf-8") as f:
-            f.write(content)
-        return path
+        return write_text(f"{self.output_dir}/{filename}", content)
 
     @staticmethod
     def _assign_trade_good(self, province, development: int) -> str:
@@ -559,14 +526,10 @@ class ModDescriptorExporter:
             f'supported_version="1.37.*.*"\n'
             f'tags={{\n\t"Total Conversion"\n\t"Map"\n\t"Alternative History"\n}}\n'
         )
-        pointer_path = f"{output_dir}/{tech_name}.mod"
-        with open(pointer_path, "w", encoding="utf-8") as f:
-            f.write(pointer_content)
+        pointer_path = write_text(f"{output_dir}/{tech_name}.mod", pointer_content)
 
         # In-mod descriptor
-        descriptor_path = f"{output_dir}/descriptor.mod"
-        with open(descriptor_path, "w", encoding="utf-8") as f:
-            f.write(pointer_content)
+        descriptor_path = write_text(f"{output_dir}/descriptor.mod", pointer_content)
 
         return pointer_path, descriptor_path
 
@@ -595,7 +558,7 @@ class MasterExportOrchestrator:
             shutil.rmtree(mod_root)
 
         for subdir in MOD_SUBDIRS:
-            os.makedirs(os.path.join(mod_root, subdir), exist_ok=True)
+            ensure_dir(os.path.join(mod_root, subdir))
 
         return mod_root
 
@@ -806,7 +769,7 @@ class MasterExportOrchestrator:
                                     assignments: Dict[str, str],
                                     countries: Dict[str, Any]) -> str:
         """Write Celestial Directorate history entries for countries."""
-        os.makedirs(f"{output_dir}/history/countries", exist_ok=True)
+        ensure_dir(f"{output_dir}/history/countries")
 
         for tag, role in assignments.items():
             if tag in countries:
@@ -816,8 +779,7 @@ class MasterExportOrchestrator:
                 path = f"{output_dir}/history/countries/{filename}"
 
                 if os.path.exists(path):
-                    with open(path, "a", encoding="utf-8") as f:
-                        f.write(f"\n{role}\n")
+                    write_text(path, f"\n{role}\n", mode="a")
 
         return output_dir
 

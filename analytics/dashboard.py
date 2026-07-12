@@ -15,6 +15,8 @@ import numpy as np
 from typing import Dict, List, Any, Optional, Tuple
 from dataclasses import dataclass, asdict
 
+from eu4_wgs_v8.common.io_utils import ensure_dir, write_text
+
 
 # ═══════════════════════════════════════════════════════════════════════
 #  DASHBOARD DATA PREPARER
@@ -211,7 +213,7 @@ class DashboardGenerator:
     def __init__(self, output_dir: str = "."):
         self.output_dir = output_dir
         self.preparer = DashboardDataPreparer()
-        os.makedirs(output_dir, exist_ok=True)
+        ensure_dir(output_dir)
 
     def generate_dashboard(
         self,
@@ -265,10 +267,7 @@ class DashboardGenerator:
         )
 
         output_path = os.path.join(self.output_dir, "analytics_dashboard.html")
-        with open(output_path, "w", encoding="utf-8") as f:
-            f.write(html)
-
-        return output_path
+        return write_text(output_path, html)
 
     def _build_html(self, **kwargs) -> str:
         """Build the complete HTML document with embedded CSS and JS."""
