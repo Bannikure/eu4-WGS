@@ -20,20 +20,24 @@ __version__ = "8.0.0"
 __author__ = "SuperNinja — NinjaTech AI"
 __title__ = "EU4 World Generator Studio V8 — Afro-Asian Ascendancy"
 
-from eu4_wgs_v8.engine import (
-    MapConfig, MapGenerationEngine, ProvinceGenerator, ProvinceInfo,
-    RiverGenerator, TerrainClassifier, NormalMapGenerator, WatercolorGenerator,
-)
-from eu4_wgs_v8.analytics import (
-    HeightmapAnalyzer, ProvinceInspector, WorldAnalytics,
-    DashboardGenerator, generate_dashboard_from_analytics,
-)
-from eu4_wgs_v8.content import (
-    CountryGenerator, CountryData, CelestialDirectorate,
-    ReligionGenerator, CultureGenerator, IdeaGenerator,
-    TradeGenerator, DiplomacyGenerator, FlagGenerator,
-)
-from eu4_wgs_v8.export import (
-    MasterExportOrchestrator, MapFileExporter, CountryFileExporter,
-    ProvinceHistoryExporter, ModDescriptorExporter,
-)
+try:
+    from eu4_wgs_v8.engine import (
+        MapConfig, MapGenerationEngine, ProvinceGenerator, ProvinceInfo,
+        RiverGenerator, TerrainClassifier, NormalMapGenerator, WatercolorGenerator,
+    )
+    from eu4_wgs_v8.analytics import (
+        HeightmapAnalyzer, ProvinceInspector, WorldAnalytics,
+        DashboardGenerator, generate_dashboard_from_analytics,
+    )
+    from eu4_wgs_v8.content import (
+        CountryGenerator, CountryData, CelestialDirectorate,
+        ReligionGenerator, CultureGenerator, IdeaGenerator,
+        TradeGenerator, DiplomacyGenerator, FlagGenerator,
+    )
+    from eu4_wgs_v8.export import (
+        MasterExportOrchestrator, MapFileExporter, CountryFileExporter,
+        ProvinceHistoryExporter, ModDescriptorExporter,
+    )
+except ModuleNotFoundError as exc:
+    if exc.name != "eu4_wgs_v8":
+        raise
