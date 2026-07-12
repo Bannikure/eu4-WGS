@@ -11,6 +11,7 @@ Fixes vs. original:
 
 from __future__ import annotations
 
+import logging
 import os
 import random
 from typing import Any
@@ -26,6 +27,8 @@ from .constants import (
     FLAG_PALETTE,
     MISSION_ARCHETYPES,
 )
+
+logger = logging.getLogger(__name__)
 
 
 def generate_country_name() -> tuple[str, str]:
@@ -77,8 +80,8 @@ def generate_custom_flag(tag: str, output_dir: str, assets_path: str = "assets")
             flag_img = Image.composite(
                 Image.new("RGB", (64, 64), color=secondary_color), flag_img, pattern_mask
             )
-        except Exception:
-            pass
+        except (OSError, ValueError) as e:
+            logger.warning("Failed to apply flag pattern for tag '%s': %s", tag, e)
 
     emblem_dir = os.path.join(assets_path, "emblems")
     if os.path.isdir(emblem_dir) and os.listdir(emblem_dir):
@@ -89,8 +92,8 @@ def generate_custom_flag(tag: str, output_dir: str, assets_path: str = "assets")
             )
             emblem_stamp = Image.new("RGB", (40, 40), color=emblem_color)
             flag_img.paste(emblem_stamp, (12, 12), mask=ImageOps.invert(emblem_mask))
-        except Exception:
-            pass
+        except (OSError, ValueError) as e:
+            logger.warning("Failed to apply flag emblem for tag '%s': %s", tag, e)
 
     flag_img.save(os.path.join(output_dir, "gfx", "flags", f"{tag}.tga"), format="TGA")
 

@@ -16,9 +16,12 @@ Name lists available:
 Also provides country name lists and a merged "all names" list.
 """
 
+import logging
 import os
 import random
 from typing import Dict, List, Optional
+
+logger = logging.getLogger(__name__)
 
 # Path to the name list files
 _NAME_LIST_DIR = os.path.join(os.path.dirname(__file__), "name_lists")
@@ -60,7 +63,8 @@ def _load_name_file(filename: str) -> List[str]:
                 name = line.strip()
                 if name and not name.startswith("#"):
                     names.append(name)
-    except Exception:
+    except OSError as e:
+        logger.warning("Could not read name list '%s' (%s); using empty list", fpath, e)
         names = []
 
     _name_cache[filename] = names

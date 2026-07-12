@@ -321,7 +321,7 @@ class IconicButton(ctk.CTkButton):
         try:
             r, g, b = int(hex_color[1:3], 16), int(hex_color[3:5], 16), int(hex_color[5:7], 16)
             return f"#{max(0,r-30):02x}{max(0,g-30):02x}{max(0,b-30):02x}"
-        except:
+        except (ValueError, IndexError):
             return hex_color
 
 
@@ -1564,10 +1564,11 @@ if CTk_AVAILABLE:
                     f"Files written: {len(result.get('files_written', []))}"))
 
             except Exception as e:
-                self.gen_state.fail(f"Export error: {str(e)}")
+                err_msg = str(e)
+                self.gen_state.fail(f"Export error: {err_msg}")
                 import traceback
                 traceback.print_exc()
-                self.after(0, lambda: messagebox.showerror("Export Error", str(e)))
+                self.after(0, lambda msg=err_msg: messagebox.showerror("Export Error", msg))
 
         # ── Open Dashboard ──────────────────────────────────────
         def _on_open_dashboard(self):
