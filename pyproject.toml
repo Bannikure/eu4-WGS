@@ -1,0 +1,52 @@
+[build-system]
+requires = ["setuptools>=64.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "eu4-wgs"
+version = "8.0.0"
+description = "EU4 World Generator Studio V8 — Afro-Asian Ascendancy total-conversion mod generator"
+readme = "README.md"
+requires-python = ">=3.9"
+authors = [
+    { name = "C.D. Wilson", email = "c.d.wilson3933@gmail.com" }
+]
+license = { text = "MIT" }
+keywords = ["eu4", "mod", "generator", "procedural", "world"]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: End Users/Desktop",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Games/Entertainment",
+]
+dependencies = [
+    "numpy>=1.24",
+    "opencv-python>=4.8",
+    "Pillow>=10.0",
+    "scipy>=1.11",
+    "matplotlib>=3.7",
+    "customtkinter>=5.2",
+]
+
+[project.optional-dependencies]
+test = ["pytest"]
+
+[project.scripts]
+eu4-wgs = "main:main"
+generate-world = "generate_world:generate_world"
+
+[project.urls]
+Homepage = "https://github.com/Bannikure/eu4-WGS"
+Repository = "https://github.com/Bannikure/eu4-WGS"
+
+[tool.setuptools]
+packages = ["eu4_wgs_v8", "common", "engine", "analytics", "content", "export", "gui", "resources", "eu4gen"]
+py-modules = ["main", "generate_world"]
+
+[tool.setuptools.package-data]
+eu4_wgs_v8 = ["assets/**/*", "templates/**/*"]

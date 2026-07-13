@@ -208,6 +208,8 @@ def run_test():
         province_infos=province_info_list,
         countries=country_dict_for_export,
         climate_zones=climate_zones,
+        terrain_bmp=terrain_bmp,
+        rivers_bmp=rivers,
     )
     print(f"  ✓ Export: {len(result)} files in {time.time()-t0:.1f}s")
 
@@ -223,23 +225,43 @@ def run_test():
 
 def run_headless_pipeline(args):
     """Run the full headless generation pipeline."""
-    from eu4_wgs_v8.gui.studio import GUIConfig, run_headless
+    import generate_world
+    from eu4_wgs_v8.export import MasterExportOrchestrator
 
-    config = GUIConfig()
-    config.mod_name = args.mod_name
-    config.seed = args.seed
-    config.province_count = args.provinces
-    config.land_percentage = args.land_pct
-    config.map_style = args.map_style
-    config.map_width = args.map_width
-    config.map_height = args.map_height
-    config.output_dir = args.output
-    config.noise_octaves = args.octaves
-    config.enable_tectonic_plates = not args.no_tectonic
-    config.enable_hydraulic_erosion = not args.no_erosion
-    config.enable_impact_craters = not args.no_craters
+    result = generate_world.generate_world(
+        mod_name=args.mod_name,
+        seed=args.seed,
+        width=args.map_width,
+        height=args.map_height,
+        land_pct=args.land_pct,
+        province_count=args.provinces,
+        output_dir=args.output,
+        map_style=args.map_style,
+        enable_tectonic=not args.no_tectonic,
+        enable_erosion=not args.no_erosion,
+        enable_craters=not args.no_craters,
+        num_craters=5,
+    )
 
-    return run_headless(config)
+    orchestrator = MasterExportOrchestrator(
+        output_base_dir=args.output, map_height=args.map_height
+    )
+    export_result = orchestrator.export_complete_mod(
+        mod_name=args.mod_name,
+        heightmap=result["heightmap"],
+        land_mask=result["land_mask"],
+        provinces_bmp=result["provinces_bmp"],
+        province_infos=result["province_infos"],
+        countries={c.tag: c for c in result["countries"]},
+        climate_zones=result["climate_zones"],
+        terrain_bmp=result["terrain_bmp"],
+        rivers_bmp=result["rivers_bmp"],
+    )
+
+    return {
+        "dashboard_path": result["dashboard_path"],
+        "export_result": export_result,
+    }
 
 
 def main():
@@ -252,7 +274,8 @@ def main():
     if args.headless:
         result = run_headless_pipeline(args)
         print(f"\n[DONE] Dashboard: {result.get('dashboard_path', 'N/A')}")
-        print(f"[DONE] Mod: {args.output}/{args.mod_name}")
+        export_result = result.get("export_result", {})
+        print(f"[DONE] Mod: {args.output}/{args.mod_name} ({len(export_result)} files)")
         return
 
     # Try GUI

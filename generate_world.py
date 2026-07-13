@@ -1,14 +1,11 @@
 #!/usr/bin/env python3
 """Full world generation pipeline with dashboard and preview image generation."""
 import os
-import sys
 import time
 import json
 import numpy as np
 from PIL import Image
 
-# Ensure package imports work
-sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from eu4_wgs_v8.engine.map_generation import (
     MapConfig, MapGenerationEngine, ProvinceGenerator,
@@ -29,7 +26,12 @@ def generate_world(
     height=1024,
     land_pct=30,
     province_count=1500,
-    output_dir="./world_output"
+    output_dir="./world_output",
+    map_style="continents_islands",
+    enable_tectonic=True,
+    enable_erosion=True,
+    enable_craters=True,
+    num_craters=5,
 ):
     """Generate a complete world with all data and visualizations."""
     os.makedirs(output_dir, exist_ok=True)
@@ -41,11 +43,14 @@ def generate_world(
     config = MapConfig(
         width=width, height=height, seed=seed,
         land_percentage=land_pct,
-        layout_style="continents_islands"
+        layout_style=map_style
     )
     engine = MapGenerationEngine(config)
     heightmap, land_mask = engine.generate_complete_heightmap(
-        apply_tectonic=True, apply_erosion=True, apply_craters=True, num_craters=5
+        apply_tectonic=enable_tectonic,
+        apply_erosion=enable_erosion,
+        apply_craters=enable_craters,
+        num_craters=num_craters,
     )
     timings["heightmap"] = time.time() - t0
     land_pct_actual = land_mask.sum() / land_mask.size * 100
@@ -272,6 +277,7 @@ def generate_world(
         "continent_stats": continent_stats,
         "religion_dist": religion_dist,
         "tech_dist": tech_dist,
+        "climate_zones": climate_zones,
     }
 
 

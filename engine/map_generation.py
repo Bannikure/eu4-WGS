@@ -9,7 +9,6 @@ hydraulic erosion, and impact cratering.
 import numpy as np
 import cv2
 from scipy.spatial import cKDTree
-from perlin_noise import PerlinNoise
 from PIL import Image
 import random
 from dataclasses import dataclass, field
@@ -47,65 +46,8 @@ class MapConfig:
 
 
 # ═══════════════════════════════════════════════════════════════
-#  PERLIN NOISE GENERATOR
+#  FAST NOISE GENERATOR
 # ═══════════════════════════════════════════════════════════════
-
-class PerlinNoiseGenerator:
-    """High-quality Perlin noise generation with octave layering."""
-
-    def __init__(self, seed: int = 42):
-        self.seed = seed
-
-    def pnoise2(x, y, octaves=1, persistence=0.5, lacunarity=2.0):
-    # Creates a combined octave noise generator mimicking the old library
-    total = 0
-    freq = 1.0
-    amp = 1.0
-    max_val = 0
-    for _ in range(octaves):
-        noise_gen = PerlinNoise(octaves=1)
-        total += noise_gen([x * freq, y * freq]) * amp
-        max_val += amp
-        freq *= lacunarity
-        amp *= persistence
-    return total / max_val
-
-    def generate_octave_noise(self, width: int, height: int,
-                               scale: float, octaves: int,
-                               persistence: float = 0.5,
-                               lacunarity: float = 2.0) -> np.ndarray:
-        """
-        Generate fractal Brownian motion (fBm) noise using Perlin noise octaves.
-        Each octave adds finer detail at half the amplitude.
-        """
-        result = np.zeros((height, width), dtype=np.float32)
-        amplitude = 1.0
-        frequency = scale
-        max_amplitude = 0.0
-
-        for octave in range(octaves):
-            layer = np.zeros((height, width), dtype=np.float32)
-            for y in range(height):
-                for x in range(width):
-                    nx = x / width * frequency * 10
-                    ny = y / height * frequency * 10
-                    layer[y, x] = pnoise2(
-                        nx + octave * 31.7 + self.seed * 0.1,
-                        ny + octave * 47.3 + self.seed * 0.1,
-                        octaves=1,
-                        persistence=0.5,
-                        lacunarity=2.0,
-                        repeatx=4096,
-                        repeaty=4096,
-                        base=self.seed
-                    )
-            result += layer * amplitude
-            max_amplitude += amplitude
-            amplitude *= persistence
-            frequency *= lacunarity
-
-        return result / max_amplitude
-
 
 class FastNoiseGenerator:
     """
@@ -569,7 +511,7 @@ class ProvinceGenerator:
         provinces_bmp[~land_mask] = [0, 40, 80]
 
         # Land pixels get their province color
-        for p_idx in range(min(num_provinces, active_seeds)):
+        for p_idx in range(min(num_provinces, active_seeds + 1)):
             mask = closest_indices == p_idx
             provinces_bmp[mask & land_mask] = unique_colors[p_idx]
 
