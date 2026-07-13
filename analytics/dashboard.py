@@ -113,8 +113,16 @@ class DashboardDataPreparer:
         """Prepare elevation histogram data."""
         land = heightmap[heightmap > 0]
         sea = heightmap[heightmap <= 0]
-        land_hist, land_edges = np.histogram(land, bins=bins) if len(land) > 0 else ([0]*bins, np.linspace(0, 1, bins+1))
-        sea_hist, sea_edges = np.histogram(sea, bins=bins) if len(sea) > 0 else ([0]*bins, np.linspace(-1, 0, bins+1))
+        land_hist, land_edges = (
+            np.histogram(land, bins=bins)
+            if len(land) > 0
+            else (np.zeros(bins, dtype=int), np.linspace(0, 1, bins + 1))
+        )
+        sea_hist, sea_edges = (
+            np.histogram(sea, bins=bins)
+            if len(sea) > 0
+            else (np.zeros(bins, dtype=int), np.linspace(-1, 0, bins + 1))
+        )
 
         land_labels = [f"{land_edges[i]:.2f}-{land_edges[i+1]:.2f}" for i in range(len(land_hist))]
         sea_labels = [f"{sea_edges[i]:.2f}-{sea_edges[i+1]:.2f}" for i in range(len(sea_hist))]
