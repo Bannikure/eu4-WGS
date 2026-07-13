@@ -251,6 +251,10 @@ class ExternalDataLoader:
             # Handle nested blocks
             if line.endswith('{'):
                 key = line.replace('{', '').strip()
+                # Strip an assignment operator so nested keys use their
+                # logical name (e.g. "nested = {" -> "nested").
+                if '=' in key:
+                    key = key.split('=', 1)[0].strip()
                 new_dict = {}
                 stack[-1][key] = new_dict
                 stack.append(new_dict)

@@ -29,7 +29,7 @@ def test_load_file_routes_supported_formats_and_caches_results(tmp_path: Path) -
     assert loader.load_file("data.txt") == {
         "enabled": True,
         "count": 4,
-        "nested =": {"ratio": 1.5},
+        "nested": {"ratio": 1.5},
     }
     assert loader.load_file("data.bin") == b"\x00\x01"
     assert loader.load_file("data.lua") == "return { value = 3 }"
@@ -69,7 +69,7 @@ def test_parse_eu4_script_converts_scalars_and_closes_nested_blocks() -> None:
         "count": 4,
         "ratio": 1.25,
         "label": "Aksum",
-        "nested =": {"child": 2},
+        "nested": {"child": 2},
     }
 
 
