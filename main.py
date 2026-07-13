@@ -241,6 +241,7 @@ def run_headless_pipeline(args):
         enable_erosion=not args.no_erosion,
         enable_craters=not args.no_craters,
         num_craters=5,
+        octaves=args.octaves,
     )
 
     orchestrator = MasterExportOrchestrator(

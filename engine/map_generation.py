@@ -197,7 +197,7 @@ class MapGenerationEngine:
         raw_noise = noise_gen.generate_fbm(
             self.width, self.height,
             base_scale=self.config.perlin_scale,
-            octaves=8,
+            octaves=self.config.continent_octaves,
             persistence=0.55,
             warp_strength=self.config.warp_strength,
             warp_scale=self.config.warp_scale
@@ -207,7 +207,7 @@ class MapGenerationEngine:
         continent_noise = noise_gen.generate_fbm(
             self.width, self.height,
             base_scale=self.config.perlin_scale * 0.3,
-            octaves=4,
+            octaves=self.config.detail_octaves,
             persistence=0.6,
             warp_strength=self.config.warp_strength * 2.0,
             warp_scale=self.config.warp_scale * 0.3

@@ -32,6 +32,7 @@ def generate_world(
     enable_erosion=True,
     enable_craters=True,
     num_craters=5,
+    octaves=None,
 ):
     """Generate a complete world with all data and visualizations."""
     os.makedirs(output_dir, exist_ok=True)
@@ -40,11 +41,15 @@ def generate_world(
     # ── Phase 1: Heightmap ──
     print("[1/7] Generating heightmap...")
     t0 = time.time()
-    config = MapConfig(
+    config_kwargs = dict(
         width=width, height=height, seed=seed,
         land_percentage=land_pct,
         layout_style=map_style
     )
+    if octaves is not None:
+        config_kwargs["continent_octaves"] = octaves
+        config_kwargs["detail_octaves"] = octaves
+    config = MapConfig(**config_kwargs)
     engine = MapGenerationEngine(config)
     heightmap, land_mask = engine.generate_complete_heightmap(
         apply_tectonic=enable_tectonic,

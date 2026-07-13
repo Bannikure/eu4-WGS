@@ -13,7 +13,6 @@ working directory.
 """
 
 import importlib
-import sys
 from pathlib import Path
 from types import ModuleType
 
@@ -48,7 +47,7 @@ def __getattr__(name: str) -> ModuleType:
         try:
             # Imports relative to this package, using the repository root
             # path declared above.
-            mod = importlib.import_module(name, package=__name__)
+            mod = importlib.import_module("." + name, package=__name__)
         except ModuleNotFoundError as exc:
             raise AttributeError(f"module 'eu4_wgs_v8' has no attribute {name!r}") from exc
         globals()[name] = mod
