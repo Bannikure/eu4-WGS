@@ -104,16 +104,16 @@ class MapFileExporter:
                 writer.writerow([p.id, r, g, b, name, "x"])
         return path
 
-    def write_default_map(self, max_provinces: int, sea_ids: list,
-                           wasteland_ids: list) -> str:
+    def write_default_map(self, width: int, height: int, max_provinces: int,
+                           sea_ids: list, wasteland_ids: list) -> str:
         """Writes the standard EU4 default.map."""
         sea_str = " ".join(map(str, sea_ids))
         wasteland_str = " ".join(map(str, wasteland_ids))
 
-        content = f"""# default.map for 5632x2048 framework
+        content = f"""# default.map for {width}x{height} framework
 
-width = 5632
-height = 2048
+width = {width}
+height = {height}
 max_provinces = {max_provinces}
 
 definitions = "definition.csv"
@@ -616,7 +616,7 @@ class MasterExportOrchestrator:
         max_provinces = len(province_infos) + 1
 
         exported_files["default_map"] = map_exporter.write_default_map(
-            max_provinces, sea_ids, wasteland_ids
+            width, height, max_provinces, sea_ids, wasteland_ids
         )
 
         # Compute positions

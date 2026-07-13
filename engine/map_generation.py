@@ -790,6 +790,20 @@ class TerrainClassifier:
         h, w = heightmap.shape
         terrain_canvas = np.zeros((h, w, 3), dtype=np.uint8)
 
+        # Scale thresholds relative to a 2048-height reference map
+        scale = h / 2048.0
+        polar_low = 250 * scale
+        polar_high = h - 250 * scale
+        subpolar_low = 450 * scale
+        subpolar_high = h - 450 * scale
+        temperate_low = 650 * scale
+        temperate_high = h - 650 * scale
+        subtropical_low = 900 * scale
+        subtropical_high = h - 900 * scale
+        tropical_split = 1050 * scale
+        coastal_low = 500 * scale
+        coastal_high = 800 * scale
+
         # Ocean
         terrain_canvas[~land_mask] = self.TERRAIN_COLORS["ocean"]
 
@@ -809,20 +823,20 @@ class TerrainClassifier:
             is_highland = (row_heights > 170) & (~is_mountain) & (~is_hills)
 
             # Latitude-based biome assignment
-            if y < 250 or y > 1798:  # Polar
+            if y < polar_low or y > polar_high:  # Polar
                 terrain_canvas[y, row_mask & ~is_mountain & ~is_hills] = self.TERRAIN_COLORS["ice_sheet"]
                 terrain_canvas[y, row_mask & is_hills] = self.TERRAIN_COLORS["tundra"]
-            elif y < 450 or y > 1598:  # Subpolar
+            elif y < subpolar_low or y > subpolar_high:  # Subpolar
                 terrain_canvas[y, row_mask & ~is_mountain & ~is_hills] = self.TERRAIN_COLORS["tundra"]
                 terrain_canvas[y, row_mask & is_hills] = self.TERRAIN_COLORS["steppe"]
-            elif y < 650 or y > 1398:  # Temperate
+            elif y < temperate_low or y > temperate_high:  # Temperate
                 terrain_canvas[y, row_mask & ~is_mountain & ~is_hills & ~is_highland] = self.TERRAIN_COLORS["farmland"]
                 terrain_canvas[y, row_mask & is_highland] = self.TERRAIN_COLORS["grasslands"]
                 terrain_canvas[y, row_mask & is_hills] = self.TERRAIN_COLORS["hills"]
-            elif y < 900 or y > 1198:  # Subtropical
+            elif y < subtropical_low or y > subtropical_high:  # Subtropical
                 terrain_canvas[y, row_mask & ~is_mountain & ~is_hills] = self.TERRAIN_COLORS["grasslands"]
                 terrain_canvas[y, row_mask & is_hills] = self.TERRAIN_COLORS["forest"]
-            elif y < 1050:  # Tropical (north)
+            elif y < tropical_split:  # Tropical (north)
                 terrain_canvas[y, row_mask & ~is_mountain & ~is_hills] = self.TERRAIN_COLORS["jungle"]
                 terrain_canvas[y, row_mask & is_hills] = self.TERRAIN_COLORS["marsh"]
             else:  # Tropical (south)
@@ -833,7 +847,7 @@ class TerrainClassifier:
             terrain_canvas[y, row_mask & is_mountain] = self.TERRAIN_COLORS["mountain"]
 
             # Coastal desert near sea
-            if 500 < y < 800:
+            if coastal_low < y < coastal_high:
                 coastal_zone = row_mask & (heightmap[y, :] < 130) & (~is_mountain) & (~is_hills)
                 if np.any(coastal_zone):
                     terrain_canvas[y, coastal_zone] = self.TERRAIN_COLORS["coastal_desert"]
@@ -853,21 +867,25 @@ class TerrainClassifier:
             "equatorial_rain": [],
         }
 
+        # Scale thresholds relative to a 2048-height reference map
+        h = self.height
+        scale = h / 2048.0
+
         for p in province_infos:
             if p.is_sea or p.is_wasteland:
                 continue
             y = p.center_y
             pid = p.id
 
-            if y < 300 or y > 1748:
+            if y < 300 * scale or y > h - 300 * scale:
                 zones["severe_winter"].append(pid)
-            elif y < 500 or y > 1548:
+            elif y < 500 * scale or y > h - 500 * scale:
                 zones["normal_winter"].append(pid)
-            elif 900 <= y <= 1198:
+            elif 900 * scale <= y <= 1198 * scale:
                 zones["equatorial_tropical"].append(pid)
-            elif 700 <= y < 900:
+            elif 700 * scale <= y < 900 * scale:
                 zones["monsoon"].append(pid)
-            elif 500 <= y < 700:
+            elif 500 * scale <= y < 700 * scale:
                 zones["semi_arid"].append(pid)
             else:
                 zones["mild_winter"].append(pid)
