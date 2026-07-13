@@ -43,8 +43,8 @@ def parse_args():
                         help="Map height in pixels (default: 2048)")
     parser.add_argument("--output", type=str, default="./mod_output",
                         help="Output directory (default: ./mod_output)")
-    parser.add_argument("--octaves", type=int, default=6,
-                        help="Noise octaves (default: 6)")
+    parser.add_argument("--octaves", type=int, default=None,
+                        help="Noise octaves; uses MapConfig defaults if omitted")
     parser.add_argument("--no-tectonic", action="store_true",
                         help="Disable tectonic plate simulation")
     parser.add_argument("--no-erosion", action="store_true",

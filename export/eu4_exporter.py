@@ -721,15 +721,14 @@ class MasterExportOrchestrator:
 
         return exported_files
 
-    @staticmethod
-    def _compute_positions(province_infos: list) -> Dict[int, Dict]:
+    def _compute_positions(self, province_infos: list) -> Dict[int, Dict]:
         """Compute province positions for positions.txt."""
         positions = {}
         for p in province_infos:
             if p.is_sea:
                 continue
             center_x = p.center_x
-            center_y = 2048 - p.center_y  # EU4 uses inverted Y
+            center_y = self.map_height - p.center_y  # EU4 uses inverted Y
             positions[p.id] = {
                 "bc_x": center_x,
                 "bc_y": center_y,

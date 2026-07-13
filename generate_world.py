@@ -190,8 +190,11 @@ def generate_world(
 
     # Normal map preview
     normal_map = NormalMapGenerator.generate(heightmap)
-    # Convert from [-1,1] float to [0,255] uint8 for display
-    normal_display = ((normal_map + 1) / 2 * 255).astype(np.uint8)
+    # NormalMapGenerator returns uint8 RGB; scale only if it ever returns float
+    if normal_map.dtype != np.uint8:
+        normal_display = ((normal_map + 1) / 2 * 255).astype(np.uint8)
+    else:
+        normal_display = normal_map
     if normal_display.shape[2] == 3:
         nm_img = Image.fromarray(normal_display, mode='RGB')
     else:
