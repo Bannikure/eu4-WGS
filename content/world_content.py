@@ -19,8 +19,9 @@ from PIL import Image, ImageOps, ImageDraw
 from dataclasses import dataclass, field
 from typing import Dict, List, Tuple, Any, Optional
 
-logger = logging.getLogger(__name__)
+from eu4_wgs_v8.common.io_utils import ensure_dir, write_text
 
+logger = logging.getLogger(__name__)
 
 # ═══════════════════════════════════════════════════════════════
 #  NAMING CONSTANTS
@@ -431,7 +432,7 @@ class FlagGenerator:
         if seed is not None:
             random.seed(seed)
 
-        os.makedirs(f"{output_dir}/gfx/flags", exist_ok=True)
+        ensure_dir(f"{output_dir}/gfx/flags")
 
         size = FLAG_SIZE
         palette = FLAG_PALETTE_ADVANCED if is_advanced else FLAG_PALETTE_PRIMITIVE
@@ -573,7 +574,7 @@ class ReligionGenerator:
     @staticmethod
     def generate_religion_file(output_dir: str) -> str:
         """Writes common/religions/00_religion.txt with inverted power matrix."""
-        os.makedirs(f"{output_dir}/common/religions", exist_ok=True)
+        ensure_dir(f"{output_dir}/common/religions")
 
         religion_script = """# ═══════════════════════════════════════════════════
 # INVERTED RELIGIONS DATABASE
@@ -796,16 +797,13 @@ dharma = {
     }
 }
 """
-        output_path = f"{output_dir}/common/religions/00_religion.txt"
-        with open(output_path, "w", encoding="utf-8") as f:
-            f.write(religion_script)
-        return output_path
+        return write_text(f"{output_dir}/common/religions/00_religion.txt", religion_script)
 
     @staticmethod
     def generate_hindu_holy_center_event(output_dir: str,
                                           target_province_id: int) -> str:
         """Writes event file creating automated Hindu holy center."""
-        os.makedirs(f"{output_dir}/events", exist_ok=True)
+        ensure_dir(f"{output_dir}/events")
 
         event_script = f"""# ═══════════════════════════════════════════
 # HINDU CENTER OF REFORMATION - The Vatican of the East
@@ -898,15 +896,12 @@ country_event = {{
     }}
 }}
 """
-        output_path = f"{output_dir}/events/HinduDharmaEvents.txt"
-        with open(output_path, "w", encoding="utf-8") as f:
-            f.write(event_script)
-        return output_path
+        return write_text(f"{output_dir}/events/HinduDharmaEvents.txt", event_script)
 
     @staticmethod
     def generate_holy_city_modifier_file(output_dir: str) -> str:
         """Creates the modifier database for the Hindu holy center."""
-        os.makedirs(f"{output_dir}/common/event_modifiers", exist_ok=True)
+        ensure_dir(f"{output_dir}/common/event_modifiers")
 
         modifier_script = """# Hindu Vatican Capital Buffs
 hindu_holy_city_seat = {
@@ -932,15 +927,12 @@ carthaginian_fury = {
     devastation = -0.05
 }
 """
-        output_path = f"{output_dir}/common/event_modifiers/02_hindu_modifiers.txt"
-        with open(output_path, "w", encoding="utf-8") as f:
-            f.write(modifier_script)
-        return output_path
+        return write_text(f"{output_dir}/common/event_modifiers/02_hindu_modifiers.txt", modifier_script)
 
     @staticmethod
     def generate_corrupt_church_aspects(output_dir: str) -> str:
         """Creates church aspects that make Christian reforms extremely costly."""
-        os.makedirs(f"{output_dir}/common/church_aspects", exist_ok=True)
+        ensure_dir(f"{output_dir}/common/church_aspects")
 
         aspect_script = """# Expensive and Corrupt Christian Reforms Matrix
 
@@ -995,10 +987,7 @@ aspect_puritanical_zeal = {
     }
 }
 """
-        output_path = f"{output_dir}/common/church_aspects/00_church_aspects.txt"
-        with open(output_path, "w", encoding="utf-8") as f:
-            f.write(aspect_script)
-        return output_path
+        return write_text(f"{output_dir}/common/church_aspects/00_church_aspects.txt", aspect_script)
 
 
 # ═══════════════════════════════════════════════════════════════
@@ -1084,7 +1073,7 @@ class CultureGenerator:
     @classmethod
     def generate_cultures_file(cls, output_dir: str) -> str:
         """Writes common/cultures/00_cultures.txt."""
-        os.makedirs(f"{output_dir}/common/cultures", exist_ok=True)
+        ensure_dir(f"{output_dir}/common/cultures")
 
         all_groups = {}
         all_groups.update(cls.AFRICAN_CULTURES)
@@ -1111,10 +1100,7 @@ class CultureGenerator:
                 content += f"    }}\n\n"
             content += f"}}\n\n"
 
-        output_path = f"{output_dir}/common/cultures/00_cultures.txt"
-        with open(output_path, "w", encoding="utf-8") as f:
-            f.write(content)
-        return output_path
+        return write_text(f"{output_dir}/common/cultures/00_cultures.txt", content)
 
     @classmethod
     def get_culture_for_continent(cls, continent: str) -> str:
@@ -1476,7 +1462,7 @@ class CelestialDirectorate:
     @staticmethod
     def generate_imperial_reforms(output_dir: str) -> str:
         """Writes the Celestial Directorate empire group parameters."""
-        os.makedirs(f"{output_dir}/common/imperial_reforms", exist_ok=True)
+        ensure_dir(f"{output_dir}/common/imperial_reforms")
 
         mechanics_script = """# ═══════════════════════════════════════════════════
 # THE CELESTIAL DIRECTORATE - Second HRE
@@ -1586,10 +1572,7 @@ celestial_directorate = {
     }
 }
 """
-        output_path = f"{output_dir}/common/imperial_reforms/celestial_directorate.txt"
-        with open(output_path, "w", encoding="utf-8") as f:
-            f.write(mechanics_script)
-        return output_path
+        return write_text(f"{output_dir}/common/imperial_reforms/celestial_directorate.txt", mechanics_script)
 
     @staticmethod
     def assign_directorate_roles(countries: Dict[str, CountryData]) -> Dict[str, str]:
@@ -1653,8 +1636,8 @@ class TradeGenerator:
     @staticmethod
     def generate_trade_goods_files(output_dir: str) -> str:
         """Writes EU4 trade good definitions and price files."""
-        os.makedirs(f"{output_dir}/common/trade_goods", exist_ok=True)
-        os.makedirs(f"{output_dir}/common/prices", exist_ok=True)
+        ensure_dir(f"{output_dir}/common/trade_goods")
+        ensure_dir(f"{output_dir}/common/prices")
 
         tg_script = "# Procedural Trade Goods Matrix\n"
         price_script = "# Procedural Price Layout\n"
@@ -1677,13 +1660,8 @@ class TradeGenerator:
                 f"}}\n\n"
             )
 
-        tg_path = f"{output_dir}/common/trade_goods/00_trade_goods.txt"
-        with open(tg_path, "w", encoding="utf-8") as f:
-            f.write(tg_script)
-
-        price_path = f"{output_dir}/common/prices/00_prices.txt"
-        with open(price_path, "w", encoding="utf-8") as f:
-            f.write(price_script)
+        tg_path = write_text(f"{output_dir}/common/trade_goods/00_trade_goods.txt", tg_script)
+        write_text(f"{output_dir}/common/prices/00_prices.txt", price_script)
 
         return tg_path
 
@@ -1726,7 +1704,7 @@ class TradeGenerator:
             else:
                 node_buckets["asian_wealth_hub"]["provinces"].append(pid)
 
-        os.makedirs(f"{output_dir}/common/tradenodes", exist_ok=True)
+        ensure_dir(f"{output_dir}/common/tradenodes")
         output_path = f"{output_dir}/common/tradenodes/00_tradenodes.txt"
 
         with open(output_path, "w", encoding="utf-8") as f:
@@ -1750,7 +1728,7 @@ class TradeGenerator:
     @staticmethod
     def generate_trade_price_events(output_dir: str) -> str:
         """Creates EU4 events that cripple European economies and enrich Asian/African ones."""
-        os.makedirs(f"{output_dir}/events", exist_ok=True)
+        ensure_dir(f"{output_dir}/events")
 
         event_script = """# ═══════════════════════════════════════════════════
 # INVERTED ECONOMIC FLUCTUATION EVENTS
@@ -1861,10 +1839,7 @@ country_event = {
     }
 }
 """
-        output_path = f"{output_dir}/events/InvertedEconomyEvents.txt"
-        with open(output_path, "w", encoding="utf-8") as f:
-            f.write(event_script)
-        return output_path
+        return write_text(f"{output_dir}/events/InvertedEconomyEvents.txt", event_script)
 
 
 # ═══════════════════════════════════════════════════════════════
@@ -1878,7 +1853,7 @@ class DiplomacyGenerator:
     def generate_diplomacy(output_dir: str,
                            countries: Dict[str, CountryData]) -> str:
         """Auto-generate starting alliances, rivalries, and CBs."""
-        os.makedirs(f"{output_dir}/history/diplomacy", exist_ok=True)
+        ensure_dir(f"{output_dir}/history/diplomacy")
 
         diplomacy_script = "# ═══════════════════════════════════════════════════\n"
         diplomacy_script += "# Procedural Diplomatic Starting Matrix\n"
@@ -1948,15 +1923,12 @@ casus_belli = {{
 
                 processed_pairs.add(pair_key)
 
-        output_path = f"{output_dir}/history/diplomacy/procedural_alliances.txt"
-        with open(output_path, "w", encoding="utf-8") as f:
-            f.write(diplomacy_script)
-        return output_path
+        return write_text(f"{output_dir}/history/diplomacy/procedural_alliances.txt", diplomacy_script)
 
     @staticmethod
     def generate_war_events(output_dir: str) -> str:
         """Generates cascading crisis and mega-war event files."""
-        os.makedirs(f"{output_dir}/events", exist_ok=True)
+        ensure_dir(f"{output_dir}/events")
 
         event_script = """# ═══════════════════════════════════════════════════
 # Procedural Dynamic War Crisis Chains
@@ -2042,7 +2014,4 @@ country_event = {
     }
 }
 """
-        output_path = f"{output_dir}/events/DynamicCrisisEvents.txt"
-        with open(output_path, "w", encoding="utf-8") as f:
-            f.write(event_script)
-        return output_path
+        return write_text(f"{output_dir}/events/DynamicCrisisEvents.txt", event_script)

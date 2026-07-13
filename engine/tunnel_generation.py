@@ -40,6 +40,8 @@ from typing import Dict, List, Tuple, Optional, Set
 from dataclasses import dataclass, field
 from collections import defaultdict
 
+from eu4_wgs_v8.common.io_utils import write_text
+
 
 # ═══════════════════════════════════════════════════════════════════════
 #  TUNNEL TERRAIN DEFINITIONS
@@ -802,12 +804,8 @@ class TunnelTerrainExporter:
         # 1. Generate terrain.txt entries (to be appended to main terrain.txt)
         terrain_entries = TunnelTerrainExporter.generate_terrain_txt_entries()
         terrain_path = os.path.join(mod_root, "map", "terrain.txt")
-        if os.path.exists(terrain_path):
-            with open(terrain_path, "a", encoding="utf-8") as f:
-                f.write(terrain_entries)
-        else:
-            with open(terrain_path, "w", encoding="utf-8") as f:
-                f.write(terrain_entries)
+        mode = "a" if os.path.exists(terrain_path) else "w"
+        write_text(terrain_path, terrain_entries, mode=mode)
         exported["tunnel_terrain_txt"] = terrain_path
 
         # 2. Generate adjacencies.csv entries (to be appended)
@@ -822,27 +820,21 @@ class TunnelTerrainExporter:
 
         # 3. Generate province modifiers
         mod_dir = os.path.join(mod_root, "common", "event_modifiers")
-        os.makedirs(mod_dir, exist_ok=True)
-        mod_path = os.path.join(mod_dir, "tunnel_modifiers.txt")
-        with open(mod_path, "w", encoding="utf-8") as f:
-            f.write(TunnelTerrainExporter.generate_province_modifiers())
+        mod_path = write_text(os.path.join(mod_dir, "tunnel_modifiers.txt"),
+                              TunnelTerrainExporter.generate_province_modifiers())
         exported["tunnel_modifiers"] = mod_path
 
         # 4. Generate triggered modifiers
         tm_dir = os.path.join(mod_root, "common", "triggered_modifiers")
-        os.makedirs(tm_dir, exist_ok=True)
-        tm_path = os.path.join(tm_dir, "tunnel_terrain_modifiers.txt")
-        with open(tm_path, "w", encoding="utf-8") as f:
-            f.write(TunnelTerrainExporter.generate_tunnel_triggered_modifiers())
+        tm_path = write_text(os.path.join(tm_dir, "tunnel_terrain_modifiers.txt"),
+                             TunnelTerrainExporter.generate_tunnel_triggered_modifiers())
         exported["tunnel_triggered_modifiers"] = tm_path
 
         # 5. Generate localisation
         loc_dir = os.path.join(mod_root, "localisation")
-        os.makedirs(loc_dir, exist_ok=True)
-        loc_path = os.path.join(loc_dir, "tunnel_terrain_l_english.yml")
-        with open(loc_path, "wb") as f:
-            f.write(b'\xef\xbb\xbf')  # UTF-8 BOM
-            f.write(TunnelTerrainExporter.generate_localisation().encode('utf-8'))
+        loc_path = write_text(os.path.join(loc_dir, "tunnel_terrain_l_english.yml"),
+                              TunnelTerrainExporter.generate_localisation(),
+                              encoding="utf-8-sig")
         exported["tunnel_localisation"] = loc_path
 
         # 6. Write tunnel node province history additions

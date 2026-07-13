@@ -11,9 +11,31 @@ No external server required — fully static HTML.
 
 import os
 import json
+import html as html_lib
 import numpy as np
 from typing import Dict, List, Any, Optional, Tuple
 from dataclasses import dataclass, asdict
+
+from eu4_wgs_v8.common.io_utils import ensure_dir, write_text
+
+
+def _json_for_script(value: Any) -> str:
+    """Serialize a value to JSON safe for embedding inside an inline <script>.
+
+    Escapes characters that could otherwise terminate the script element or
+    break the surrounding HTML context (``<``, ``>``, ``&``) as well as the
+    U+2028/U+2029 line separators that are invalid in JavaScript string
+    literals. This prevents a value such as ``</script><script>...`` from
+    breaking out of the script block (XSS).
+    """
+    return (
+        json.dumps(value)
+        .replace("<", "\\u003c")
+        .replace(">", "\\u003e")
+        .replace("&", "\\u0026")
+        .replace("\u2028", "\\u2028")
+        .replace("\u2029", "\\u2029")
+    )
 
 
 # ═══════════════════════════════════════════════════════════════════════
@@ -211,7 +233,7 @@ class DashboardGenerator:
     def __init__(self, output_dir: str = "."):
         self.output_dir = output_dir
         self.preparer = DashboardDataPreparer()
-        os.makedirs(output_dir, exist_ok=True)
+        ensure_dir(output_dir)
 
     def generate_dashboard(
         self,
@@ -247,28 +269,25 @@ class DashboardGenerator:
 
         # Generate HTML
         html = self._build_html(
-            world_name=world_name,
-            seed=seed,
-            map_width=map_width,
-            map_height=map_height,
-            wealth_chart=json.dumps(wealth_chart),
-            religion_chart=json.dumps(religion_chart),
-            tech_chart=json.dumps(tech_chart),
-            terrain_chart=json.dumps(terrain_chart),
-            climate_chart=json.dumps(climate_chart),
-            power_chart=json.dumps(power_chart),
-            trade_chart=json.dumps(trade_chart),
-            province_table=json.dumps(province_table),
-            elev_stats=json.dumps(elev_stats),
-            elev_land=json.dumps(elev_data.get("land", {"labels": [], "data": []})),
-            elev_sea=json.dumps(elev_data.get("sea", {"labels": [], "data": []})),
+            world_name=html_lib.escape(str(world_name)),
+            seed=html_lib.escape(str(seed)),
+            map_width=html_lib.escape(str(map_width)),
+            map_height=html_lib.escape(str(map_height)),
+            wealth_chart=_json_for_script(wealth_chart),
+            religion_chart=_json_for_script(religion_chart),
+            tech_chart=_json_for_script(tech_chart),
+            terrain_chart=_json_for_script(terrain_chart),
+            climate_chart=_json_for_script(climate_chart),
+            power_chart=_json_for_script(power_chart),
+            trade_chart=_json_for_script(trade_chart),
+            province_table=_json_for_script(province_table),
+            elev_stats=_json_for_script(elev_stats),
+            elev_land=_json_for_script(elev_data.get("land", {"labels": [], "data": []})),
+            elev_sea=_json_for_script(elev_data.get("sea", {"labels": [], "data": []})),
         )
 
         output_path = os.path.join(self.output_dir, "analytics_dashboard.html")
-        with open(output_path, "w", encoding="utf-8") as f:
-            f.write(html)
-
-        return output_path
+        return write_text(output_path, html)
 
     def _build_html(self, **kwargs) -> str:
         """Build the complete HTML document with embedded CSS and JS."""
@@ -1030,6 +1049,18 @@ const ELEV_STATS = {kwargs["elev_stats"]};
 const ELEV_LAND = {kwargs["elev_land"]};
 const ELEV_SEA = {kwargs["elev_sea"]};
 
+// ── HTML escaping ───────────────────────────────────────────────────
+// Escape values before inserting them via innerHTML to prevent DOM-based
+// XSS from attacker-controlled strings (province/owner/culture names, etc.).
+function esc(value) {{
+  return String(value == null ? '' : value)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}}
+
 // ── Tab Navigation ──────────────────────────────────────────────────
 document.querySelectorAll('.nav-tab').forEach(tab => {{
   tab.addEventListener('click', () => {{
@@ -1059,7 +1090,7 @@ const summaryItems = [
 summaryItems.forEach(item => {{
   const div = document.createElement('div');
   div.className = 'summary-card ' + item.cls;
-  div.innerHTML = '<div class="value">' + item.value + '</div><div class="label">' + item.label + '</div>';
+  div.innerHTML = '<div class="value">' + esc(item.value) + '</div><div class="label">' + esc(item.label) + '</div>';
   summaryGrid.appendChild(div);
 }});
 
@@ -1298,11 +1329,11 @@ if (POWER_DATA.labels?.length) {{
     li.className = 'power-item';
     li.innerHTML =
       '<span class="power-rank">' + (i+1) + '</span>' +
-      '<span class="power-tag">' + (POWER_DATA.tags?.[i] || '???') + '</span>' +
-      '<span style="flex:0 0 120px;color:var(--text-primary);font-size:13px;">' + name + '</span>' +
+      '<span class="power-tag">' + esc(POWER_DATA.tags?.[i] || '???') + '</span>' +
+      '<span style="flex:0 0 120px;color:var(--text-primary);font-size:13px;">' + esc(name) + '</span>' +
       '<div class="power-bar-container"><div class="power-bar ' + (isAdvanced ? 'advanced' : 'primitive') +
       '" style="width:' + pct + '%"></div></div>' +
-      '<span class="power-value">' + POWER_DATA.data[i] + '</span>';
+      '<span class="power-value">' + esc(POWER_DATA.data[i]) + '</span>';
     powerList.appendChild(li);
   }});
 }} else {{
@@ -1315,7 +1346,7 @@ if (TRADE_DATA.nodes?.length) {{
   TRADE_DATA.nodes.forEach(node => {{
     const div = document.createElement('div');
     div.className = 'trade-node ' + (node.continent === 'africa' || node.continent === 'asia' ? 'advanced' : 'primitive');
-    div.innerHTML = '<span class="value">' + node.value + '</span><span class="name">' + node.label + '</span>';
+    div.innerHTML = '<span class="value">' + esc(node.value) + '</span><span class="name">' + esc(node.label) + '</span>';
     div.title = node.continent + ' — Value: ' + node.value;
     tradeFlowViz.appendChild(div);
   }});
@@ -1361,17 +1392,17 @@ function renderTable(data) {{
     const tr = document.createElement('tr');
     tr.className = isAdvanced ? 'advanced' : 'primitive';
     tr.innerHTML =
-      '<td>' + p.id + '</td>' +
-      '<td>' + p.name + '</td>' +
-      '<td>' + p.elevation + '</td>' +
-      '<td>' + p.terrain + '</td>' +
-      '<td>' + p.continent + '</td>' +
-      '<td><span class="badge ' + (p.development > 15 ? 'badge-advanced' : 'badge-primitive') + '">' + p.development + '</span></td>' +
-      '<td><span class="badge badge-religion">' + p.religion + '</span></td>' +
-      '<td>' + p.culture + '</td>' +
-      '<td>' + p.trade_good + '</td>' +
-      '<td>' + p.tech_group + '</td>' +
-      '<td>' + p.owner + '</td>';
+      '<td>' + esc(p.id) + '</td>' +
+      '<td>' + esc(p.name) + '</td>' +
+      '<td>' + esc(p.elevation) + '</td>' +
+      '<td>' + esc(p.terrain) + '</td>' +
+      '<td>' + esc(p.continent) + '</td>' +
+      '<td><span class="badge ' + (p.development > 15 ? 'badge-advanced' : 'badge-primitive') + '">' + esc(p.development) + '</span></td>' +
+      '<td><span class="badge badge-religion">' + esc(p.religion) + '</span></td>' +
+      '<td>' + esc(p.culture) + '</td>' +
+      '<td>' + esc(p.trade_good) + '</td>' +
+      '<td>' + esc(p.tech_group) + '</td>' +
+      '<td>' + esc(p.owner) + '</td>';
     tableBody.appendChild(tr);
   }});
 }}
