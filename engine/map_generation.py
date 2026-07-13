@@ -799,7 +799,7 @@ class TerrainClassifier:
         temperate_low = 650 * scale
         temperate_high = h - 650 * scale
         subtropical_low = 900 * scale
-        subtropical_high = h - 900 * scale
+        subtropical_high = h - 850 * scale  # original subtropical upper bound was 1198
         tropical_split = 1050 * scale
         coastal_low = 500 * scale
         coastal_high = 800 * scale
@@ -881,7 +881,7 @@ class TerrainClassifier:
                 zones["severe_winter"].append(pid)
             elif y < 500 * scale or y > h - 500 * scale:
                 zones["normal_winter"].append(pid)
-            elif 900 * scale <= y <= 1198 * scale:
+            elif 900 * scale <= y <= h - 850 * scale:
                 zones["equatorial_tropical"].append(pid)
             elif 700 * scale <= y < 900 * scale:
                 zones["monsoon"].append(pid)
