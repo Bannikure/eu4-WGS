@@ -9,7 +9,6 @@ hydraulic erosion, and impact cratering.
 import numpy as np
 import cv2
 from scipy.spatial import cKDTree
-from perlin_noise import PerlinNoise
 from PIL import Image
 import random
 from dataclasses import dataclass, field
@@ -47,65 +46,8 @@ class MapConfig:
 
 
 # ═══════════════════════════════════════════════════════════════
-#  PERLIN NOISE GENERATOR
+#  FAST NOISE GENERATOR
 # ═══════════════════════════════════════════════════════════════
-
-class PerlinNoiseGenerator:
-    """High-quality Perlin noise generation with octave layering."""
-
-    def __init__(self, seed: int = 42):
-        self.seed = seed
-
-    def pnoise2(x, y, octaves=1, persistence=0.5, lacunarity=2.0):
-    # Creates a combined octave noise generator mimicking the old library
-    total = 0
-    freq = 1.0
-    amp = 1.0
-    max_val = 0
-    for _ in range(octaves):
-        noise_gen = PerlinNoise(octaves=1)
-        total += noise_gen([x * freq, y * freq]) * amp
-        max_val += amp
-        freq *= lacunarity
-        amp *= persistence
-    return total / max_val
-
-    def generate_octave_noise(self, width: int, height: int,
-                               scale: float, octaves: int,
-                               persistence: float = 0.5,
-                               lacunarity: float = 2.0) -> np.ndarray:
-        """
-        Generate fractal Brownian motion (fBm) noise using Perlin noise octaves.
-        Each octave adds finer detail at half the amplitude.
-        """
-        result = np.zeros((height, width), dtype=np.float32)
-        amplitude = 1.0
-        frequency = scale
-        max_amplitude = 0.0
-
-        for octave in range(octaves):
-            layer = np.zeros((height, width), dtype=np.float32)
-            for y in range(height):
-                for x in range(width):
-                    nx = x / width * frequency * 10
-                    ny = y / height * frequency * 10
-                    layer[y, x] = pnoise2(
-                        nx + octave * 31.7 + self.seed * 0.1,
-                        ny + octave * 47.3 + self.seed * 0.1,
-                        octaves=1,
-                        persistence=0.5,
-                        lacunarity=2.0,
-                        repeatx=4096,
-                        repeaty=4096,
-                        base=self.seed
-                    )
-            result += layer * amplitude
-            max_amplitude += amplitude
-            amplitude *= persistence
-            frequency *= lacunarity
-
-        return result / max_amplitude
-
 
 class FastNoiseGenerator:
     """
@@ -255,7 +197,7 @@ class MapGenerationEngine:
         raw_noise = noise_gen.generate_fbm(
             self.width, self.height,
             base_scale=self.config.perlin_scale,
-            octaves=8,
+            octaves=self.config.continent_octaves,
             persistence=0.55,
             warp_strength=self.config.warp_strength,
             warp_scale=self.config.warp_scale
@@ -265,7 +207,7 @@ class MapGenerationEngine:
         continent_noise = noise_gen.generate_fbm(
             self.width, self.height,
             base_scale=self.config.perlin_scale * 0.3,
-            octaves=4,
+            octaves=self.config.detail_octaves,
             persistence=0.6,
             warp_strength=self.config.warp_strength * 2.0,
             warp_scale=self.config.warp_scale * 0.3
@@ -569,7 +511,7 @@ class ProvinceGenerator:
         provinces_bmp[~land_mask] = [0, 40, 80]
 
         # Land pixels get their province color
-        for p_idx in range(min(num_provinces, active_seeds)):
+        for p_idx in range(min(num_provinces, active_seeds + 1)):
             mask = closest_indices == p_idx
             provinces_bmp[mask & land_mask] = unique_colors[p_idx]
 
@@ -848,6 +790,20 @@ class TerrainClassifier:
         h, w = heightmap.shape
         terrain_canvas = np.zeros((h, w, 3), dtype=np.uint8)
 
+        # Scale thresholds relative to a 2048-height reference map
+        scale = h / 2048.0
+        polar_low = 250 * scale
+        polar_high = h - 250 * scale
+        subpolar_low = 450 * scale
+        subpolar_high = h - 450 * scale
+        temperate_low = 650 * scale
+        temperate_high = h - 650 * scale
+        subtropical_low = 900 * scale
+        subtropical_high = h - 850 * scale  # original subtropical upper bound was 1198
+        tropical_split = 1050 * scale
+        coastal_low = 500 * scale
+        coastal_high = 800 * scale
+
         # Ocean
         terrain_canvas[~land_mask] = self.TERRAIN_COLORS["ocean"]
 
@@ -867,20 +823,20 @@ class TerrainClassifier:
             is_highland = (row_heights > 170) & (~is_mountain) & (~is_hills)
 
             # Latitude-based biome assignment
-            if y < 250 or y > 1798:  # Polar
+            if y < polar_low or y > polar_high:  # Polar
                 terrain_canvas[y, row_mask & ~is_mountain & ~is_hills] = self.TERRAIN_COLORS["ice_sheet"]
                 terrain_canvas[y, row_mask & is_hills] = self.TERRAIN_COLORS["tundra"]
-            elif y < 450 or y > 1598:  # Subpolar
+            elif y < subpolar_low or y > subpolar_high:  # Subpolar
                 terrain_canvas[y, row_mask & ~is_mountain & ~is_hills] = self.TERRAIN_COLORS["tundra"]
                 terrain_canvas[y, row_mask & is_hills] = self.TERRAIN_COLORS["steppe"]
-            elif y < 650 or y > 1398:  # Temperate
+            elif y < temperate_low or y > temperate_high:  # Temperate
                 terrain_canvas[y, row_mask & ~is_mountain & ~is_hills & ~is_highland] = self.TERRAIN_COLORS["farmland"]
                 terrain_canvas[y, row_mask & is_highland] = self.TERRAIN_COLORS["grasslands"]
                 terrain_canvas[y, row_mask & is_hills] = self.TERRAIN_COLORS["hills"]
-            elif y < 900 or y > 1198:  # Subtropical
+            elif y < subtropical_low or y > subtropical_high:  # Subtropical
                 terrain_canvas[y, row_mask & ~is_mountain & ~is_hills] = self.TERRAIN_COLORS["grasslands"]
                 terrain_canvas[y, row_mask & is_hills] = self.TERRAIN_COLORS["forest"]
-            elif y < 1050:  # Tropical (north)
+            elif y < tropical_split:  # Tropical (north)
                 terrain_canvas[y, row_mask & ~is_mountain & ~is_hills] = self.TERRAIN_COLORS["jungle"]
                 terrain_canvas[y, row_mask & is_hills] = self.TERRAIN_COLORS["marsh"]
             else:  # Tropical (south)
@@ -891,7 +847,7 @@ class TerrainClassifier:
             terrain_canvas[y, row_mask & is_mountain] = self.TERRAIN_COLORS["mountain"]
 
             # Coastal desert near sea
-            if 500 < y < 800:
+            if coastal_low < y < coastal_high:
                 coastal_zone = row_mask & (heightmap[y, :] < 130) & (~is_mountain) & (~is_hills)
                 if np.any(coastal_zone):
                     terrain_canvas[y, coastal_zone] = self.TERRAIN_COLORS["coastal_desert"]
@@ -911,21 +867,25 @@ class TerrainClassifier:
             "equatorial_rain": [],
         }
 
+        # Scale thresholds relative to a 2048-height reference map
+        h = self.height
+        scale = h / 2048.0
+
         for p in province_infos:
             if p.is_sea or p.is_wasteland:
                 continue
             y = p.center_y
             pid = p.id
 
-            if y < 300 or y > 1748:
+            if y < 300 * scale or y > h - 300 * scale:
                 zones["severe_winter"].append(pid)
-            elif y < 500 or y > 1548:
+            elif y < 500 * scale or y > h - 500 * scale:
                 zones["normal_winter"].append(pid)
-            elif 900 <= y <= 1198:
+            elif 900 * scale <= y <= h - 850 * scale:
                 zones["equatorial_tropical"].append(pid)
-            elif 700 <= y < 900:
+            elif 700 * scale <= y < 900 * scale:
                 zones["monsoon"].append(pid)
-            elif 500 <= y < 700:
+            elif 500 * scale <= y < 700 * scale:
                 zones["semi_arid"].append(pid)
             else:
                 zones["mild_winter"].append(pid)

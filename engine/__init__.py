@@ -9,7 +9,6 @@ from .map_generation import (
     TerrainClassifier,
     NormalMapGenerator,
     WatercolorGenerator,
-    PerlinNoiseGenerator,
     FastNoiseGenerator,
 )
 
@@ -22,6 +21,5 @@ __all__ = [
     "TerrainClassifier",
     "NormalMapGenerator",
     "WatercolorGenerator",
-    "PerlinNoiseGenerator",
     "FastNoiseGenerator",
 ]

@@ -14,6 +14,7 @@ import numpy as np
 from typing import Dict, List, Tuple, Any, Optional
 from dataclasses import dataclass
 
+import eu4_wgs_v8
 from eu4_wgs_v8.common.io_utils import ensure_dir, write_text, save_image
 
 
@@ -103,16 +104,16 @@ class MapFileExporter:
                 writer.writerow([p.id, r, g, b, name, "x"])
         return path
 
-    def write_default_map(self, max_provinces: int, sea_ids: list,
-                           wasteland_ids: list) -> str:
+    def write_default_map(self, width: int, height: int, max_provinces: int,
+                           sea_ids: list, wasteland_ids: list) -> str:
         """Writes the standard EU4 default.map."""
         sea_str = " ".join(map(str, sea_ids))
         wasteland_str = " ".join(map(str, wasteland_ids))
 
-        content = f"""# default.map for 5632x2048 framework
+        content = f"""# default.map for {width}x{height} framework
 
-width = 5632
-height = 2048
+width = {width}
+height = {height}
 max_provinces = {max_provinces}
 
 definitions = "definition.csv"
@@ -568,7 +569,9 @@ class MasterExportOrchestrator:
                              province_infos: list,
                              countries: Dict[str, Any],
                              climate_zones: Dict[str, list],
-                             is_micro: bool = False) -> Dict[str, str]:
+                             is_micro: bool = False,
+                             terrain_bmp: Optional[np.ndarray] = None,
+                             rivers_bmp: Optional[np.ndarray] = None) -> Dict[str, str]:
         """
         Execute the complete mod export pipeline.
         Returns a dict of {file_type: path} for all exported files.
@@ -576,6 +579,7 @@ class MasterExportOrchestrator:
         tech_name = mod_name.lower().replace(" ", "_")
         mod_root = self.create_mod_structure(mod_name)
         exported_files = {}
+        height, width = heightmap.shape[:2]
 
         # ── Map files ──────────────────────────────────────────
         map_exporter = MapFileExporter(mod_root, map_height=self.map_height)
@@ -590,7 +594,20 @@ class MasterExportOrchestrator:
         exported_files["watercolor"] = map_exporter.save_watercolor_bmp(watercolor)
 
         exported_files["provinces"] = map_exporter.save_provinces_bmp(provinces_bmp)
-        exported_files["trees"] = map_exporter.save_trees_bmp()
+
+        if terrain_bmp is None:
+            from eu4_wgs_v8.engine.map_generation import TerrainClassifier
+            terrain_cls = TerrainClassifier(width=width, height=height)
+            terrain_bmp = terrain_cls.generate_terrain_bmp(heightmap, land_mask)
+        exported_files["terrain"] = map_exporter.save_terrain_bmp(terrain_bmp)
+
+        if rivers_bmp is None:
+            from eu4_wgs_v8.engine.map_generation import RiverGenerator
+            river_gen = RiverGenerator(width=width, height=height)
+            rivers_bmp, _ = river_gen.generate_rivers(heightmap, land_mask)
+        exported_files["rivers"] = map_exporter.save_rivers_bmp(rivers_bmp)
+
+        exported_files["trees"] = map_exporter.save_trees_bmp(width, height)
         exported_files["definition_csv"] = map_exporter.write_definition_csv(province_infos)
 
         # Compute sea and wasteland IDs
@@ -599,7 +616,7 @@ class MasterExportOrchestrator:
         max_provinces = len(province_infos) + 1
 
         exported_files["default_map"] = map_exporter.write_default_map(
-            max_provinces, sea_ids, wasteland_ids
+            width, height, max_provinces, sea_ids, wasteland_ids
         )
 
         # Compute positions
@@ -619,7 +636,7 @@ class MasterExportOrchestrator:
             country_exporter.write_country_history_file(tag, data)
             country_exporter.write_national_ideas(tag, data.center_y)
             FlagGenerator.generate_flag(tag, data.is_advanced, mod_root,
-                                          assets_path="assets",
+                                          assets_path=str(eu4_wgs_v8.ASSETS_DIR),
                                           continent=data.continent,
                                           seed=hash(tag) % (2**31))
 
@@ -689,7 +706,7 @@ class MasterExportOrchestrator:
             hre_tags=[t for t, c in countries.items()
                       if getattr(c, 'religion', '') == 'catholic'],
         )
-        template_exporter = TemplateExporter(template_config, templates_dir="templates")
+        template_exporter = TemplateExporter(template_config, templates_dir=str(eu4_wgs_v8.TEMPLATES_DIR))
         template_stats = template_exporter.export_all(mod_root)
         for category, file_count in template_stats.items():
             exported_files[f"template_{category}"] = f"{file_count} files"
@@ -704,15 +721,14 @@ class MasterExportOrchestrator:
 
         return exported_files
 
-    @staticmethod
-    def _compute_positions(province_infos: list) -> Dict[int, Dict]:
+    def _compute_positions(self, province_infos: list) -> Dict[int, Dict]:
         """Compute province positions for positions.txt."""
         positions = {}
         for p in province_infos:
             if p.is_sea:
                 continue
             center_x = p.center_x
-            center_y = 2048 - p.center_y  # EU4 uses inverted Y
+            center_y = self.map_height - p.center_y  # EU4 uses inverted Y
             positions[p.id] = {
                 "bc_x": center_x,
                 "bc_y": center_y,

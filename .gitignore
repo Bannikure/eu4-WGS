@@ -17,6 +17,14 @@ __pycache__/
 *.py[cod]
 *.egg-info/
 .pytest_cache/
+build/
+dist/
+
+# Generated output
+mod_output/
+mod_output_test/
+world_output/
+test_output/
 
 # Editor directories and files
 .vscode/*

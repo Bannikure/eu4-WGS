@@ -19,6 +19,7 @@ from PIL import Image, ImageOps, ImageDraw
 from dataclasses import dataclass, field
 from typing import Dict, List, Tuple, Any, Optional
 
+import eu4_wgs_v8
 from eu4_wgs_v8.common.io_utils import ensure_dir, write_text
 
 logger = logging.getLogger(__name__)
@@ -411,7 +412,7 @@ class FlagGenerator:
     @classmethod
     def generate_flag(cls, tag: str, is_advanced: bool = True,
                       output_dir: str = ".",
-                      assets_path: str = "assets",
+                      assets_path: str = str(eu4_wgs_v8.ASSETS_DIR),
                       continent: str = "",
                       seed: Optional[int] = None) -> str:
         """

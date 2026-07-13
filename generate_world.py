@@ -1,14 +1,11 @@
 #!/usr/bin/env python3
 """Full world generation pipeline with dashboard and preview image generation."""
 import os
-import sys
 import time
 import json
 import numpy as np
 from PIL import Image
 
-# Ensure package imports work
-sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from eu4_wgs_v8.engine.map_generation import (
     MapConfig, MapGenerationEngine, ProvinceGenerator,
@@ -29,7 +26,13 @@ def generate_world(
     height=1024,
     land_pct=30,
     province_count=1500,
-    output_dir="./world_output"
+    output_dir="./world_output",
+    map_style="continents_islands",
+    enable_tectonic=True,
+    enable_erosion=True,
+    enable_craters=True,
+    num_craters=5,
+    octaves=None,
 ):
     """Generate a complete world with all data and visualizations."""
     os.makedirs(output_dir, exist_ok=True)
@@ -38,14 +41,21 @@ def generate_world(
     # ── Phase 1: Heightmap ──
     print("[1/7] Generating heightmap...")
     t0 = time.time()
-    config = MapConfig(
+    config_kwargs = dict(
         width=width, height=height, seed=seed,
         land_percentage=land_pct,
-        layout_style="continents_islands"
+        layout_style=map_style
     )
+    if octaves is not None:
+        config_kwargs["continent_octaves"] = octaves
+        config_kwargs["detail_octaves"] = octaves
+    config = MapConfig(**config_kwargs)
     engine = MapGenerationEngine(config)
     heightmap, land_mask = engine.generate_complete_heightmap(
-        apply_tectonic=True, apply_erosion=True, apply_craters=True, num_craters=5
+        apply_tectonic=enable_tectonic,
+        apply_erosion=enable_erosion,
+        apply_craters=enable_craters,
+        num_craters=num_craters,
     )
     timings["heightmap"] = time.time() - t0
     land_pct_actual = land_mask.sum() / land_mask.size * 100
@@ -180,8 +190,11 @@ def generate_world(
 
     # Normal map preview
     normal_map = NormalMapGenerator.generate(heightmap)
-    # Convert from [-1,1] float to [0,255] uint8 for display
-    normal_display = ((normal_map + 1) / 2 * 255).astype(np.uint8)
+    # NormalMapGenerator returns uint8 RGB; scale only if it ever returns float
+    if normal_map.dtype != np.uint8:
+        normal_display = ((normal_map + 1) / 2 * 255).astype(np.uint8)
+    else:
+        normal_display = normal_map
     if normal_display.shape[2] == 3:
         nm_img = Image.fromarray(normal_display, mode='RGB')
     else:
@@ -272,6 +285,7 @@ def generate_world(
         "continent_stats": continent_stats,
         "religion_dist": religion_dist,
         "tech_dist": tech_dist,
+        "climate_zones": climate_zones,
     }
 
 
