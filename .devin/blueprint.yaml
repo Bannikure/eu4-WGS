@@ -1,0 +1,25 @@
+# Devin environment blueprint for eu4-WGS
+# Commands run from the repo root.
+
+initialize: |
+  # Keep pip new enough for PEP 660 editable builds
+  pip install -U pip
+
+maintenance: |
+  # Install/refresh the project in editable mode with all dependencies
+  pip install -e .
+
+knowledge:
+  - name: test
+    contents: |
+      python main.py --test
+      python -m pytest test -q
+  - name: run
+    contents: |
+      python main.py --headless
+      # or after install:
+      eu4-wgs --headless
+  - name: notes
+    contents: |
+      main.py is the CLI entry point.
+      eu4-wgs and generate-world are console scripts installed by pip install -e .
