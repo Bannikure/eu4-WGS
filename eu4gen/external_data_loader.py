@@ -366,7 +366,7 @@ class ProvinceDataLoader(ExternalDataLoader):
             try:
                 result[int(key)] = str(value)
             except (ValueError, TypeError):
-                pass
+                logger.debug("Skipping non-numeric province id key %r in %s", key, filename)
         
         return result
 

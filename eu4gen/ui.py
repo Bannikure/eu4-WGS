@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import logging
 import traceback
 from threading import Thread
 from typing import Any
@@ -13,6 +14,8 @@ from .exporter import export_complete_eu4_mod
 from .map_engine import MapGenerationEngine
 from .map_writers import calculate_province_positions
 from .render import generate_rivers, render_photorealistic_3d_viewport
+
+logger = logging.getLogger(__name__)
 
 ctk.set_appearance_mode("Dark")
 ctk.set_default_color_theme("blue")
@@ -111,6 +114,7 @@ class EU4GeneratorUI(ctk.CTk):
             self._set_progress(1.0)
             self._set_status(f"World generated — {province_count} provinces.")
         except Exception:
+            logger.exception("World generation failed")
             self._set_status(f"Generation failed: {traceback.format_exc().splitlines()[-1]}")
 
     def export_mod(self) -> None:
@@ -126,6 +130,7 @@ class EU4GeneratorUI(ctk.CTk):
             export_complete_eu4_mod(mod_name, mod_name.replace(" ", "_"), self.generation_data)  # type: ignore[arg-type]
             self._set_status(f"Mod '{mod_name}' exported successfully.")
         except Exception:
+            logger.exception("Mod export failed")
             self._set_status(f"Export failed: {traceback.format_exc().splitlines()[-1]}")
 
     def preview_map(self) -> None:
@@ -135,4 +140,5 @@ class EU4GeneratorUI(ctk.CTk):
         try:
             render_photorealistic_3d_viewport(self.generation_data["heightmap"])
         except Exception:
+            logger.exception("Preview rendering failed")
             self._set_status(f"Preview failed: {traceback.format_exc().splitlines()[-1]}")

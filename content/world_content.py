@@ -12,6 +12,7 @@ Generates all game content with inverted power dynamics:
 
 import os
 import csv
+import logging
 import random
 import numpy as np
 from PIL import Image, ImageOps, ImageDraw
@@ -20,6 +21,7 @@ from typing import Dict, List, Tuple, Any, Optional
 
 from eu4_wgs_v8.common.io_utils import ensure_dir, write_text
 
+logger = logging.getLogger(__name__)
 
 # ═══════════════════════════════════════════════════════════════
 #  NAMING CONSTANTS
@@ -201,7 +203,8 @@ class FlagGenerator:
                 with Image.open(fpath) as test_img:
                     test_img.verify()
                 valid_files.append(fpath)
-            except Exception:
+            except (OSError, SyntaxError) as e:
+                logger.warning("Skipping invalid %s asset '%s': %s", asset_type, fpath, e)
                 continue
 
         cls._emblem_cache[cache_key] = valid_files
@@ -274,7 +277,8 @@ class FlagGenerator:
                 return canvas
             else:
                 return img.resize(target_size, Image.LANCZOS)
-        except Exception:
+        except (OSError, ValueError) as e:
+            logger.warning("Failed to load/resize image '%s': %s", fpath, e)
             return None
 
     @staticmethod
