@@ -60,3 +60,4 @@ def test_save_image_infers_and_forces_mode(tmp_path):
     gray = (np.random.rand(6, 6) * 255).astype(np.uint8)
     gray_path = save_image(gray, os.path.join(str(tmp_path), "gray.bmp"))
     assert os.path.getsize(gray_path) > 0
+    assert Image.open(gray_path).size == (6, 6)
