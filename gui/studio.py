@@ -1,10 +1,40 @@
 """
 EU4 Studio GUI
 ==============
+Module 5: EU4 World Generator Studio V8 — Redesigned Desktop GUI
+=================================================================
+Full-featured desktop application combining the best elements of
+WorldGeneratorPlus (WPF/OpenGL preview, colourmap, crater controls)
+and EUIV_Map_Generator (Qt5-style step workflow, export panels).
+
+Layout Architecture (inspired by both reference GUIs):
+  ┌──────────────────────────────────────────────────────────────┐
+  │  [Logo]  ⚡Generate  📦Export  📊Dashboard  🔄Reset  ℹ️About│  ← Toolbar
+  ├──────────┬───────────────────────────────────┬───────────────┤
+  │ Left     │                                   │ Right         │
+  │ Sidebar  │     Map Viewport (Preview)        │ Inspector     │
+  │ ─────── │                                   │ ───────────── │
+  │ 🗺️ Map   │                                   │ 📋 Province   │
+  │ 🌋 Noise │                                   │ 🏰 Country    │
+  │ 🌋 Adv   │                                   │ 🌍 World      │
+  │ ⚖️ Dynam │                                   │ Stats         │
+  │ 🎨 Color │    [Drag & Drop Heightmap Zone]   │               │
+  │ 📤 Export│                                   │               │
+  ├──────────┴───────────────────────────────────┴───────────────┤
+  │  [████████░░░░░░░░] 65%  Generating provinces...  12.3s    │  ← Status
+  └──────────────────────────────────────────────────────────────┘
 Enhanced Tkinter GUI for the EU4 World Generator Studio.
 Provides intuitive control over map generation parameters with live preview.
 """
 
+import os
+import sys
+import threading
+import time
+import json
+import numpy as np
+from typing import Dict, List, Any, Optional, Callable, Tuple
+from dataclasses import dataclass, field
 import customtkinter as ctk
 import tkinter as tk
 from tkinter import messagebox, filedialog
@@ -18,6 +48,8 @@ import numpy as np
 from PIL import Image, ImageTk
 
 logger = logging.getLogger(__name__)
+
+
 
 
 # ═══════════════════════════════════════════════════════════════
