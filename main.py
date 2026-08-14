@@ -9,6 +9,7 @@ Usage:
     python main.py --headless         # Run headless generation pipeline
     python main.py --headless --seed 1234 --provinces 500
     python main.py --test             # Run quick test with small map
+    python main.py --headless --mask-path my_land_mask.png --height-path my_terrain_heightmap.png --map-width 5632 --map-height 2048 --mod-name MyWorld --output ./mod_output
 """
 
 import os
@@ -47,6 +48,13 @@ def parse_args():
                         help="Noise octaves; uses MapConfig defaults if omitted")
     parser.add_argument("--no-tectonic", action="store_true",
                         help="Disable tectonic plate simulation")
+    parser.add_argument("--mask-path", type=str, default=None,  
+                        help="Path to a B&W land-mask image (white=land, black=sea). "  
+                             "If set with --height-path, uses image-based heightmap "  
+                             "instead of procedural generation.")  
+    parser.add_argument("--height-path", type=str, default=None,  
+                        help="Path to a grayscale heightmap image. "  
+                             "Required together with --mask-path.")
     parser.add_argument("--no-erosion", action="store_true",
                         help="Disable hydraulic erosion")
     parser.add_argument("--no-craters", action="store_true",
@@ -242,6 +250,8 @@ def run_headless_pipeline(args):
         enable_craters=not args.no_craters,
         num_craters=5,
         octaves=args.octaves,
+        mask_path=args.mask_path,  
+        height_path=args.height_path,
     )
 
     orchestrator = MasterExportOrchestrator(
@@ -278,6 +288,10 @@ def main():
         export_result = result.get("export_result", {})
         print(f"[DONE] Mod: {args.output}/{args.mod_name} ({len(export_result)} files)")
         return
+
+    if bool(args.mask_path) != bool(args.height_path):  
+        print("[WGS] WARNING: --mask-path and --height-path must be used together; "  
+              "falling back to procedural generation.")
 
     # Try GUI
     try:
