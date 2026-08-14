@@ -283,7 +283,7 @@ def main():
     try:
         from eu4_wgs_v8.gui import WorldGeneratorStudio
         app = WorldGeneratorStudio()
-        app.run()
+        app.mainloop()
     except Exception as e:
         print(f"[WGS] GUI launch failed ({e}), falling back to headless mode...")
         run_headless_pipeline(args)
